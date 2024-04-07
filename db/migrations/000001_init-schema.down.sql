@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS products cascade;
+DROP TABLE IF EXISTS lables cascade;
+DROP TABLE IF EXISTS categories cascade;
+DROP TABLE IF EXISTS product_categories cascade;
+DROP TABLE IF EXISTS users cascade;
+DROP TABLE IF EXISTS comments cascade;
+DROP TABLE IF EXISTS orders cascade;
+DROP TABLE IF EXISTS product_orders cascade;
+DROP TABLE IF EXISTS countries cascade;
+DROP TABLE IF EXISTS delivery_methods cascade;
+DROP TABLE IF EXISTS payment_methods cascade;
