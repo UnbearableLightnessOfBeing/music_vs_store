@@ -6,22 +6,23 @@ import (
 	"fmt"
 	db "music_vs_store/db/sqlc"
 	"net/http"
+	"os"
 	"text/template"
+
+	"github.com/subosito/gotenv"
 
 	_ "github.com/lib/pq"
 )
 
-const (
-    dbDriver = "postgres"
-    dbSource = "postgresql://admin:admin@localhost:1234/music_vs_store_db?sslmode=disable"
-)
-
 var queries *db.Queries
 
+func init() {
+  gotenv.Load()
+}
 func main() {
-  ctx := context.Background()
+  // ctx := context.Background()
 
-  conn, err := sql.Open(dbDriver, dbSource)
+  conn, err := sql.Open(os.Getenv("DB_DRIVER"), os.Getenv("DB_SOURCE"))
   if err != nil {
     panic(err)
   }
@@ -29,42 +30,43 @@ func main() {
 
   queries = db.New(conn)
 
+  // err = queries.DeleteUserByName(ctx, "aboba")
+  // if err != nil {
+  //   panic(err)
+  // }
+  // err = queries.DeleteUserByName(ctx, "zeliboba")
+  // if err != nil {
+  //   panic(err)
+  // }
 
-  err = queries.DeleteUserByName(ctx, "aboba")
-  if err != nil {
-    panic(err)
-  }
-  err = queries.DeleteUserByName(ctx, "zeliboba")
-  if err != nil {
-    panic(err)
-  }
+  // insertedUser, err := queries.CreateUser(ctx, db.CreateUserParams{
+  //   Username: "aboba",
+  //   Email: "aboba@gmail.com",
+  //   Password: "password",
+  // })
+  // if err != nil {
+  //   panic(err)
+  // }
 
-  insertedUser, err := queries.CreateUser(ctx, db.CreateUserParams{
-    Username: "aboba",
-    Email: "aboba@gmail.com",
-    Password: "password",
-  })
-  if err != nil {
-    panic(err)
-  }
+  // insertedUser2, err := queries.CreateUser(ctx, db.CreateUserParams{
+  //   Username: "zeliboba",
+  //   Email: "zeliboba@gmail.com",
+  //   Password: "password",
+  // })
+  // if err != nil {
+  //   panic(err)
+  // }
 
-  insertedUser2, err := queries.CreateUser(ctx, db.CreateUserParams{
-    Username: "zeliboba",
-    Email: "zeliboba@gmail.com",
-    Password: "password",
-  })
-  if err != nil {
-    panic(err)
-  }
-
-  fmt.Println("inserted user:", insertedUser)
-  fmt.Println("inserted user 2:", insertedUser2)
+  // fmt.Println("inserted user:", insertedUser)
+  // fmt.Println("inserted user 2:", insertedUser2)
 
   mux := http.NewServeMux()
   mux.HandleFunc("/", handler)
 
-  fmt.Println("starting server at :8080")
-  http.ListenAndServe(":8080", mux)
+  port := os.Getenv("SERVER_PORT")
+
+  fmt.Println("starting server at " + port)
+  http.ListenAndServe(port, mux)
 }
 
 

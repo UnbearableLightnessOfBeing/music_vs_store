@@ -9,93 +9,93 @@ import (
 )
 
 type Category struct {
-	ID   int32
-	Name string
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
 }
 
 type Comment struct {
-	ID        int32
-	UserID    int32
-	Text      string
-	CreatedAt sql.NullTime
+	ID        int32        `json:"id"`
+	UserID    int32        `json:"user_id"`
+	Text      string       `json:"text"`
+	CreatedAt sql.NullTime `json:"created_at"`
 }
 
 type Country struct {
-	ID   int32
-	Name sql.NullString
+	ID   int32          `json:"id"`
+	Name sql.NullString `json:"name"`
 }
 
 type DeliveryMethod struct {
-	ID   int32
-	Name sql.NullString
+	ID   int32          `json:"id"`
+	Name sql.NullString `json:"name"`
 }
 
 type Lable struct {
-	ID   int32
-	Name string
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
 }
 
 type Order struct {
-	ID                  int32
-	UserID              sql.NullInt32
-	ProductCount        int32
-	PriceInt            int32
-	PriceDec            sql.NullInt32
-	DeliveryPriceInt    int32
-	DeliveryPriceDec    sql.NullInt32
-	TotalInt            int32
-	TotalDec            sql.NullInt32
-	CountryID           sql.NullInt32
-	District            string
-	City                string
-	PostalCode          int32
-	DeliveryMethodID    int32
-	PaymentMethodID     int32
-	CustomerFirstname   string
-	CusotmerMiddlename  string
-	CustomerLastname    string
-	CustomerPhoneNumber string
-	CustomerEmail       string
-	CustomerAddress     string
-	CustomerComment     sql.NullString
-	CreatedAt           sql.NullTime
+	ID                  int32          `json:"id"`
+	UserID              sql.NullInt32  `json:"user_id"`
+	ProductCount        int32          `json:"product_count"`
+	PriceInt            int32          `json:"price_int"`
+	PriceDec            sql.NullInt32  `json:"price_dec"`
+	DeliveryPriceInt    int32          `json:"delivery_price_int"`
+	DeliveryPriceDec    sql.NullInt32  `json:"delivery_price_dec"`
+	TotalInt            int32          `json:"total_int"`
+	TotalDec            sql.NullInt32  `json:"total_dec"`
+	CountryID           sql.NullInt32  `json:"country_id"`
+	District            string         `json:"district"`
+	City                string         `json:"city"`
+	PostalCode          int32          `json:"postal_code"`
+	DeliveryMethodID    int32          `json:"delivery_method_id"`
+	PaymentMethodID     int32          `json:"payment_method_id"`
+	CustomerFirstname   string         `json:"customer_firstname"`
+	CusotmerMiddlename  string         `json:"cusotmer_middlename"`
+	CustomerLastname    string         `json:"customer_lastname"`
+	CustomerPhoneNumber string         `json:"customer_phone_number"`
+	CustomerEmail       string         `json:"customer_email"`
+	CustomerAddress     string         `json:"customer_address"`
+	CustomerComment     sql.NullString `json:"customer_comment"`
+	CreatedAt           sql.NullTime   `json:"created_at"`
 }
 
 type PaymentMethod struct {
-	ID   int32
-	Name sql.NullString
+	ID   int32          `json:"id"`
+	Name sql.NullString `json:"name"`
 }
 
 type Product struct {
-	ID          int32
-	Name        string
-	PriceInt    int32
-	PriceDec    sql.NullInt32
-	LabelID     sql.NullInt32
-	ImgUrl      sql.NullString
-	Description sql.NullString
-	InStock     sql.NullBool
+	ID          int32          `json:"id"`
+	Name        string         `json:"name"`
+	PriceInt    int32          `json:"price_int"`
+	PriceDec    sql.NullInt32  `json:"price_dec"`
+	LabelID     sql.NullInt32  `json:"label_id"`
+	ImgUrl      sql.NullString `json:"img_url"`
+	Description sql.NullString `json:"description"`
+	InStock     sql.NullBool   `json:"in_stock"`
 }
 
 type ProductCategory struct {
-	ID         int32
-	ProductID  int32
-	CategoryID int32
+	ID         int32 `json:"id"`
+	ProductID  int32 `json:"product_id"`
+	CategoryID int32 `json:"category_id"`
 }
 
 type ProductOrder struct {
-	ID        int32
-	ProductID int32
-	OrderID   int32
-	Count     int32
+	ID        int32 `json:"id"`
+	ProductID int32 `json:"product_id"`
+	OrderID   int32 `json:"order_id"`
+	Count     int32 `json:"count"`
 }
 
 type User struct {
-	ID       int32
-	Username string
-	Email    string
-	IsAdmin  sql.NullBool
+	ID       int32        `json:"id"`
+	Username string       `form:"username" json:"username"`
+	Email    string       `form:"email" json:"email"`
+	IsAdmin  sql.NullBool `json:"is_admin"`
 	// hashed version
-	Password  string
-	CreatedAt sql.NullTime
+	Password  string       `form:"password" json:"password"`
+	CreatedAt sql.NullTime `json:"created_at"`
 }

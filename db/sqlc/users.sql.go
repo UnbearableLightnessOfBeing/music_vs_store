@@ -21,9 +21,9 @@ insert into users (
 `
 
 type CreateUserParams struct {
-	Username string
-	Email    string
-	Password string
+	Username string `form:"username" json:"username"`
+	Email    string `form:"email" json:"email"`
+	Password string `form:"password" json:"password"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -79,6 +79,44 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 	return i, err
 }
 
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, username, email, is_admin, password, created_at FROM users
+WHERE email = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.IsAdmin,
+		&i.Password,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getUserByName = `-- name: GetUserByName :one
+SELECT id, username, email, is_admin, password, created_at FROM users
+WHERE username = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserByName(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByName, username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.IsAdmin,
+		&i.Password,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const listUsrs = `-- name: ListUsrs :many
 select id, username, email, is_admin, password, created_at from users
 order by id
@@ -87,8 +125,8 @@ offset $2
 `
 
 type ListUsrsParams struct {
-	Limit  int32
-	Offset int32
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
 }
 
 func (q *Queries) ListUsrs(ctx context.Context, arg ListUsrsParams) ([]User, error) {
@@ -129,8 +167,8 @@ returning id, username, email, is_admin, password, created_at
 `
 
 type UpdateUserIsAdminParams struct {
-	ID      int32
-	IsAdmin sql.NullBool
+	ID      int32        `json:"id"`
+	IsAdmin sql.NullBool `json:"is_admin"`
 }
 
 func (q *Queries) UpdateUserIsAdmin(ctx context.Context, arg UpdateUserIsAdminParams) (User, error) {
@@ -155,8 +193,8 @@ RETURNING id, username, email, is_admin, password, created_at
 `
 
 type UpdateUserNameParams struct {
-	ID       int32
-	Username string
+	ID       int32  `json:"id"`
+	Username string `form:"username" json:"username"`
 }
 
 func (q *Queries) UpdateUserName(ctx context.Context, arg UpdateUserNameParams) (User, error) {

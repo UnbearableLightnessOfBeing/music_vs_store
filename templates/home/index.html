@@ -1,0 +1,23 @@
+{{ define "home/index.html" }}
+  {{ template "layouts/header.html"}}
+  <h1>{{ .title }}</h1>
+  <h5>User logged in: {{ .isLoggedIn }}</h5>
+  <div>
+    <ul>
+      {{ range .users }}
+      <li> {{ .Username }} - {{ .Email }} </li>
+      {{ end }}
+    </ul>
+  </div>
+  {{ if .isLoggedIn }}
+  <form action="/logout" method="POST">
+    <button>Logout</button>
+  </form>
+  {{ else }}
+  <div>
+    <a href="/login">Login</a>
+    <a href="/signup">Signup</a>
+  </div>
+  {{ end }}
+  {{ template "layouts/footer.html"}}
+{{ end }}

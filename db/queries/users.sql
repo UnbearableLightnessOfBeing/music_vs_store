@@ -11,6 +11,14 @@ insert into users (
 SELECT * FROM users
 WHERE id = $1 LIMIT 1;
 
+-- name: GetUserByName :one
+SELECT * FROM users
+WHERE username = $1 LIMIT 1;
+
+-- name: GetUserByEmail :one
+SELECT * FROM users
+WHERE email = $1 LIMIT 1;
+
 -- name: ListUsrs :many
 select * from users
 order by id
