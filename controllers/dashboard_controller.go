@@ -18,8 +18,18 @@ func NewDashboardController(queries *db.Queries) DashboardController {
 }
 
 func (d DashboardController) Index(c *gin.Context) {
+
+  categories, err := d.queries.ListCategories(c, db.ListCategoriesParams{
+    Limit: 10,
+    Offset: 0,
+  })
+
+  if err != nil {
+    panic(err)
+  }
+
 	c.HTML(http.StatusOK, "dashboard/index.html", gin.H{
 		"title": "Welcome to music_vs_store",
+    "categories": categories,
 	})
-  
 }

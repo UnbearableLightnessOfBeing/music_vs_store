@@ -1,9 +1,9 @@
 {{ define "home/index.html" }}
   {{ template "layouts/header.html"}}
-  <h1>{{ .title }}</h1>
+  <h1 class="text-pink-400">{{ .title }}</h1>
   <h5>User logged in: {{ .isLoggedIn }}</h5>
   <div>
-    <ul>
+    <ul class="text-slate-700">
       {{ range .users }}
       <li> {{ .Username }} - {{ .Email }} </li>
       {{ end }}

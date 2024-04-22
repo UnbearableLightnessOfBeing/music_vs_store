@@ -56,7 +56,7 @@ func (m AuthMiddleware) RequireAdmin() gin.HandlerFunc {
     session := sessions.Default(c)
     sessionID := session.Get("id")
 
-    log.Println("session id:", sessionID)
+    fmt.Println("session id from middleware:", sessionID)
 
     if sessionID != nil {
       user, err := m.queries.GetUser(c, sessionID.(int32))

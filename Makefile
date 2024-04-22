@@ -19,4 +19,7 @@ sqlc:
 test:
 	go test ./... -v -cover
 
-.PHONY: postgres createdb dropdb migrate-up migrate-down sqlc test
+run-css-server:
+	npx tailwindcss -i ./static/styles/input.css -o ./static/styles/output.css --watch
+
+.PHONY: postgres createdb dropdb migrate-up migrate-down sqlc test run-css-server
