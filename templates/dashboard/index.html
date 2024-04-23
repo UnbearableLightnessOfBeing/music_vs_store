@@ -1,11 +1,43 @@
-{{ define "dashboard/index.html" }}
-  {{ template "layouts/header.html"}}
-  <h1>{{ .title }}</h1>
-  <div class="border-2 rounded-md border-red-400 p-8 bg-pink-600 text-sky-100 m-6">
-    {{ range .categories }}
-      <div class="font-bold text-3xl">{{ .Name }}</div>
-    {{ end }}
+{{ define "dashboard/index.html" }} 
+{{ template "layouts/header.html"}}
+<h1>{{ .title }}</h1>
+<div
+  id="target"
+  class="border-2 rounded-md border-red-400 p-8 bg-pink-600 text-sky-100 m-6"
+>
+  {{ range .categories }}
+  <div class="font-bold text-3xl">{{ .Name }}</div>
+  {{ end }}
+</div>
+<div class="p-10 m-2">
+  <div class="text-4xl text-green-400 text-center">Add new category</div>
+  <form
+    class="border-1 border-black p-4 space-y-4"
+    action="/admin/categories"
+    method="POST"
+  >
+    <div class="space-y-2">
+      <label for="name" class="text-red-400 block">Name</label>
+      <input
+        class="outline outline-blue-300 block"
+        type="text"
+        id="name"
+        name="name"
+      />
+    </div>
+    <button type="submit" class="px-4 py-2 bg-blue-200 text-red-500 text-xl">
+      Submit
+    </button>
+  </form>
+  <div 
+    class="bg-black p-3 text-white" 
+    hx-get="/admin/htmx"
+    hx-trigger="click"
+    hx-swap="outerHTML"
+    hx-target="#target"
+  >
+    htmx
   </div>
-  {{ template "layouts/footer.html"}}
+</div>
+{{ template "layouts/footer.html"}} 
 {{ end }}
-

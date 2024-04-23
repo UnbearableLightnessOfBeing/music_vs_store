@@ -10,11 +10,10 @@ import (
 )
 
 const createCategory = `-- name: CreateCategory :one
-insert into categories (
-  name
-)  values (
-  $1
-) returning id, name
+insert into categories 
+(name)  
+values ($1) 
+returning id, name
 `
 
 func (q *Queries) CreateCategory(ctx context.Context, name string) (Category, error) {

@@ -33,3 +33,25 @@ func (d DashboardController) Index(c *gin.Context) {
     "categories": categories,
 	})
 }
+
+type CreateCategoryParams struct {
+  Name string `form:"name" binding:"required"`
+}
+
+func (d DashboardController) CreateCategory(c *gin.Context) {
+  var params CreateCategoryParams 
+  c.ShouldBind(&params)
+
+  _, err := d.queries.CreateCategory(c, params.Name)
+  if err != nil {
+    panic(err)
+  }
+
+  c.Redirect(http.StatusMovedPermanently, "/admin")
+
+  // c.HTML(http.StatusOK, "dashboard/index.html", gin.H{})
+} 
+
+func (d DashboardController) TestHtmx(c *gin.Context) {
+  c.HTML(http.StatusOK, "dashboard/htmx.html", gin.H{})
+}

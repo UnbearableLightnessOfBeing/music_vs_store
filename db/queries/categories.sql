@@ -1,9 +1,8 @@
 -- name: CreateCategory :one
-insert into categories (
-  name
-)  values (
-  $1
-) returning *;
+insert into categories 
+(name)  
+values ($1) 
+returning *;
 
 -- name: GetCategory :one
 SELECT * FROM categories

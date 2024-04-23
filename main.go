@@ -48,6 +48,12 @@ func main() {
   r.POST("/login", sessionsController.Login)
   r.POST("/logout", sessionsController.Logout)
 
+  // admin api
+  r.POST("/admin/categories", authMiddleware.RequireAdmin(), dashboardController.CreateCategory)
+
+  // HTMX test
+  r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)
+
   var port = os.Getenv("SERVER_PORT")
   fmt.Println("starting server at: " + port)
   r.Run(port)
