@@ -8,6 +8,18 @@ returning *;
 SELECT * FROM categories
 WHERE id = $1 LIMIT 1;
 
+-- name: UpdateCategoryName :one
+UPDATE categories
+SET name = $2
+WHERE id = $1
+RETURNING *;
+
+-- name: UpdateCategoryImageUrl :one
+UPDATE categories
+SET img_url = $2
+WHERE id = $1
+RETURNING *;
+
 -- name: ListCategories :many
 select * from categories
 order by id

@@ -9,8 +9,9 @@ import (
 )
 
 type Category struct {
-	ID   int32  `json:"id"`
-	Name string `json:"name"`
+	ID     int32          `json:"id"`
+	Name   string         `json:"name"`
+	ImgUrl sql.NullString `json:"img_url"`
 }
 
 type Comment struct {
@@ -30,7 +31,7 @@ type DeliveryMethod struct {
 	Name sql.NullString `json:"name"`
 }
 
-type Lable struct {
+type Label struct {
 	ID   int32  `json:"id"`
 	Name string `json:"name"`
 }

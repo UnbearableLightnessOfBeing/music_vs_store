@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS products cascade;
-DROP TABLE IF EXISTS lables cascade;
+DROP TABLE IF EXISTS labels cascade;
 DROP TABLE IF EXISTS categories cascade;
 DROP TABLE IF EXISTS product_categories cascade;
 DROP TABLE IF EXISTS users cascade;

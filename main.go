@@ -22,6 +22,8 @@ func init() {
 func main() {
 	r := gin.Default()
   r.Static("/styles", "./static/styles")
+  r.Static("/assets", "./static/assets")
+  r.Static("/storage", "./storage/images/")
   r.LoadHTMLGlob("templates/**/*")
 
   queries := driver.GetQueries()

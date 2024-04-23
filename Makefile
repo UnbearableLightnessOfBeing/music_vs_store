@@ -22,4 +22,10 @@ test:
 run-css-server:
 	npx tailwindcss -i ./static/styles/input.css -o ./static/styles/output.css --watch
 
-.PHONY: postgres createdb dropdb migrate-up migrate-down sqlc test run-css-server
+clear-images:
+	rm -rf ./storage/images/*
+
+reset-db:
+	make migrate-down && make migrate-up && make clear-images
+
+.PHONY: postgres createdb dropdb migrate-up migrate-down sqlc test run-css-server clear-images

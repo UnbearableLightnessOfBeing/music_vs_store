@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"database/sql"
 	db "music_vs_store/db/sqlc"
 	"net/http"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type DashboardController struct {
@@ -42,14 +45,37 @@ func (d DashboardController) CreateCategory(c *gin.Context) {
   var params CreateCategoryParams 
   c.ShouldBind(&params)
 
-  _, err := d.queries.CreateCategory(c, params.Name)
+  created, err := d.queries.CreateCategory(c, params.Name)
+  if err != nil {
+    panic(err)
+  }
+
+  file, err := c.FormFile("image")
+  if err != nil {
+    panic(err)
+  }
+  ext := filepath.Ext(file.Filename)
+  uuidStr := uuid.New().String()
+
+  dst := "./storage/images/" + uuidStr + ext
+  if err = c.SaveUploadedFile(file, dst); err != nil {
+    panic(err)
+  }
+
+  imgUrl := "/storage/" + uuidStr + ext
+  updateParams := db.UpdateCategoryImageUrlParams{
+    ID: created.ID,
+    ImgUrl: sql.NullString{
+      String: imgUrl,
+      Valid: true,
+    },
+  }
+  _, err = d.queries.UpdateCategoryImageUrl(c, updateParams)
   if err != nil {
     panic(err)
   }
 
   c.Redirect(http.StatusMovedPermanently, "/admin")
-
-  // c.HTML(http.StatusOK, "dashboard/index.html", gin.H{})
 } 
 
 func (d DashboardController) TestHtmx(c *gin.Context) {

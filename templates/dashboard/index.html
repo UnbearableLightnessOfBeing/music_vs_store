@@ -7,12 +7,18 @@
 >
   {{ range .categories }}
   <div class="font-bold text-3xl">{{ .Name }}</div>
+  {{ if .ImgUrl.Valid }}
+  <img src="{{.ImgUrl.String}}" class="w-[200px] h-[200px]">
+  {{ else }}
+  <img src="/assets/no-image.jpg" class="w-[200px] h-[200px]">
+  {{ end }}
   {{ end }}
 </div>
 <div class="p-10 m-2">
   <div class="text-4xl text-green-400 text-center">Add new category</div>
   <form
     class="border-1 border-black p-4 space-y-4"
+    enctype="multipart/form-data"
     action="/admin/categories"
     method="POST"
   >
@@ -24,6 +30,8 @@
         id="name"
         name="name"
       />
+      <label>Add file: </label><br/>
+      <input type="file" name="image"/>
     </div>
     <button type="submit" class="px-4 py-2 bg-blue-200 text-red-500 text-xl">
       Submit
