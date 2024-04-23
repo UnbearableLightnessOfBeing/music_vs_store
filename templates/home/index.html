@@ -1,6 +1,6 @@
 {{ define "home/index.html" }}
   {{ template "layouts/header.html"}}
-  <h1 class="text-pink-400">{{ .title }}</h1>
+  <h1 class="text-pink-400 text-2xl text-center font-bold">{{ .title }}</h1>
   <h5>User logged in: {{ .isLoggedIn }}</h5>
   <div>
     <ul class="text-slate-700">
@@ -14,9 +14,9 @@
     <button>Logout</button>
   </form>
   {{ else }}
-  <div>
-    <a href="/login">Login</a>
-    <a href="/signup">Signup</a>
+  <div class="flex gap-4">
+    <a class="block" href="/login">Login</a>
+    <a class="block bg-red-600" href="/signup">Signup</a>
   </div>
   {{ end }}
   {{ template "layouts/footer.html"}}

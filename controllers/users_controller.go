@@ -25,7 +25,7 @@ func (q UsersController) ListUsers(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "home/index.html", gin.H{
-		"title": "Hello GinGonik",
+		"title": "Hello GinGonic",
 		"users": users,
     "isLoggedIn": c.GetUint64("user_id") > 0,
 	})
