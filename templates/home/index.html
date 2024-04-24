@@ -18,7 +18,79 @@
     <a class="block" href="/login">Login</a>
     <a class="block bg-red-600" href="/signup">Signup</a>
   </div>
-  <img src="/assets/no-image.jpg" class="border border-pink-300 m-10 rounded-xl w-[200px] h-[200px]" >
+
+   <section class="w-full py-12 md:py-24 lg:py-32 max-w-[1000px] mx-auto">
+          <div class="container grid gap-8 px-4 md:px-6">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 md:grid-rows-2 gap-4">
+              <div class="relative group">
+                <a class="absolute inset-0 z-10" href="#">
+                  <span class="sr-only">View Electronics</span>
+                </a>
+                <img
+                  alt="Electronics"
+                  class="rounded-lg object-cover w-full aspect-square group-hover:opacity-50 transition-opacity"
+                  src="assets/no-image.jpg"
+                />
+                <div class="flex-1 py-4">
+                  <h3 class="font-semibold tracking-tight text-center">Electronics</h3>
+                </div>
+              </div>
+              <div class="relative group">
+                <a class="absolute inset-0 z-10" href="#">
+                  <span class="sr-only">View Clothing</span>
+                </a>
+                <img
+                  alt="Clothing"
+                  class="rounded-lg object-cover w-full aspect-square group-hover:opacity-50 transition-opacity"
+                  src="assets/no-image.jpg"
+                />
+                <div class="flex-1 py-4">
+                  <h3 class="font-semibold tracking-tight text-center">Clothing</h3>
+                </div>
+              </div>
+              <div class="relative group">
+                <a class="absolute inset-0 z-10" href="#">
+                  <span class="sr-only">View Home</span>
+                </a>
+                <img
+                  alt="Home"
+                  class="rounded-lg object-cover w-full aspect-square group-hover:opacity-50 transition-opacity"
+                  src="assets/no-image.jpg"
+                />
+                <div class="flex-1 py-4">
+                  <h3 class="font-semibold tracking-tight text-center">Home</h3>
+                </div>
+              </div>
+              <div class="relative group">
+                <a class="absolute inset-0 z-10" href="#">
+                  <span class="sr-only">View Sports</span>
+                </a>
+                <img
+                  alt="Sports"
+                  class="rounded-lg object-cover w-full aspect-square group-hover:opacity-50 transition-opacity"
+                  src="assets/no-image.jpg"
+                />
+                <div class="flex-1 py-4">
+                  <h3 class="font-semibold tracking-tight text-center">Sports</h3>
+                </div>
+              </div>
+              <div class="relative group col-span-2 max-h-[360px]">
+                <a class="absolute inset-0 z-10" href="#">
+                  <span class="sr-only">View Accessories</span>
+                </a>
+                <img
+                  alt="Accessories"
+                  class="rounded-lg object-cover w-full h-full group-hover:opacity-50 transition-opacity"
+                  src="assets/no-image.jpg"
+                />
+                <div class="flex-1 py-4">
+                  <h3 class="font-semibold tracking-tight text-center">Accessories</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
   {{ end }}
   {{ template "layouts/footer.html"}}
 {{ end }}

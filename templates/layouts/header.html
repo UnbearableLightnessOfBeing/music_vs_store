@@ -9,5 +9,102 @@
     <link rel="stylesheet" href="/styles/output.css">
     <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
   </head>
-  <body>
+
+<body>
+  <div class="flex flex-col min-h-screen">
+    <header class="flex h-16 w-full items-center justify-between bg-white px-4 shadow-sm">
+        <div class="flex items-center gap-4">
+          <a class="flex items-center gap-2" href="#">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+              <path
+                d="M12 16V12M12 8H12.01"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+            </svg>
+            <span class="text-lg font-semibold">Acme Store</span>
+          </a>
+          <nav class="hidden md:flex items-center gap-4">
+            <a class="text-sm font-medium hover:text-gray-900" href="#">
+              Products
+            </a>
+            <a class="text-sm font-medium hover:text-gray-900" href="#">
+              Categories
+            </a>
+            <a class="text-sm font-medium hover:text-gray-900" href="#">
+              About
+            </a>
+            <a class="text-sm font-medium hover:text-gray-900" href="#">
+              Contact
+            </a>
+          </nav>
+        </div>
+        <div class="flex items-center gap-4">
+          <a class="relative" href="#">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.70711 15.2929C4.07714 15.9229 4.52331 17 5.41421 17H17M17 17C15.8954 17 15 17.8954 15 19C15 20.1046 15.8954 21 17 21C18.1046 21 19 20.1046 19 19C19 17.8954 18.1046 17 17 17ZM9 19C9 20.1046 8.10457 21 7 21C5.89543 21 5 20.1046 5 19C5 17.8954 5.89543 17 7 17C8.10457 17 9 17.8954 9 19Z"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+            </svg>
+            <div class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+              3
+            </div>
+          </a>
+          <a class="relative" href="#">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.70711 15.2929C4.07714 15.9229 4.52331 17 5.41421 17H17M17 17C15.8954 17 15 17.8954 15 19C15 20.1046 15.8954 21 17 21C18.1046 21 19 20.1046 19 19C19 17.8954 18.1046 17 17 17ZM9 19C9 20.1046 8.10457 21 7 21C5.89543 21 5 20.1046 5 19C5 17.8954 5.89543 17 7 17C8.10457 17 9 17.8954 9 19Z"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+            </svg>
+            <div class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+              2
+            </div>
+          </a>
+          <div class="relative">
+            <div class="h-9 w-9 rounded-full overflow-hidden">
+              <img alt="@shadcn" class="h-full w-full object-cover" src="/placeholder.svg" />
+              <span class="sr-only">Toggle user menu</span>
+            </div>
+            <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <a
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                href="#"
+              >
+                My Account
+              </a>
+              <a
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                href="#"
+              >
+                Orders
+              </a>
+              <div class="border-t border-gray-100" />
+              <a
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                href="#"
+              >
+                Logout
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+    <main class="flex-1 block">
 {{ end }}
