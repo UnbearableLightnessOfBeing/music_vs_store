@@ -5,6 +5,7 @@ import (
 	"music_vs_store/controllers"
 	"music_vs_store/driver"
 	"music_vs_store/middlewares"
+	"music_vs_store/web"
 	"os"
 
 	"github.com/gin-contrib/sessions"
@@ -41,7 +42,12 @@ func main() {
   sessionsController := controllers.NewSessionsController(queries)
   dashboardController := controllers.NewDashboardController(queries)
 
-  r.GET("/", usersController.ListUsers)
+  webController := web.NewWebController(queries)
+
+  // r.GET("/", usersController.ListUsers)
+  r.GET("/", webController.RenderMainPage)
+  r.GET("/catalogue", webController.RenderCataloguePage)
+
   r.GET("/signup", usersController.CreateUserView)
   r.GET("/login", usersController.LoginView)
   r.GET("/admin", authMiddleware.RequireAdmin(), dashboardController.Index)

@@ -1,17 +1,17 @@
-{{ define "home/index.html" }}
+{{ define "home/catalogue.html" }}
   {{ template "layouts/header.html"}}
-        <section class="w-full py-12 md:py-24 lg:py-32 max-w-[1000px] mx-auto">
-          <h1 class="text-center text-4xl mb-4">Most popular categories</h1>
+        <section class="w-full py-12 md:py-24 lg:py-32 max-w-[1200px] mx-auto">
+          <h1 class="text-center text-4xl mb-4">Catalogue</h1>
           <div class="container grid gap-8 px-4 md:px-6">
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 md:grid-rows-2 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4">
               {{ range .categories }}
-              <div class="relative group last:col-span-2 max-h-[360px]">
+              <div class="relative group">
                 <a class="absolute inset-0 z-10" href="#">
                   <span class="sr-only">View Electronics</span>
                 </a>
                 <img
                   alt="Electronics"
-                  class="rounded-lg object-cover w-full max-h-[300px] group-hover:opacity-50 transition-opacity"
+                  class="rounded-lg object-cover w-full group-hover:opacity-50 transition-opacity"
                   src="assets/no-image.jpg"
                 />
                 <div class="flex-1 py-4">

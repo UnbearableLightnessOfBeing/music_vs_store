@@ -115,6 +115,9 @@ ALTER TABLE "product_orders" ADD FOREIGN KEY ("order_id") REFERENCES "orders" ("
 
 INSERT INTO categories (name) VALUES ('drums');
 INSERT INTO categories (name) VALUES ('guitars');
+INSERT INTO categories (name) VALUES ('pianos');
+INSERT INTO categories (name) VALUES ('abobus');
+INSERT INTO categories (name) VALUES ('zelibobas');
 
 INSERT INTO users (username, email, is_admin, password) VALUES ('admin', 'admin@admin.ru', 'true', '$2a$10$DS/dEObNUtdY4Q6LCdbSf.FjRE3y87tB0pC9bwSaiVADQK5tGoHEm');
 INSERT INTO users (username, email, is_admin, password) VALUES ('user', 'user@user.com', 'false', '$2a$10$Rx6oImAgXCqrlKlz1nRNlOnLLPtVDksvevkmMazB0XCMGkcJWHHTi');

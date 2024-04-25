@@ -24,9 +24,18 @@ func (q UsersController) ListUsers(c *gin.Context) {
 		panic(err)
 	}
 
+  categories, err := q.queries.ListCategories(c, db.ListCategoriesParams{
+    Limit: 10,
+    Offset: 0,
+  })
+  if err != nil {
+    panic(err)
+  }
+
 	c.HTML(http.StatusOK, "home/index.html", gin.H{
 		"title": "Hello GinGonic",
 		"users": users,
+		"categories": categories,
     "isLoggedIn": c.GetUint64("user_id") > 0,
 	})
 }
