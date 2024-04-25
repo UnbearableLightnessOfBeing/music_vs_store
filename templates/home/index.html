@@ -1,5 +1,5 @@
 {{ define "home/index.html" }}
-  {{ template "layouts/header.html"}}
+  {{ template "layouts/header.html" . }}
         <section class="w-full py-12 md:py-24 lg:py-32 max-w-[1000px] mx-auto">
           <h1 class="text-center text-4xl mb-4">Most popular categories</h1>
           <div class="container grid gap-8 px-4 md:px-6">
@@ -12,7 +12,7 @@
                 <img
                   alt="Electronics"
                   class="rounded-lg object-cover w-full max-h-[300px] group-hover:opacity-50 transition-opacity"
-                  src="assets/no-image.jpg"
+                  src="assets/images/no-image.jpg"
                 />
                 <div class="flex-1 py-4">
                   <h3 class="font-semibold tracking-tight text-center">{{ .Name }}</h3>

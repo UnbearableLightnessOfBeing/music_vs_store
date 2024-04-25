@@ -13,39 +13,17 @@
 <body>
   <div class="flex flex-col min-h-screen">
     <header class="flex h-16 w-full items-center justify-between bg-white px-4 shadow-sm">
-        <div class="flex items-center gap-4">
-          <a class="flex items-center gap-2" href="/">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-              />
-              <path
-                d="M12 16V12M12 8H12.01"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-              />
-            </svg>
-            <span class="text-lg font-semibold">Music VS Store</span>
+        <div class="flex items-center gap-20">
+          <a class="flex items-center gap-4" href="/">
+            <img src="/assets/images/logo.png" class="h-12" >
+            <span class="text-lg md:text-3xl font-semibold font-harlow">Music VS Store</span>
           </a>
           <nav class="hidden md:flex items-center gap-4">
-            <a class="text-sm font-medium hover:text-gray-900" href="/catalogue">
-              Catalogue
+            {{ range $index, $value :=  .pages.Pages }}
+            <a class="text-lg font-medium text-black {{ if (eq $value $.pages.CurrentPage)}} text-red-300 {{ else }} hover:text-gray-600 {{ end }}" href="/{{ $value }}">
+              {{ $index }}
             </a>
-            <a class="text-sm font-medium hover:text-gray-900" href="#">
-              Categories
-            </a>
-            <a class="text-sm font-medium hover:text-gray-900" href="#">
-              About
-            </a>
-            <a class="text-sm font-medium hover:text-gray-900" href="#">
-              Contact
-            </a>
+            {{ end }}
           </nav>
         </div>
         <div class="flex items-center gap-4">
