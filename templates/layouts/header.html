@@ -16,12 +16,12 @@
         <div class="flex items-center gap-20">
           <a class="flex items-center gap-4" href="/">
             <img src="/assets/images/logo.png" class="h-12" >
-            <span class="text-lg md:text-3xl font-semibold font-harlow">Music VS Store</span>
+            <span class="text-lg whitespace-nowrap lg:text-3xl font-semibold font-harlow">Music VS Store</span>
           </a>
-          <nav class="hidden md:flex items-center gap-4">
-            {{ range $index, $value :=  .pages.Pages }}
-            <a class="text-lg font-medium text-black {{ if (eq $value $.pages.CurrentPage)}} text-red-300 {{ else }} hover:text-gray-600 {{ end }}" href="/{{ $value }}">
-              {{ $index }}
+          <nav class="hidden md:flex items-center gap-1 md:gap-4">
+            {{ range $value := .pages.Pages }}
+            <a class="text-sm whitespace-nowrap lg:text-lg font-medium text-black {{ if (eq $value.Value $.pages.CurrentPage)}} text-red-300 {{ else }} hover:text-gray-600 {{ end }}" href="/{{ $value.Value }}">
+              {{ $value.Name }}
             </a>
             {{ end }}
           </nav>

@@ -44,10 +44,15 @@ func main() {
 
   webController := web.NewWebController(queries)
 
-  // r.GET("/", usersController.ListUsers)
+  // web
   r.GET("/", webController.RenderMainPage)
   r.GET("/catalogue", webController.RenderCataloguePage)
+  r.GET("/about", webController.RenderAboutPage)
+  r.GET("/comments", webController.RenderCommentsPage)
+  r.GET("/delivery", webController.RenderDeliveryPage)
+  r.GET("/contacts", webController.RenderContactsPage)
 
+  // auth
   r.GET("/signup", usersController.CreateUserView)
   r.GET("/login", usersController.LoginView)
   r.GET("/admin", authMiddleware.RequireAdmin(), dashboardController.Index)

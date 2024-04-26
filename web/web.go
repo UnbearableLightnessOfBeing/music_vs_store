@@ -17,18 +17,24 @@ func NewWebController(queries *db.Queries) WebController {
 	}
 }
 
+type PageLink struct {
+	Name  string
+	Value string
+}
+
 type PagesInfo struct {
-  // name - value map
-	Pages       map[string]string
+	// name - value map
+	Pages       []PageLink
 	CurrentPage string
 }
 
-var pages = map[string]string{
-  "Главная": "home",
-  "Каталог": "catalogue",
-  "Категории": "categories",
-  "О нас": "about",
-  "Контакты": "contacts",
+var pages = []PageLink{
+  { Name: "Главная", Value: "" },
+  { Name: "Каталог", Value: "catalogue" },
+  { Name: "О компании", Value: "about" },
+  { Name: "Отзывы", Value: "comments" },
+  { Name: "Доставка и оплата", Value: "delivery" },
+  { Name: "Контакты", Value: "contacts" },
 }
 
 func (w WebController) RenderMainPage(c *gin.Context) {
@@ -40,12 +46,11 @@ func (w WebController) RenderMainPage(c *gin.Context) {
 		panic(err)
 	}
 
-	c.HTML(http.StatusOK, "home/index.html", gin.H{
-		"pages":      PagesInfo{
-      Pages: pages,
-      CurrentPage: "home",
-    },
-		"title":      "aboba",
+	c.HTML(http.StatusOK, "web/index.html", gin.H{
+		"pages": PagesInfo{
+			Pages:       pages,
+			CurrentPage: "",
+		},
 		"categories": categories,
 		"isLoggedIn": c.GetUint64("user_id") > 0,
 	})
@@ -60,12 +65,52 @@ func (w WebController) RenderCataloguePage(c *gin.Context) {
 		panic(err)
 	}
 
-	c.HTML(http.StatusOK, "home/catalogue.html", gin.H{
-		"pages":      PagesInfo{
-      Pages: pages,
-      CurrentPage: "catalogue",
-    },
-		"categories":  categories,
-		"isLoggedIn":  c.GetUint64("user_id") > 0,
+	c.HTML(http.StatusOK, "web/catalogue.html", gin.H{
+		"pages": PagesInfo{
+			Pages:       pages,
+			CurrentPage: "catalogue",
+		},
+		"categories": categories,
+		"isLoggedIn": c.GetUint64("user_id") > 0,
+	})
+}
+
+func (w WebController) RenderAboutPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "web/about.html", gin.H{
+		"pages": PagesInfo{
+			Pages:       pages,
+			CurrentPage: "about",
+		},
+		"message": "About page",
+	})
+}
+
+func (w WebController) RenderCommentsPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "web/comments.html", gin.H{
+		"pages": PagesInfo{
+			Pages:       pages,
+			CurrentPage: "comments",
+		},
+		"message": "Comments page",
+	})
+}
+
+func (w WebController) RenderDeliveryPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "web/delivery.html", gin.H{
+		"pages": PagesInfo{
+			Pages:       pages,
+			CurrentPage: "delivery",
+		},
+		"message": "Delivery page",
+	})
+}
+
+func (w WebController) RenderContactsPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "web/contacts.html", gin.H{
+		"pages": PagesInfo{
+			Pages:       pages,
+			CurrentPage: "contacts",
+		},
+		"message": "Contacts page",
 	})
 }
