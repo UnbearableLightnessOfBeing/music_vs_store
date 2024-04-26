@@ -113,5 +113,5 @@ func (q SessionsController) Login(c *gin.Context) {
 
 func (q SessionsController) Logout(c *gin.Context) {
   helpers.ClearSession(c)
-  c.Redirect(http.StatusMovedPermanently, "/")
+  c.Header("HX-Refresh", "true") 
 }

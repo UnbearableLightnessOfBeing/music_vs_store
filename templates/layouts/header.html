@@ -8,6 +8,7 @@
     <title>Music Vs Store</title>
     <link rel="stylesheet" href="/styles/output.css">
     <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+    <script defer src="/js/index.js"></script>
   </head>
 
 <body>
@@ -37,49 +38,52 @@
                 stroke-width="2"
               />
             </svg>
-            <div class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-              3
-            </div>
-          </a>
-          <a class="relative" href="#">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.70711 15.2929C4.07714 15.9229 4.52331 17 5.41421 17H17M17 17C15.8954 17 15 17.8954 15 19C15 20.1046 15.8954 21 17 21C18.1046 21 19 20.1046 19 19C19 17.8954 18.1046 17 17 17ZM9 19C9 20.1046 8.10457 21 7 21C5.89543 21 5 20.1046 5 19C5 17.8954 5.89543 17 7 17C8.10457 17 9 17.8954 9 19Z"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-              />
-            </svg>
+            {{ if .isLoggedIn }}
             <div class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
               2
             </div>
+            {{ end }}
           </a>
           <div class="relative">
-            <div class="h-9 w-9 rounded-full overflow-hidden">
-              <img alt="@shadcn" class="h-full w-full object-cover" src="/placeholder.svg" />
+            <div id="user-icon" class="h-9 w-9 rounded-full overflow-hidden border border-black hover:border-red-400 cursor-pointer">
+              <img alt="user" class="h-full w-full object-cover" src="/assets/images/no-image.jpg" />
               <span class="sr-only">Toggle user menu</span>
             </div>
-            <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <div id="menu-dropdown" class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              {{ if .isLoggedIn}}
               <a
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 href="#"
               >
-                My Account
+                Мой профиль
               </a>
               <a
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 href="#"
               >
-                Orders
+                Заказы
               </a>
               <div class="border-t border-gray-100" />
               <a
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                href="#"
+                hx-post="/logout"
               >
-                Logout
+                Выйти
               </a>
+              {{ else }}
+              <a
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                href="/login"
+              >
+                Войти
+              </a>
+              <a
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                href="/signup"
+              >
+                Зарегистрироваться
+              </a>
+              {{ end }}
             </div>
           </div>
         </div>
