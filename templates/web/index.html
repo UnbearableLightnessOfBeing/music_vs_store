@@ -11,8 +11,12 @@
                 </a>
                 <img
                   alt="Electronics"
-                  class="rounded-lg object-cover w-full max-h-[300px] group-hover:opacity-50 transition-opacity"
-                  src="assets/images/no-image.jpg"
+                  class="rounded-lg object-cover w-full h-[300px] group-hover:opacity-70 transition-opacity border border-gray-100"
+                  {{ if .ImgUrl.Valid }}
+                  src="{{ .ImgUrl.Value }}"
+                  {{ else }}
+                  src="/assets/images/no-image.jpg"
+                  {{ end }}
                 />
                 <div class="flex-1 py-4">
                   <h3 class="font-semibold tracking-tight text-center">{{ .Name }}</h3>

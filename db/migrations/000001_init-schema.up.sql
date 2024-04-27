@@ -113,7 +113,7 @@ ALTER TABLE "product_orders" ADD FOREIGN KEY ("product_id") REFERENCES "products
 ALTER TABLE "product_orders" ADD FOREIGN KEY ("order_id") REFERENCES "orders" ("id");
 
 
-INSERT INTO categories (name) VALUES ('drums');
+INSERT INTO categories (name, img_url) VALUES ('drums', '/assets/images/category_1.jpg');
 INSERT INTO categories (name) VALUES ('guitars');
 INSERT INTO categories (name) VALUES ('pianos');
 INSERT INTO categories (name) VALUES ('abobus');
