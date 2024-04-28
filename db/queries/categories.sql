@@ -8,6 +8,10 @@ returning *;
 SELECT * FROM categories
 WHERE id = $1 LIMIT 1;
 
+-- name: GetCategoryBySlug :one
+SELECT * FROM categories
+WHERE slug = $1 LIMIT 1;
+
 -- name: UpdateCategoryName :one
 UPDATE categories
 SET name = $2

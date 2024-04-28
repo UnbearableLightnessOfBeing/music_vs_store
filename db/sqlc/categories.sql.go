@@ -14,30 +14,57 @@ const createCategory = `-- name: CreateCategory :one
 insert into categories 
 (name)  
 values ($1) 
-returning id, name, img_url
+returning id, name, slug, img_url
 `
 
 func (q *Queries) CreateCategory(ctx context.Context, name string) (Category, error) {
 	row := q.db.QueryRowContext(ctx, createCategory, name)
 	var i Category
-	err := row.Scan(&i.ID, &i.Name, &i.ImgUrl)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ImgUrl,
+	)
 	return i, err
 }
 
 const getCategory = `-- name: GetCategory :one
-SELECT id, name, img_url FROM categories
+SELECT id, name, slug, img_url FROM categories
 WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetCategory(ctx context.Context, id int32) (Category, error) {
 	row := q.db.QueryRowContext(ctx, getCategory, id)
 	var i Category
-	err := row.Scan(&i.ID, &i.Name, &i.ImgUrl)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ImgUrl,
+	)
+	return i, err
+}
+
+const getCategoryBySlug = `-- name: GetCategoryBySlug :one
+SELECT id, name, slug, img_url FROM categories
+WHERE slug = $1 LIMIT 1
+`
+
+func (q *Queries) GetCategoryBySlug(ctx context.Context, slug string) (Category, error) {
+	row := q.db.QueryRowContext(ctx, getCategoryBySlug, slug)
+	var i Category
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ImgUrl,
+	)
 	return i, err
 }
 
 const listCategories = `-- name: ListCategories :many
-select id, name, img_url from categories
+select id, name, slug, img_url from categories
 order by id
 limit $1
 offset $2
@@ -57,7 +84,12 @@ func (q *Queries) ListCategories(ctx context.Context, arg ListCategoriesParams) 
 	var items []Category
 	for rows.Next() {
 		var i Category
-		if err := rows.Scan(&i.ID, &i.Name, &i.ImgUrl); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Slug,
+			&i.ImgUrl,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -75,7 +107,7 @@ const updateCategoryImageUrl = `-- name: UpdateCategoryImageUrl :one
 UPDATE categories
 SET img_url = $2
 WHERE id = $1
-RETURNING id, name, img_url
+RETURNING id, name, slug, img_url
 `
 
 type UpdateCategoryImageUrlParams struct {
@@ -86,7 +118,12 @@ type UpdateCategoryImageUrlParams struct {
 func (q *Queries) UpdateCategoryImageUrl(ctx context.Context, arg UpdateCategoryImageUrlParams) (Category, error) {
 	row := q.db.QueryRowContext(ctx, updateCategoryImageUrl, arg.ID, arg.ImgUrl)
 	var i Category
-	err := row.Scan(&i.ID, &i.Name, &i.ImgUrl)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ImgUrl,
+	)
 	return i, err
 }
 
@@ -94,7 +131,7 @@ const updateCategoryName = `-- name: UpdateCategoryName :one
 UPDATE categories
 SET name = $2
 WHERE id = $1
-RETURNING id, name, img_url
+RETURNING id, name, slug, img_url
 `
 
 type UpdateCategoryNameParams struct {
@@ -105,6 +142,11 @@ type UpdateCategoryNameParams struct {
 func (q *Queries) UpdateCategoryName(ctx context.Context, arg UpdateCategoryNameParams) (Category, error) {
 	row := q.db.QueryRowContext(ctx, updateCategoryName, arg.ID, arg.Name)
 	var i Category
-	err := row.Scan(&i.ID, &i.Name, &i.ImgUrl)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ImgUrl,
+	)
 	return i, err
 }

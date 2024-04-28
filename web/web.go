@@ -29,12 +29,12 @@ type PagesInfo struct {
 }
 
 var pages = []PageLink{
-  { Name: "Главная", Value: "" },
-  { Name: "Каталог", Value: "catalogue" },
-  { Name: "О компании", Value: "about" },
-  { Name: "Отзывы", Value: "comments" },
-  { Name: "Доставка и оплата", Value: "delivery" },
-  { Name: "Контакты", Value: "contacts" },
+	{Name: "Главная", Value: ""},
+	{Name: "Каталог", Value: "catalogue"},
+	{Name: "О компании", Value: "about"},
+	{Name: "Отзывы", Value: "comments"},
+	{Name: "Доставка и оплата", Value: "delivery"},
+	{Name: "Контакты", Value: "contacts"},
 }
 
 func (w WebController) RenderMainPage(c *gin.Context) {
@@ -112,5 +112,30 @@ func (w WebController) RenderContactsPage(c *gin.Context) {
 			CurrentPage: "contacts",
 		},
 		"message": "Contacts page",
+	})
+}
+
+type CategoryPage struct {
+  Uri string `uri:"slug" binding:"required"`
+}
+
+func (w WebController) RenderCategoryPage(c *gin.Context) {
+  var page CategoryPage
+  if err := c.ShouldBindUri(&page); err != nil {
+    panic(err)
+  }
+
+  category, err := w.queries.GetCategoryBySlug(c, page.Uri)
+  if err != nil {
+    panic(err)
+  }
+
+	c.HTML(http.StatusOK, "web/category.html", gin.H{
+		"pages": PagesInfo{
+			Pages:       pages,
+			CurrentPage: "categories",
+		},
+		"isLoggedIn":   c.GetUint64("user_id") > 0,
+		"categoryName": category.Name,
 	})
 }

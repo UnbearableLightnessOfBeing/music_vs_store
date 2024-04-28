@@ -11,6 +11,7 @@ import (
 type Category struct {
 	ID     int32          `json:"id"`
 	Name   string         `json:"name"`
+	Slug   string         `json:"slug"`
 	ImgUrl sql.NullString `json:"img_url"`
 }
 

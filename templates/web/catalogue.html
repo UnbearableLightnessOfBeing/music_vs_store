@@ -1,18 +1,22 @@
 {{ define "web/catalogue.html" }}
   {{ template "layouts/header.html" . }}
-        <section class="w-full py-12 md:py-24 lg:py-32 max-w-[1200px] mx-auto">
-          <h1 class="text-center text-4xl mb-4">Catalogue</h1>
+        <section class="w-full py-12 md:py-24 lg:py-32 max-w-[1200px] mx-auto space-y-10">
+          <h1 class="text-center text-4xl mb-4">Каталог</h1>
           <div class="container grid gap-8 px-4 md:px-6">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4">
               {{ range .categories }}
               <div class="relative group">
-                <a class="absolute inset-0 z-10" href="#">
+                <a class="absolute inset-0 z-10" href="/catalogue/{{ .Slug }}">
                   <span class="sr-only">{{ .Name }}</span>
                 </a>
                 <img
                   alt="Electronics"
                   class="rounded-lg object-cover w-full group-hover:opacity-50 transition-opacity"
+                  {{ if .ImgUrl.Valid }}
+                  src="{{ .ImgUrl.Value }}"
+                  {{ else }}
                   src="assets/images/no-image.jpg"
+                  {{ end }}
                 />
                 <div class="flex-1 py-4">
                   <h3 class="font-semibold tracking-tight text-center">{{ .Name }}</h3>
