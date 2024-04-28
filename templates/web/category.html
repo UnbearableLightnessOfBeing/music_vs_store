@@ -1,5 +1,34 @@
 {{ define "web/category.html" }}
   {{ template "layouts/header.html" . }}
-  <h1 class="text-2xl text-green-400">{{ .categoryName }}</h1>
+  <div class="grid grid-cols-[250px_auto] max-w-[1400px] mx-auto">
+    <form class="border border-red-400 space-y-4">
+      <div>Filters</div>
+      <div class="">
+        <div>Price</div>
+        <div class="space-y-2">
+          <label for="min-price">min</label>
+          <input id="min-price" class="border border-black" type="number" value="0" name="min-price">
+          <br>
+          <label for="min-price">max</label>
+          <input id="max-price" class="border border-black" type="number" value="999999" name="max-price">
+          <br>
+          <label for="label">label</label>
+          <select name="label" id="label" class="border border-black">
+            <option value="">Please select option</option>
+            <option value="aboba">aboba</option>
+            <option value="zeliboba">zeliboba</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex gap-4">
+        <div id="apply" class="px-4 py-2 bg-green-400 text-white cursor-pointer">Apply</div>
+        <div id="reset" class="px-4 py-2 bg-lime-500 text-white cursor-pointer">Reset</div>
+      </div>
+    </form>
+    <div class="border border-blue-400 p-6">
+      <h1 class="text-2xl text-green-400">{{ .categoryName }}</h1>
+      {{ template "components/products.html" . }}
+    </div>
+  </div>
   {{ template "layouts/footer.html"}}
 {{ end }}

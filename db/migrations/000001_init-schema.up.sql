@@ -122,6 +122,20 @@ INSERT INTO categories (name, slug, img_url) VALUES ('Звуковое обор�
 INSERT INTO categories (name, slug, img_url) VALUES ('Микрофоны', 'mics', '/assets/images/categories/mics.jpg');
 INSERT INTO categories (name, slug, img_url) VALUES ('Разъемы и кабели', 'cables', '/assets/images/categories/cables.jpg');
 
+insert into labels (name) values ('Honor');
+insert into labels (name) values ('Huawey');
+insert into labels (name) values ('LG');
+
+insert into products (name, price_int, label_id, img_url, description) values ('Alhambra', '1200', '1', '/assets/images/products/alhambra.jpg', 'cool guitar');
+insert into products (name, price_int, label_id, img_url, description) values ('ALMANSA', '900', '2', '/assets/images/products/almansa.jpg', 'ALMANSA 402 Cedro – 6-струнная полноразмерная классическая гитара.
+Модель из серии гитар (Estudio). Верхняя дека из массива кедра, корпус из слоеного красного дерева, гриф из красного дерева с накладкой из индийского палисандра. Мензура 650 мм, ширина верхнего порожка 52 мм. Глянцевая отделка.
+Произведена в Испании.');
+insert into product_categories (product_id, category_id) values ('1', '2');
+insert into product_categories (product_id, category_id) values ('2', '2');
+
+insert into products (name, price_int, label_id, img_url, description) values ('KAWAI CR-40 TRANSPARENCY', '4000', '3', '/assets/images/products/kawai.jpg', 'cool piano');
+insert into product_categories (product_id, category_id) values ('3', '1');
+
 -- pass: admin
 INSERT INTO users (username, email, is_admin, password) VALUES ('admin', 'admin@admin.ru', 'true', '$2a$10$DS/dEObNUtdY4Q6LCdbSf.FjRE3y87tB0pC9bwSaiVADQK5tGoHEm');
 -- pass: user

@@ -116,19 +116,41 @@ func (w WebController) RenderContactsPage(c *gin.Context) {
 }
 
 type CategoryPage struct {
-  Uri string `uri:"slug" binding:"required"`
+	Uri string `uri:"slug" binding:"required"`
+}
+
+type CategoryFilters struct {
+	MinPrice int32 `form:"min_price"`
+	MaxPrice int32 `form:"max_price"`
+	LabelID  int32 `form:"label_id"`
 }
 
 func (w WebController) RenderCategoryPage(c *gin.Context) {
-  var page CategoryPage
-  if err := c.ShouldBindUri(&page); err != nil {
-    panic(err)
-  }
+	var page CategoryPage
+	if err := c.ShouldBindUri(&page); err != nil {
+		panic(err)
+	}
 
-  category, err := w.queries.GetCategoryBySlug(c, page.Uri)
-  if err != nil {
-    panic(err)
-  }
+	category, err := w.queries.GetCategoryBySlug(c, page.Uri)
+	if err != nil {
+		panic(err)
+	}
+
+	var query CategoryFilters
+
+	if err := c.ShouldBindQuery(&query); err != nil {
+		panic(err)
+	}
+
+	products, err := w.queries.GetProductsByCategory(c, db.GetProductsByCategoryParams{
+		CategoryID: category.ID,
+		MinPrice:   query.MinPrice,
+		MaxPrice:   query.MaxPrice,
+		LabelID:    query.LabelID,
+	})
+	if err != nil {
+		panic(err)
+	}
 
 	c.HTML(http.StatusOK, "web/category.html", gin.H{
 		"pages": PagesInfo{
@@ -137,5 +159,6 @@ func (w WebController) RenderCategoryPage(c *gin.Context) {
 		},
 		"isLoggedIn":   c.GetUint64("user_id") > 0,
 		"categoryName": category.Name,
+		"products":     products,
 	})
 }
