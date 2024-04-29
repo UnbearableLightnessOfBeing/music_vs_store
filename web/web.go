@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	db "music_vs_store/db/sqlc"
 	"net/http"
 
@@ -120,9 +121,10 @@ type CategoryPage struct {
 }
 
 type CategoryFilters struct {
-	MinPrice int32 `form:"min_price"`
-	MaxPrice int32 `form:"max_price"`
-	LabelID  int32 `form:"label_id"`
+	MinPrice     int32  `form:"min_price"`
+	MaxPrice     int32  `form:"max_price"`
+	LabelID      int32  `form:"label_id"`
+	PriceSorting string `form:"price_sorting"`
 }
 
 func (w WebController) RenderCategoryPage(c *gin.Context) {
@@ -143,10 +145,19 @@ func (w WebController) RenderCategoryPage(c *gin.Context) {
 	}
 
 	products, err := w.queries.GetProductsByCategory(c, db.GetProductsByCategoryParams{
-		CategoryID: category.ID,
-		MinPrice:   query.MinPrice,
-		MaxPrice:   query.MaxPrice,
-		LabelID:    query.LabelID,
+		CategoryID:   category.ID,
+		MinPrice:     query.MinPrice,
+		MaxPrice:     query.MaxPrice,
+		LabelID:      query.LabelID,
+		PriceSorting: query.PriceSorting,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	labels, err := w.queries.ListLabels(c, db.ListLabelsParams{
+		Limit:  99999,
+		Offset: 0,
 	})
 	if err != nil {
 		panic(err)
@@ -160,5 +171,42 @@ func (w WebController) RenderCategoryPage(c *gin.Context) {
 		"isLoggedIn":   c.GetUint64("user_id") > 0,
 		"categoryName": category.Name,
 		"products":     products,
+		"labels":       labels,
+		"slug":         page.Uri,
+	})
+}
+
+func (w WebController) RenderProducts(c *gin.Context) {
+	var page CategoryPage
+	if err := c.ShouldBindUri(&page); err != nil {
+		panic(err)
+	}
+
+	category, err := w.queries.GetCategoryBySlug(c, page.Uri)
+	if err != nil {
+		panic(err)
+	}
+
+	var query CategoryFilters
+	if err := c.ShouldBindQuery(&query); err != nil {
+		panic(err)
+	}
+
+	products, err := w.queries.GetProductsByCategory(c, db.GetProductsByCategoryParams{
+		CategoryID:   category.ID,
+		MinPrice:     query.MinPrice,
+		MaxPrice:     query.MaxPrice,
+		LabelID:      query.LabelID,
+		PriceSorting: query.PriceSorting,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("query:", query)
+
+	c.HTML(http.StatusOK, "components/products.html", gin.H{
+		"products": products,
+    "priceSorting": query.PriceSorting,
 	})
 }

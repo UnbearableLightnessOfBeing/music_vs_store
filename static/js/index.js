@@ -29,37 +29,18 @@ if (logout) {
   })
 }
 
-// filtering and sorting
-const sortingParams = {
-  min_price: 0,
-  max_price: 0,
-  label_id: 0
-}
-
-const replaceRouteWithQueries = () => {
-  const result = Object.keys(sortingParams).reduce((acc, cv, idx) => {
-    if (sortingParams[cv] > 0) {
-      acc += (idx !== 0 ? "&" : "" + cv + "=" + sortingParams[cv].toString())
-      return acc
-    } 
-    return acc
-  }, "")
-
-  const base = location.href.split("?")[0]
-  location.replace(base + "?" + result)
-}
-
-// min-price input
-const minPriceInput = document.getElementById("min-price")
-if (minPriceInput) {
-  minPriceInput.addEventListener("change", (e) => {
-    sortingParams.min_price = Number(e.target.value)
+// all inputs
+const inputsWithNums = document.querySelectorAll("#min_price, #max_price, #label_id")
+const inputsWithText = document.querySelectorAll("#price_sorting")
+// reset button
+const resetButton = document.getElementById("reset")
+if (resetButton) {
+  resetButton.addEventListener("click", () => {
+    if (inputsWithNums && inputsWithNums.length) {
+      inputsWithNums.forEach(input => input.value = 0)
+    }
+    if (inputsWithText && inputsWithText.length) {
+      inputsWithText.forEach(input => input.value = "")
+    }
   })
 }
-
-// apply button
-const applyButton = document.getElementById("apply")
-if (applyButton) {
-  applyButton.addEventListener("click", replaceRouteWithQueries)
-} 
-

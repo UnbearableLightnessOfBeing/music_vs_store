@@ -49,6 +49,7 @@ func main() {
   r.GET("/", webController.RenderMainPage)
   r.GET("/catalogue", webController.RenderCataloguePage)
   r.GET("/catalogue/:slug", webController.RenderCategoryPage)
+  r.GET("/catalogue/:slug/htmx", webController.RenderProducts)
   r.GET("/about", webController.RenderAboutPage)
   r.GET("/comments", webController.RenderCommentsPage)
   r.GET("/delivery", webController.RenderDeliveryPage)

@@ -20,7 +20,7 @@
           </a>
           <nav class="hidden md:flex items-center gap-1 md:gap-4">
             {{ range $value := .pages.Pages }}
-            <a class="text-sm whitespace-nowrap lg:text-lg font-medium text-black {{ if (eq $value.Value $.pages.CurrentPage)}} text-amber-600 {{ else }} hover:text-gray-600 {{ end }}" href="/{{ $value.Value }}">
+            <a class="text-sm whitespace-nowrap lg:text-lg font-medium {{ if (eq $value.Value $.pages.CurrentPage)}} text-amber-600 {{ else }} text-black hover:text-gray-600 {{ end }}" href="/{{ $value.Value }}">
               {{ $value.Name }}
             </a>
             {{ end }}

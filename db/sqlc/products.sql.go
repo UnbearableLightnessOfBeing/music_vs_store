@@ -37,13 +37,17 @@ WHERE p.id = p_c.product_id
   AND (CASE WHEN $2::integer > 0 THEN p.price_int >= $2 ELSE p.price_int > 0 END)
   AND (CASE WHEN $3::integer > 0 THEN p.price_int <= $3 ELSE p.price_int < 999999 END)
   AND (CASE WHEN $4::integer > 0 THEN p.label_id = $4 ELSE TRUE END)
+ORDER BY 
+CASE WHEN $5::varchar(10) = 'ASC' THEN p.price_int END asc,
+CASE WHEN $5::varchar(10) = 'DESC' THEN p.price_int END desc
 `
 
 type GetProductsByCategoryParams struct {
-	CategoryID int32 `json:"category_id"`
-	MinPrice   int32 `json:"min_price"`
-	MaxPrice   int32 `json:"max_price"`
-	LabelID    int32 `json:"label_id"`
+	CategoryID   int32  `json:"category_id"`
+	MinPrice     int32  `json:"min_price"`
+	MaxPrice     int32  `json:"max_price"`
+	LabelID      int32  `json:"label_id"`
+	PriceSorting string `json:"price_sorting"`
 }
 
 func (q *Queries) GetProductsByCategory(ctx context.Context, arg GetProductsByCategoryParams) ([]Product, error) {
@@ -52,6 +56,7 @@ func (q *Queries) GetProductsByCategory(ctx context.Context, arg GetProductsByCa
 		arg.MinPrice,
 		arg.MaxPrice,
 		arg.LabelID,
+		arg.PriceSorting,
 	)
 	if err != nil {
 		return nil, err
