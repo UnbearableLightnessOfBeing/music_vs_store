@@ -671,6 +671,14 @@ video {
   display: none;
 }
 
+.aspect-\[2\/3\] {
+  aspect-ratio: 2/3;
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
 .h-12 {
   height: 3rem;
 }
@@ -693,6 +701,14 @@ video {
 
 .h-\[300px\] {
   height: 300px;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-\[650px\] {
+  height: 650px;
 }
 
 .max-h-\[360px\] {
@@ -735,6 +751,14 @@ video {
   max-width: 1400px;
 }
 
+.max-w-\[400px\] {
+  max-width: 400px;
+}
+
+.max-w-\[450px\] {
+  max-width: 450px;
+}
+
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -753,6 +777,10 @@ video {
 
 .grid-cols-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .grid-cols-\[1fr_1fr_1fr\] {
@@ -793,6 +821,10 @@ video {
 
 .gap-4 {
   gap: 1rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
 }
 
 .gap-8 {
@@ -922,6 +954,11 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.object-contain {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
@@ -929,6 +966,10 @@ video {
 
 .p-10 {
   padding: 2.5rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
 }
 
 .p-3 {
@@ -993,6 +1034,11 @@ video {
 .text-4xl {
   font-size: 2.25rem;
   line-height: 2.5rem;
+}
+
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 .text-lg {
@@ -1136,6 +1182,14 @@ video {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
+.splide__slide {
+  opacity: 0.6;
+}
+
+.splide__slide.is-active {
+  opacity: 1;
+}
+
 .last\:col-span-2:last-child {
   grid-column: span 2 / span 2;
 }
@@ -1143,6 +1197,11 @@ video {
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-slate-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(241 245 249 / var(--tw-bg-opacity));
 }
 
 .hover\:text-amber-600:hover {
@@ -1199,6 +1258,14 @@ video {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .md\:grid-cols-\[1fr_2fr\] {
+    grid-template-columns: 1fr 2fr;
+  }
+
+  .md\:grid-cols-\[1fr_1\.5fr\] {
+    grid-template-columns: 1fr 1.5fr;
+  }
+
   .md\:grid-rows-2 {
     grid-template-rows: repeat(2, minmax(0, 1fr));
   }
@@ -1233,4 +1300,9 @@ video {
     font-size: 1.125rem;
     line-height: 1.75rem;
   }
+}
+
+.\[\&\:has\(\:checked\)\]\:bg-gray-100:has(:checked) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }

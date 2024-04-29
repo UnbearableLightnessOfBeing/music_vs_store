@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	db "music_vs_store/db/sqlc"
 	"net/http"
 
@@ -166,7 +165,7 @@ func (w WebController) RenderCategoryPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "web/category.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
-			CurrentPage: "categories",
+			CurrentPage: "catalogue",
 		},
 		"isLoggedIn":   c.GetUint64("user_id") > 0,
 		"categoryName": category.Name,
@@ -203,10 +202,35 @@ func (w WebController) RenderProducts(c *gin.Context) {
 		panic(err)
 	}
 
-	fmt.Println("query:", query)
-
 	c.HTML(http.StatusOK, "components/products.html", gin.H{
-		"products": products,
-    "priceSorting": query.PriceSorting,
+		"products":     products,
+		"priceSorting": query.PriceSorting,
+	})
+}
+
+type ProductPage struct {
+	Category  string `uri:"slug" binding:"required"`
+	ProductID int32  `uri:"id" binding:"required"`
+}
+
+func (w WebController) RenderProductPage(c *gin.Context) {
+	var productPage ProductPage
+
+	if err := c.ShouldBindUri(&productPage); err != nil {
+		panic(err)
+	}
+
+	product, err := w.queries.GetProduct(c, productPage.ProductID)
+	if err != nil {
+		panic(err)
+	}
+
+	c.HTML(http.StatusOK, "web/product.html", gin.H{
+		"pages": PagesInfo{
+			Pages:       pages,
+			CurrentPage: "catalogue",
+		},
+		"isLoggedIn": c.GetUint64("user_id") > 0,
+		"product":    product,
 	})
 }

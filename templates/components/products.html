@@ -6,13 +6,16 @@
   <div>Всего товаров: {{ len .products }} </div>
   <div class="px-4 py-2 border border-red-400 rounded-xl grid grid-cols-[1fr_1fr_1fr] gap-4">
     {{ range .products }}
-    <div class="px-4 py-2 rounded-md border border-black text-emerald-500">
+    <a 
+      href="/catalogue/{{ $.slug }}/{{ .ID }}"
+      class="block px-4 py-2 rounded-md border border-black text-emerald-500 cursor-pointer hover:bg-slate-100"
+    >
       <div>{{ .Name }}</div>
       <div>{{ .PriceInt }}</div>
       {{ if .Description.Valid }}
       <div class="whitespace-pre-wrap">{{ .Description.Value }}</div>
       {{ end }}
-    </div>
+    </a>
     {{ end }}
   </div>
   {{ end }}

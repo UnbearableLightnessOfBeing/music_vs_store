@@ -23,7 +23,7 @@ if (logout) {
     try {
       await fetch("/logout", { method: "POST" })
       location.assign(location.origin)
-    } catch(err) {
+    } catch (err) {
       console.log("error: ", err)
     }
   })
@@ -44,3 +44,43 @@ if (resetButton) {
     }
   })
 }
+
+// splide
+// new Splide(".splide", {
+//   perPage: 4,
+//   perMove: 1,
+//   gap: 10,
+//   pagination: false,
+//   arrows: false,
+// }).mount();
+//
+
+const main = new Splide("#main-carousel", {
+  type: "slide",
+  rewind: true,
+  pagination: false,
+  arrows: true,
+  perMove: 1,
+})
+
+const thumnails = new Splide('#thumbnail-carousel', {
+  fixedWidth: 100,
+  fixedHeight: 80,
+  perPage: 4,
+  gap: 10,
+  rewind: true,
+  pagination: false,
+  arrows: false,
+  focus: 'center',
+  isNavigation: true,
+  breakpoints: {
+    600: {
+      fixedWidth: 60,
+      fixedHeight: 44
+    }
+  }
+});
+
+main.sync(thumnails)
+main.mount()
+thumnails.mount()
