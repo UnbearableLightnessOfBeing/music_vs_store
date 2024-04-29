@@ -7,66 +7,34 @@
           <section id="main-carousel" class="splide border border-gray-100 rounded-xl overflow-hidden">
             <div class="splide__track">
               <ul class="splide__list">
-                <li class="splide__slide h-[650px] max-w-[450px]">
-                  <img class="w-full h-full object-contain" src="/assets/images/categories/mics.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/categories/cables.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/categories/guitars.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
+                {{ if eq (len .product.Images) 0 }}
+                  <li class="splide__slide">
+                    <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="image">
+                  </li>
+                {{ else }}
+                  {{ range .product.Images }}
+                  <li class="splide__slide h-[650px] max-w-[450px]">
+                    <img class="w-full h-full object-contain" src="{{ . }}" alt="image">
+                  </li>
+                  {{ end }}
+                {{ end }}
               </ul>
             </div>
           </section>
           <section id="thumbnail-carousel" class="splide max-w-[450px]">
             <div class="splide__track">
               <ul class="splide__list">
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/categories/mics.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/categories/cables.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/categories/guitars.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
-                <li class="splide__slide">
-                  <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="">
-                </li>
+                {{ if eq (len .product.Images) 0 }}
+                  <li class="splide__slide">
+                    <img class="w-full h-full object-cover" src="/assets/images/no-image.jpg" alt="image">
+                  </li>
+                {{ else }}
+                  {{ range .product.Images }}
+                  <li class="splide__slide">
+                    <img class="w-full h-full object-cover" src="{{ . }}" alt="image">
+                  </li>
+                  {{ end }}
+                {{ end }}
               </ul>
             </div>
           </section>
@@ -105,7 +73,7 @@
             </div>
             <span class="text-4xl font-bold">$99</span>
           </div>
-          <form class="grid gap-4">
+          <div class="grid gap-4">
             <div class="grid gap-2">
               <label class="text-base" htmlFor="color"> Color </label>
               <div class="flex items-center gap-2">
@@ -131,16 +99,25 @@
             </div>
             <div class="grid gap-2">
               <label class="text-base" htmlFor="size"> Size </label>
-              <div class="flex items-center gap-2">
-                <label
-                  class="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-gray-100"
-                  htmlFor="size-xs">
-                  <input id="size-xs" name="size" type="radio" value="xs" />
-                  XS
-                </label>
-              </div>
+              <form 
+                class="flex items-center gap-2"
+                hx-trigger="click from:#to-cart"
+                hx-params="*"
+                hx-post="/add-to-cart"
+                hx-target="#to-cart"
+                hx-swap="outerHTML transition:true"
+              >
+                <input class="hidden" type="number" name="id" value="{{ .product.ID }}">
+                <input class="hidden" type="number" name="quantity" value="1">
+                {{ if .isLoggedIn }}
+                <div id="to-cart" class="px-4 py-2 rounded-md border border-slate-300 cursor-pointer hover:bg-gray-100">В корзину</div>
+                <div class="px-4 py-2 rounded-md border border-slate-300 cursor-pointer hover:bg-gray-100">Купить сейчас</div>
+                {{ else }}
+                <a href="/login" class="hover:underline text-slate-400 hover:text-black">Чтобы купить товар или добавить его в корзину, войдите в аккаунт</a>
+                {{ end }}
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </section>

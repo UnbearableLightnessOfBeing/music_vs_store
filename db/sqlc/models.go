@@ -8,6 +8,13 @@ import (
 	"database/sql"
 )
 
+type CartItem struct {
+	ID        int32 `json:"id"`
+	SessionID int32 `json:"session_id"`
+	ProductID int32 `json:"product_id"`
+	Quantity  int32 `json:"quantity"`
+}
+
 type Category struct {
 	ID     int32          `json:"id"`
 	Name   string         `json:"name"`
@@ -74,7 +81,7 @@ type Product struct {
 	PriceInt    int32          `json:"price_int"`
 	PriceDec    sql.NullInt32  `json:"price_dec"`
 	LabelID     sql.NullInt32  `json:"label_id"`
-	ImgUrl      sql.NullString `json:"img_url"`
+	Images      []string       `json:"images"`
 	Description sql.NullString `json:"description"`
 	InStock     sql.NullBool   `json:"in_stock"`
 }
@@ -90,6 +97,13 @@ type ProductOrder struct {
 	ProductID int32 `json:"product_id"`
 	OrderID   int32 `json:"order_id"`
 	Count     int32 `json:"count"`
+}
+
+type ShoppingSession struct {
+	ID       int32         `json:"id"`
+	UserID   int32         `json:"user_id"`
+	TotalInt sql.NullInt32 `json:"total_int"`
+	TotalDec sql.NullInt32 `json:"total_dec"`
 }
 
 type User struct {

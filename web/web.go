@@ -1,6 +1,7 @@
 package web
 
 import (
+	"database/sql"
 	db "music_vs_store/db/sqlc"
 	"net/http"
 
@@ -234,3 +235,48 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 		"product":    product,
 	})
 }
+
+type CartItemParams struct {
+	ProductID int32 `form:"id" binding:"required"`
+	Quantity  int32 `form:"quantity" binding:"required"`
+}
+
+func (w WebController) AddItemToCart(c *gin.Context) {
+  var cartItemParams CartItemParams
+
+  if err := c.ShouldBind(&cartItemParams); err != nil {
+    panic(err)
+  }
+
+  userId := c.GetUint64("user_id")
+  if userId == 0 {
+    panic("unauthorized")
+  }
+
+  var session db.ShoppingSession
+  var err error
+  session, err = w.queries.GetShoppingSessionByUserId(c, int32(userId))
+  if err != nil {
+    if err == sql.ErrNoRows {
+     session, err = w.queries.CreateShoppingSession(c, int32(userId)) 
+     if err != nil {
+       panic(err)
+     }
+    } else {
+      panic(err)
+    }
+  }
+
+  _, err = w.queries.CreateCartItem(c, db.CreateCartItemParams{
+    SessionID: session.ID,
+    ProductID: cartItemParams.ProductID,
+    Quantity: cartItemParams.Quantity,
+  })
+
+  if err != nil {
+    panic(err)
+  }
+
+	c.HTML(http.StatusOK, "htmx/createdCartItem.html", gin.H{})
+}
+

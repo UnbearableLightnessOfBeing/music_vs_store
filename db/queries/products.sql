@@ -12,3 +12,8 @@ WHERE p.id = p_c.product_id
 ORDER BY 
 CASE WHEN @price_sorting::varchar(10) = 'ASC' THEN p.price_int END asc,
 CASE WHEN @price_sorting::varchar(10) = 'DESC' THEN p.price_int END desc;
+
+-- name: GetCartProductsBySessionId :many
+SELECT p.name, p.price_int, c_i.quantity FROM products p, cart_item c_i
+WHERE p.id = c_i.product_id
+  AND c_i.session_id = $1;

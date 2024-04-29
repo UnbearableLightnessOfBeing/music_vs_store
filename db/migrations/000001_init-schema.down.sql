@@ -9,3 +9,5 @@ DROP TABLE IF EXISTS product_orders cascade;
 DROP TABLE IF EXISTS countries cascade;
 DROP TABLE IF EXISTS delivery_methods cascade;
 DROP TABLE IF EXISTS payment_methods cascade;
+DROP TABLE IF EXISTS shopping_session cascade;
+DROP TABLE IF EXISTS cart_item cascade;

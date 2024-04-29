@@ -65,6 +65,9 @@ func main() {
   r.POST("/login", sessionsController.Login)
   r.POST("/logout", sessionsController.Logout)
 
+  // cart item
+  r.POST("/add-to-cart", webController.AddItemToCart)
+
   // admin api
   r.POST("/admin/categories", authMiddleware.RequireAdmin(), dashboardController.CreateCategory)
 
