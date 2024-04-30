@@ -82,6 +82,7 @@ func main() {
   r.POST("/add-to-cart", webController.AddItemToCart)
   r.POST("/decrement-quantity", webController.DecrementQuantity)
   r.POST("/increment-quantity", webController.IncrementQuantity)
+  r.DELETE("/delete-cart-item/:product_id", webController.DeleteCartItem)
 
   // admin api
   r.POST("/admin/categories", authMiddleware.RequireAdmin(), dashboardController.CreateCategory)

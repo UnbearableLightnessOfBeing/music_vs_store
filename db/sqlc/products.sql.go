@@ -95,6 +95,7 @@ const getProdutsInCart = `-- name: GetProdutsInCart :many
 SELECT p.id, p.name, p.price_int, p.price_dec, p.label_id, p.images, p.description, p.in_stock, c_i.quantity FROM products p, cart_item c_i
 WHERE p.id = c_i.product_id
   AND c_i.session_id = $1
+ORDER BY p.id asc
 `
 
 type GetProdutsInCartRow struct {

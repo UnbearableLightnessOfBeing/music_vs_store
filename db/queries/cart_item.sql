@@ -18,3 +18,9 @@ UPDATE cart_item
 SET quantity = $2
 WHERE id = $1
 RETURNING *;
+
+-- name: DeleteCartItem :one
+DELETE FROM  cart_item
+WHERE session_id = $1
+  AND product_id = $2
+RETURNING *;

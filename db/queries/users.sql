@@ -38,8 +38,8 @@ WHERE id = $1
 RETURNING *;
 
 -- name: DeleteUser :exec
-delete from users
-where id = $1;
+DELETE FROM users
+WHERE id = $1;
 
 -- name: DeleteUserByName :exec
 delete from users

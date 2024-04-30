@@ -16,4 +16,5 @@ CASE WHEN @price_sorting::varchar(10) = 'DESC' THEN p.price_int END desc;
 -- name: GetProdutsInCart :many
 SELECT p.*, c_i.quantity FROM products p, cart_item c_i
 WHERE p.id = c_i.product_id
-  AND c_i.session_id = $1;
+  AND c_i.session_id = $1
+ORDER BY p.id asc;

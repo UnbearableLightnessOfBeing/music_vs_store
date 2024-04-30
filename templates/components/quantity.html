@@ -1,3 +1,4 @@
 {{ define "components/quantity.html" }}
 {{ .Quantity }}
+<div id="total-{{ .ID }}" hx-swap-oob="true">{{ .Total }}.00 руб</div>
 {{ end }}

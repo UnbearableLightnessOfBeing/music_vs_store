@@ -37,6 +37,30 @@ func (q *Queries) CreateCartItem(ctx context.Context, arg CreateCartItemParams) 
 	return i, err
 }
 
+const deleteCartItem = `-- name: DeleteCartItem :one
+DELETE FROM  cart_item
+WHERE session_id = $1
+  AND product_id = $2
+RETURNING id, session_id, product_id, quantity
+`
+
+type DeleteCartItemParams struct {
+	SessionID int32 `json:"session_id"`
+	ProductID int32 `json:"product_id"`
+}
+
+func (q *Queries) DeleteCartItem(ctx context.Context, arg DeleteCartItemParams) (CartItem, error) {
+	row := q.db.QueryRowContext(ctx, deleteCartItem, arg.SessionID, arg.ProductID)
+	var i CartItem
+	err := row.Scan(
+		&i.ID,
+		&i.SessionID,
+		&i.ProductID,
+		&i.Quantity,
+	)
+	return i, err
+}
+
 const getCartItem = `-- name: GetCartItem :one
 SELECT id, session_id, product_id, quantity FROM cart_item
 WHERE session_id = $1 

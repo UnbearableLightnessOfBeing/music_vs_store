@@ -2,6 +2,7 @@ package web
 
 import (
 	"database/sql"
+	"fmt"
 	db "music_vs_store/db/sqlc"
 	"music_vs_store/helpers"
 	"net/http"
@@ -381,7 +382,7 @@ func (w WebController) ManupulateQuantity(c *gin.Context, operation string) {
   targetQuantity := cartItem.Quantity
   if operation == "inc" {
     targetQuantity++
-  } else {
+  } else if targetQuantity > 1 {
     targetQuantity--
   }
 
@@ -389,10 +390,19 @@ func (w WebController) ManupulateQuantity(c *gin.Context, operation string) {
     ID: cartItem.ID,
     Quantity: targetQuantity,
   })
+  if err != nil {
+    panic(err)
+  }
+
+  product ,err := w.queries.GetProduct(c, params.ProductID)
+  if err != nil {
+    panic(err)
+  }
 
   c.HTML(http.StatusOK, "components/quantity.html", gin.H{
     "ID": params.ProductID,
     "Quantity": updatedItem.Quantity,
+    "Total": product.PriceInt * targetQuantity,
   })
 }
 
@@ -402,5 +412,33 @@ func (w WebController) DecrementQuantity(c *gin.Context) {
 
 func (w WebController) IncrementQuantity(c *gin.Context) {
   w.ManupulateQuantity(c, "inc")
+}
+
+type DeleteCartItem struct {
+  ProductID int32 `uri:"product_id" binding:"required"`
+}
+
+func (w WebController) DeleteCartItem(c *gin.Context) {
+  var params DeleteCartItem
+  c.ShouldBindUri(&params)
+
+  userID := helpers.GetSession(c)
+  if userID == 0 {
+    panic("user not authorized")
+  }
+
+  session, err := w.queries.GetShoppingSessionByUserId(c, userID)
+	if err != nil {
+		panic(err)
+	}
+
+  if _, err := w.queries.DeleteCartItem(c, db.DeleteCartItemParams{
+    SessionID: session.ID,
+    ProductID: params.ProductID,
+  }); err != nil {
+    panic(err)
+  }
+
+  c.Status(http.StatusOK)
 }
 
