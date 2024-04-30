@@ -41,88 +41,55 @@
         </div>
         <div class="grid gap-6">
           <div>
-            <h1 class="text-3xl font-bold">Acme Circles T-Shirt</h1>
-            <p class="text-gray-500">
-              60% combed ringspun cotton/40% polyester jersey tee.
+            <h1 class="text-3xl font-bold">{{ .product.Name }}</h1>
+            <div class="flex gap-4">
+              <div>ID товара: {{ .product.ID }}</div>
+              <div>В наличии: 
+                {{ if .product.InStock }} 
+                  ДА
+                {{ else }}
+                  НЕТ
+                {{ end }}</div>
+            </div>
+          </div>
+          <div class="max-w-[400px] overflow-hidden overflow-ellipsis">
+            <div>Производитель: {{ if .product.LabelID.Valid }} {{ .product.LabelID.Value }} {{ end }}</div>
+            <p class="border border-red-400 overflow-hidden overflow-ellipsis line-clamp-5">
+              {{ if .product.Description.Valid }} {{ .product.Description.Value }} {{ end }}
             </p>
           </div>
           <div class="flex items-center gap-4">
-            <div class="flex items-center gap-1">
-              <svg class="w-5 h-5 fill-primary" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-              </svg>
-              <svg class="w-5 h-5 fill-primary" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-              </svg>
-              <svg class="w-5 h-5 fill-primary" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-              </svg>
-              <svg class="w-5 h-5 fill-muted stroke-muted-foreground" fill="none" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-              </svg>
-              <svg class="w-5 h-5 fill-muted stroke-muted-foreground" fill="none" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-              </svg>
-            </div>
-            <span class="text-4xl font-bold">$99</span>
+            <span class="text-4xl font-bold">{{ .product.PriceInt }}.00 руб</span>
           </div>
           <div class="grid gap-4">
             <div class="grid gap-2">
-              <label class="text-base" htmlFor="color"> Color </label>
-              <div class="flex items-center gap-2">
-                <label
-                  class="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-gray-100"
-                  htmlFor="color-black">
-                  <input defaultChecked id="color-black" name="color" type="radio" value="black" />
-                  Black
-                </label>
-                <label
-                  class="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-gray-100"
-                  htmlFor="color-white">
-                  <input id="color-white" name="color" type="radio" value="white" />
-                  White
-                </label>
-                <label
-                  class="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-gray-100"
-                  htmlFor="color-blue">
-                  <input id="color-blue" name="color" type="radio" value="blue" />
-                  Blue
-                </label>
-              </div>
-            </div>
-            <div class="grid gap-2">
-              <label class="text-base" htmlFor="size"> Size </label>
+              {{ if .product.InStock }}
               <form 
                 class="flex items-center gap-2"
                 hx-trigger="click from:#to-cart"
                 hx-params="*"
                 hx-post="/add-to-cart"
-                hx-target="#to-cart"
+                hx-target="#cart-add-swap"
                 hx-swap="outerHTML transition:true"
               >
                 <input class="hidden" type="number" name="id" value="{{ .product.ID }}">
-                <input class="hidden" type="number" name="quantity" value="1">
                 {{ if .isLoggedIn }}
                   {{ if .isProductInCart }}
-                  <div>
-                    <div>Товар в корзине - {{ .isProductInCart }}</div>
-                    <a href="/cart" class="block px-4 py-2 rounded-md border border-red-400">Перейти в корзину</a>
-                  </div>
+                    {{ template "components/createdCartItem.html" . }} 
                   {{ else }}
-                  <div id="to-cart" class="px-4 py-2 rounded-md border border-slate-300 cursor-pointer hover:bg-gray-100">В корзину</div>
+                  <div id="cart-add-swap">
+                    <input type="number" name="quantity" value="1">
+                    <div id="to-cart" class="px-4 py-2 rounded-md border border-slate-300 cursor-pointer hover:bg-gray-100">В корзину</div>
+                  </div>
                   {{ end }}
                 <div class="px-4 py-2 rounded-md border border-slate-300 cursor-pointer hover:bg-gray-100">Купить сейчас</div>
                 {{ else }}
                 <a href="/login" class="hover:underline text-slate-400 hover:text-black">Чтобы купить товар или добавить его в корзину, войдите в аккаунт</a>
                 {{ end }}
               </form>
+              {{ else }}
+              <div>Товара нет в наличии</div>
+              {{ end }}
             </div>
           </div>
         </div>

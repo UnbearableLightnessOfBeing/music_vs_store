@@ -261,8 +261,8 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 			panic(err)
 		}
 
-		if slices.ContainsFunc(cartProducts, func(cartProduct db.GetProdutsInCartRow) bool {
-			return cartProduct.ID == product.ID
+		if slices.ContainsFunc(cartProducts, func(item db.GetProdutsInCartRow) bool {
+			return item.ID == product.ID
 		}) {
 			isProductInCart = true
 		}
@@ -312,5 +312,5 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 		panic(err)
 	}
 
-	c.HTML(http.StatusOK, "htmx/createdCartItem.html", gin.H{})
+	c.HTML(http.StatusOK, "components/createdCartItem.html", gin.H{})
 }

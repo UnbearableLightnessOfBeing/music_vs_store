@@ -83,7 +83,7 @@ type Product struct {
 	LabelID     sql.NullInt32  `json:"label_id"`
 	Images      []string       `json:"images"`
 	Description sql.NullString `json:"description"`
-	InStock     sql.NullBool   `json:"in_stock"`
+	InStock     bool           `json:"in_stock"`
 }
 
 type ProductCategory struct {
