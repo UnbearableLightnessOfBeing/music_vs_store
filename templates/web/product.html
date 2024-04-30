@@ -110,7 +110,14 @@
                 <input class="hidden" type="number" name="id" value="{{ .product.ID }}">
                 <input class="hidden" type="number" name="quantity" value="1">
                 {{ if .isLoggedIn }}
-                <div id="to-cart" class="px-4 py-2 rounded-md border border-slate-300 cursor-pointer hover:bg-gray-100">В корзину</div>
+                  {{ if .isProductInCart }}
+                  <div>
+                    <div>Товар в корзине - {{ .isProductInCart }}</div>
+                    <a href="/cart" class="block px-4 py-2 rounded-md border border-red-400">Перейти в корзину</a>
+                  </div>
+                  {{ else }}
+                  <div id="to-cart" class="px-4 py-2 rounded-md border border-slate-300 cursor-pointer hover:bg-gray-100">В корзину</div>
+                  {{ end }}
                 <div class="px-4 py-2 rounded-md border border-slate-300 cursor-pointer hover:bg-gray-100">Купить сейчас</div>
                 {{ else }}
                 <a href="/login" class="hover:underline text-slate-400 hover:text-black">Чтобы купить товар или добавить его в корзину, войдите в аккаунт</a>

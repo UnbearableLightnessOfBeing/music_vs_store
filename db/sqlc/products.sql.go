@@ -7,44 +7,10 @@ package db
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/lib/pq"
 )
-
-const getCartProductsBySessionId = `-- name: GetCartProductsBySessionId :many
-SELECT p.name, p.price_int, c_i.quantity FROM products p, cart_item c_i
-WHERE p.id = c_i.product_id
-  AND c_i.session_id = $1
-`
-
-type GetCartProductsBySessionIdRow struct {
-	Name     string `json:"name"`
-	PriceInt int32  `json:"price_int"`
-	Quantity int32  `json:"quantity"`
-}
-
-func (q *Queries) GetCartProductsBySessionId(ctx context.Context, sessionID int32) ([]GetCartProductsBySessionIdRow, error) {
-	rows, err := q.db.QueryContext(ctx, getCartProductsBySessionId, sessionID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetCartProductsBySessionIdRow
-	for rows.Next() {
-		var i GetCartProductsBySessionIdRow
-		if err := rows.Scan(&i.Name, &i.PriceInt, &i.Quantity); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
 
 const getProduct = `-- name: GetProduct :one
 SELECT id, name, price_int, price_dec, label_id, images, description, in_stock FROM products
@@ -111,6 +77,57 @@ func (q *Queries) GetProductsByCategory(ctx context.Context, arg GetProductsByCa
 			pq.Array(&i.Images),
 			&i.Description,
 			&i.InStock,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getProdutsInCart = `-- name: GetProdutsInCart :many
+SELECT p.id, p.name, p.price_int, p.price_dec, p.label_id, p.images, p.description, p.in_stock, c_i.quantity FROM products p, cart_item c_i
+WHERE p.id = c_i.product_id
+  AND c_i.session_id = $1
+`
+
+type GetProdutsInCartRow struct {
+	ID          int32          `json:"id"`
+	Name        string         `json:"name"`
+	PriceInt    int32          `json:"price_int"`
+	PriceDec    sql.NullInt32  `json:"price_dec"`
+	LabelID     sql.NullInt32  `json:"label_id"`
+	Images      []string       `json:"images"`
+	Description sql.NullString `json:"description"`
+	InStock     sql.NullBool   `json:"in_stock"`
+	Quantity    int32          `json:"quantity"`
+}
+
+func (q *Queries) GetProdutsInCart(ctx context.Context, sessionID int32) ([]GetProdutsInCartRow, error) {
+	rows, err := q.db.QueryContext(ctx, getProdutsInCart, sessionID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetProdutsInCartRow
+	for rows.Next() {
+		var i GetProdutsInCartRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.PriceInt,
+			&i.PriceDec,
+			&i.LabelID,
+			pq.Array(&i.Images),
+			&i.Description,
+			&i.InStock,
+			&i.Quantity,
 		); err != nil {
 			return nil, err
 		}

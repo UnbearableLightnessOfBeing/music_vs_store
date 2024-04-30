@@ -19,5 +19,4 @@ func ClearSession(c *gin.Context) {
   session := sessions.Default(c)
   session.Clear()
   session.Save()
-
 }

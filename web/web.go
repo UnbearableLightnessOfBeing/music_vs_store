@@ -3,7 +3,9 @@ package web
 import (
 	"database/sql"
 	db "music_vs_store/db/sqlc"
+	"music_vs_store/helpers"
 	"net/http"
+	"slices"
 
 	"github.com/gin-gonic/gin"
 )
@@ -206,6 +208,7 @@ func (w WebController) RenderProducts(c *gin.Context) {
 	c.HTML(http.StatusOK, "components/products.html", gin.H{
 		"products":     products,
 		"priceSorting": query.PriceSorting,
+		"slug":         page.Uri,
 	})
 }
 
@@ -226,14 +229,46 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 		panic(err)
 	}
 
-	c.HTML(http.StatusOK, "web/product.html", gin.H{
-		"pages": PagesInfo{
-			Pages:       pages,
-			CurrentPage: "catalogue",
-		},
-		"isLoggedIn": c.GetUint64("user_id") > 0,
-		"product":    product,
-	})
+	isProductInCart := false
+
+  respondWithHTML := func() {
+    c.HTML(http.StatusOK, "web/product.html", gin.H{
+      "pages": PagesInfo{
+        Pages:       pages,
+        CurrentPage: "catalogue",
+      },
+      "isLoggedIn":      c.GetUint64("user_id") > 0,
+      "product":         product,
+      "isProductInCart": isProductInCart,
+    })
+  }
+
+	userId := helpers.GetSession(c)
+	if userId != 0 {
+		session, err := w.queries.GetShoppingSessionByUserId(c, userId)
+		if err == sql.ErrNoRows {
+		  respondWithHTML()	
+      return
+		} else if err != nil {
+      panic(err)
+    }
+
+		cartProducts, err := w.queries.GetProdutsInCart(c, session.ID)
+    if err == sql.ErrNoRows {
+      respondWithHTML()
+      return
+    } else if err != nil {
+			panic(err)
+		}
+
+		if slices.ContainsFunc(cartProducts, func(cartProduct db.GetProdutsInCartRow) bool {
+			return cartProduct.ID == product.ID
+		}) {
+			isProductInCart = true
+		}
+	}
+
+  respondWithHTML()
 }
 
 type CartItemParams struct {
@@ -242,41 +277,40 @@ type CartItemParams struct {
 }
 
 func (w WebController) AddItemToCart(c *gin.Context) {
-  var cartItemParams CartItemParams
+	var cartItemParams CartItemParams
 
-  if err := c.ShouldBind(&cartItemParams); err != nil {
-    panic(err)
-  }
+	if err := c.ShouldBind(&cartItemParams); err != nil {
+		panic(err)
+	}
 
-  userId := c.GetUint64("user_id")
-  if userId == 0 {
-    panic("unauthorized")
-  }
+	userId := c.GetUint64("user_id")
+	if userId == 0 {
+		panic("unauthorized")
+	}
 
-  var session db.ShoppingSession
-  var err error
-  session, err = w.queries.GetShoppingSessionByUserId(c, int32(userId))
-  if err != nil {
-    if err == sql.ErrNoRows {
-     session, err = w.queries.CreateShoppingSession(c, int32(userId)) 
-     if err != nil {
-       panic(err)
-     }
-    } else {
-      panic(err)
-    }
-  }
+	var session db.ShoppingSession
+	var err error
+	session, err = w.queries.GetShoppingSessionByUserId(c, int32(userId))
+	if err != nil {
+		if err == sql.ErrNoRows {
+			session, err = w.queries.CreateShoppingSession(c, int32(userId))
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			panic(err)
+		}
+	}
 
-  _, err = w.queries.CreateCartItem(c, db.CreateCartItemParams{
-    SessionID: session.ID,
-    ProductID: cartItemParams.ProductID,
-    Quantity: cartItemParams.Quantity,
-  })
+	_, err = w.queries.CreateCartItem(c, db.CreateCartItemParams{
+		SessionID: session.ID,
+		ProductID: cartItemParams.ProductID,
+		Quantity:  cartItemParams.Quantity,
+	})
 
-  if err != nil {
-    panic(err)
-  }
+	if err != nil {
+		panic(err)
+	}
 
 	c.HTML(http.StatusOK, "htmx/createdCartItem.html", gin.H{})
 }
-

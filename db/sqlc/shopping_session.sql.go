@@ -28,6 +28,24 @@ func (q *Queries) CreateShoppingSession(ctx context.Context, userID int32) (Shop
 	return i, err
 }
 
+const deleteSessionByUserId = `-- name: DeleteSessionByUserId :one
+DELETE FROM shopping_session
+WHERE user_id = $1
+RETURNING id, user_id, total_int, total_dec
+`
+
+func (q *Queries) DeleteSessionByUserId(ctx context.Context, userID int32) (ShoppingSession, error) {
+	row := q.db.QueryRowContext(ctx, deleteSessionByUserId, userID)
+	var i ShoppingSession
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.TotalInt,
+		&i.TotalDec,
+	)
+	return i, err
+}
+
 const getShoppingSessionByUserId = `-- name: GetShoppingSessionByUserId :one
 SELECT id, user_id, total_int, total_dec FROM shopping_session
 WHERE user_id = $1 LIMIT 1

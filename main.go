@@ -34,6 +34,9 @@ func main() {
   store := memstore.NewStore([]byte("secret"))
   r.Use(sessions.Sessions("users", store))
 
+  // for TESTING
+  r.Use(middlewares.LoginForTesting())
+
   // middlewares
   authMiddleware := middlewares.NewAuthMiddleware(queries)
   r.Use(authMiddleware.RequireAuth())
