@@ -1,0 +1,20 @@
+{{ define "web/cart.html" }}
+{{ template "layouts/header.html" . }}
+<div class="border border-rose-300 px-20 py-10 space-y-10">
+  <h1 class="text-4xl">Корзина</h1>
+  {{ if .isLoggedIn }}
+  <div class="space-y-10">
+    {{ if not .products }}
+    <div class="text-pink-400">You have no products in cart</div>
+    {{ else }}
+      {{ range .products }}
+        {{ template "components/cartItem.html" . }}
+      {{ end }}
+    {{ end }}
+  </div>
+  {{ else }}
+  <div class="text-xl text-red-400">not logged in</div>
+  {{ end }}
+</div>
+{{ template "layouts/footer.html" }}
+{{ end }}

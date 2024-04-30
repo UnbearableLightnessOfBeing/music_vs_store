@@ -231,33 +231,33 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 
 	isProductInCart := false
 
-  respondWithHTML := func() {
-    c.HTML(http.StatusOK, "web/product.html", gin.H{
-      "pages": PagesInfo{
-        Pages:       pages,
-        CurrentPage: "catalogue",
-      },
-      "isLoggedIn":      c.GetUint64("user_id") > 0,
-      "product":         product,
-      "isProductInCart": isProductInCart,
-    })
-  }
+	respondWithHTML := func() {
+		c.HTML(http.StatusOK, "web/product.html", gin.H{
+			"pages": PagesInfo{
+				Pages:       pages,
+				CurrentPage: "catalogue",
+			},
+			"isLoggedIn":      c.GetUint64("user_id") > 0,
+			"product":         product,
+			"isProductInCart": isProductInCart,
+		})
+	}
 
 	userId := helpers.GetSession(c)
 	if userId != 0 {
 		session, err := w.queries.GetShoppingSessionByUserId(c, userId)
 		if err == sql.ErrNoRows {
-		  respondWithHTML()	
-      return
+			respondWithHTML()
+			return
 		} else if err != nil {
-      panic(err)
-    }
+			panic(err)
+		}
 
 		cartProducts, err := w.queries.GetProdutsInCart(c, session.ID)
-    if err == sql.ErrNoRows {
-      respondWithHTML()
-      return
-    } else if err != nil {
+		if err == sql.ErrNoRows {
+			respondWithHTML()
+			return
+		} else if err != nil {
 			panic(err)
 		}
 
@@ -268,7 +268,7 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 		}
 	}
 
-  respondWithHTML()
+	respondWithHTML()
 }
 
 type CartItemParams struct {
@@ -314,3 +314,93 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "components/createdCartItem.html", gin.H{})
 }
+
+func (w WebController) RenderCartPage(c *gin.Context) {
+	var cartProducts []db.GetProdutsInCartRow
+  var session db.ShoppingSession
+
+	respondWithHTML := func() {
+		c.HTML(http.StatusOK, "web/cart.html", gin.H{
+			"isLoggedIn": c.GetUint64("user_id") > 0,
+			"products":   cartProducts,
+      "session": session,
+		})
+	}
+
+	userID := helpers.GetSession(c)
+	if userID == 0 {
+		respondWithHTML()
+		return
+	}
+
+  var err error
+	session, err = w.queries.GetShoppingSessionByUserId(c, userID)
+	if err == sql.ErrNoRows {
+		respondWithHTML()
+		return
+	} else if err != nil {
+		panic(err)
+	}
+
+	cartProducts, err = w.queries.GetProdutsInCart(c, session.ID)
+	if err == sql.ErrNoRows {
+		respondWithHTML()
+		return
+	} else if err != nil {
+    panic(err)
+  }
+
+  respondWithHTML()
+}
+
+type CartItemManipulation struct {
+  ProductID int32 `form:"product_id" binding:"required"`
+}
+
+func (w WebController) ManupulateQuantity(c *gin.Context, operation string) {
+  var params CartItemManipulation
+  if err := c.ShouldBind(&params); err != nil {
+    panic(err)
+  }
+
+  userID := helpers.GetSession(c)
+  if userID == 0 {
+    panic("user not authorized")
+  }
+
+  session, err := w.queries.GetShoppingSessionByUserId(c, userID)
+	if err != nil {
+		panic(err)
+	}
+
+  cartItem, err := w.queries.GetCartItem(c, db.GetCartItemParams{
+    SessionID: session.ID,
+    ProductID: params.ProductID,
+  })
+
+  targetQuantity := cartItem.Quantity
+  if operation == "inc" {
+    targetQuantity++
+  } else {
+    targetQuantity--
+  }
+
+  updatedItem, err := w.queries.UpdateCartItemQuantity(c, db.UpdateCartItemQuantityParams{
+    ID: cartItem.ID,
+    Quantity: targetQuantity,
+  })
+
+  c.HTML(http.StatusOK, "components/quantity.html", gin.H{
+    "ID": params.ProductID,
+    "Quantity": updatedItem.Quantity,
+  })
+}
+
+func (w WebController) DecrementQuantity(c *gin.Context) {
+  w.ManupulateQuantity(c, "dec")
+}
+
+func (w WebController) IncrementQuantity(c *gin.Context) {
+  w.ManupulateQuantity(c, "inc")
+}
+

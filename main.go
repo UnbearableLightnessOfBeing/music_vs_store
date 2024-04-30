@@ -7,6 +7,7 @@ import (
 	"music_vs_store/middlewares"
 	"music_vs_store/web"
 	"os"
+	"text/template"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
@@ -20,12 +21,19 @@ func init() {
   gotenv.Load()
 }
 
+func Mul(param1 int32, param2 int32) int32 {
+  return param1 * param2
+}
+
 func main() {
 	r := gin.Default()
   r.Static("/styles", "./static/styles")
   r.Static("/js", "./static/js")
   r.Static("/assets", "./static/assets")
   r.Static("/storage", "./storage/images/")
+  r.SetFuncMap(template.FuncMap{
+    "mul": Mul,
+  })
   r.LoadHTMLGlob("templates/**/*")
 
   queries := driver.GetQueries()
@@ -58,6 +66,7 @@ func main() {
   r.GET("/comments", webController.RenderCommentsPage)
   r.GET("/delivery", webController.RenderDeliveryPage)
   r.GET("/contacts", webController.RenderContactsPage)
+  r.GET("/cart", webController.RenderCartPage)
 
   // auth
   r.GET("/signup", usersController.CreateUserView)
@@ -68,8 +77,11 @@ func main() {
   r.POST("/login", sessionsController.Login)
   r.POST("/logout", sessionsController.Logout)
 
+  // htmx
   // cart item
   r.POST("/add-to-cart", webController.AddItemToCart)
+  r.POST("/decrement-quantity", webController.DecrementQuantity)
+  r.POST("/increment-quantity", webController.IncrementQuantity)
 
   // admin api
   r.POST("/admin/categories", authMiddleware.RequireAdmin(), dashboardController.CreateCategory)
