@@ -1,5 +1,3 @@
-{{ define "components/quantity.html" }}
-{{ .Quantity }}
-<div id="total-{{ .ID }}" hx-swap-oob="true">{{ .Total }}.00 руб</div>
+{{ define "components/delete_cart_item.html" }}
 <div id="cart-total" hx-swap-oob="true">Итоговая сумма: <span class="text-lg font-semibold">{{ .CartTotal }}.00 руб</span></div>
 {{ end }}

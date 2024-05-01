@@ -2,7 +2,6 @@ package web
 
 import (
 	"database/sql"
-	"fmt"
 	db "music_vs_store/db/sqlc"
 	"music_vs_store/helpers"
 	"net/http"
@@ -313,6 +312,9 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 		panic(err)
 	}
 
+  // update cart total
+  w.RecalculateCartTotal(c, int32(userId), session.ID)
+
 	c.HTML(http.StatusOK, "components/createdCartItem.html", gin.H{})
 }
 
@@ -358,6 +360,31 @@ type CartItemManipulation struct {
   ProductID int32 `form:"product_id" binding:"required"`
 }
 
+func (w WebController) RecalculateCartTotal(c *gin.Context, userID, sessionID int32) db.ShoppingSession {
+  products, err := w.queries.GetProdutsInCart(c, sessionID)
+  if err != nil {
+    panic(err)
+  }
+
+  var cartTotal int32 = 0
+  for _, item := range products {
+    cartTotal += item.PriceInt * item.Quantity
+  }
+
+  updatedSession, err := w.queries.UpdateSessionTotal(c, db.UpdateSessionTotalParams{
+    UserID: userID,
+    TotalInt: sql.NullInt32{
+      Valid: true,
+      Int32: cartTotal,
+    },
+  })
+  if err != nil {
+    panic(err)
+  }
+
+  return updatedSession
+}
+
 func (w WebController) ManupulateQuantity(c *gin.Context, operation string) {
   var params CartItemManipulation
   if err := c.ShouldBind(&params); err != nil {
@@ -399,10 +426,13 @@ func (w WebController) ManupulateQuantity(c *gin.Context, operation string) {
     panic(err)
   }
 
+  updatedSession := w.RecalculateCartTotal(c, userID, session.ID)
+
   c.HTML(http.StatusOK, "components/quantity.html", gin.H{
     "ID": params.ProductID,
     "Quantity": updatedItem.Quantity,
     "Total": product.PriceInt * targetQuantity,
+    "CartTotal": updatedSession.TotalInt.Int32,
   })
 }
 
@@ -439,6 +469,14 @@ func (w WebController) DeleteCartItem(c *gin.Context) {
     panic(err)
   }
 
-  c.Status(http.StatusOK)
-}
+  // update cart total
+  updatedSession := w.RecalculateCartTotal(c, userID, session.ID)
 
+  if updatedSession.TotalInt.Int32 == 0 {
+    c.Header("HX-Refresh", "true")
+  }
+
+  c.HTML(http.StatusOK, "components/delete_cart_item.html", gin.H{
+    "CartTotal": updatedSession.TotalInt.Int32,
+  })
+}

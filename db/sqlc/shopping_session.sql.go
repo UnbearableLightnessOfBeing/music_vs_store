@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createShoppingSession = `-- name: CreateShoppingSession :one
@@ -53,6 +54,30 @@ WHERE user_id = $1 LIMIT 1
 
 func (q *Queries) GetShoppingSessionByUserId(ctx context.Context, userID int32) (ShoppingSession, error) {
 	row := q.db.QueryRowContext(ctx, getShoppingSessionByUserId, userID)
+	var i ShoppingSession
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.TotalInt,
+		&i.TotalDec,
+	)
+	return i, err
+}
+
+const updateSessionTotal = `-- name: UpdateSessionTotal :one
+UPDATE shopping_session
+SET total_int = $2
+WHERE user_id = $1
+RETURNING id, user_id, total_int, total_dec
+`
+
+type UpdateSessionTotalParams struct {
+	UserID   int32         `json:"user_id"`
+	TotalInt sql.NullInt32 `json:"total_int"`
+}
+
+func (q *Queries) UpdateSessionTotal(ctx context.Context, arg UpdateSessionTotalParams) (ShoppingSession, error) {
+	row := q.db.QueryRowContext(ctx, updateSessionTotal, arg.UserID, arg.TotalInt)
 	var i ShoppingSession
 	err := row.Scan(
 		&i.ID,
