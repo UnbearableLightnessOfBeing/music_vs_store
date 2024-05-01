@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func GetQueries() *db.Queries {
+func GetQueriesWithDb() (*db.Queries, *sql.DB) {
   conn, err := sql.Open(os.Getenv("DB_DRIVER"), os.Getenv("DB_SOURCE"))
   if err != nil {
     panic(err)
@@ -17,5 +17,5 @@ func GetQueries() *db.Queries {
     panic(err)
   }
 
-  return db.New(conn)
+  return db.New(conn), conn
 }

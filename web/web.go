@@ -12,11 +12,13 @@ import (
 
 type WebController struct {
 	queries *db.Queries
+  db *sql.DB
 }
 
-func NewWebController(queries *db.Queries) WebController {
+func NewWebController(queries *db.Queries, db *sql.DB) WebController {
 	return WebController{
 		queries,
+    db,
 	}
 }
 
@@ -361,7 +363,14 @@ type CartItemManipulation struct {
 }
 
 func (w WebController) RecalculateCartTotal(c *gin.Context, userID, sessionID int32) db.ShoppingSession {
-  products, err := w.queries.GetProdutsInCart(c, sessionID)
+  tx, err := w.db.Begin()
+  if err != nil {
+    panic(err)
+  }
+  defer tx.Rollback()
+  qtx := w.queries.WithTx(tx)
+
+  products, err := qtx.GetProdutsInCart(c, sessionID)
   if err != nil {
     panic(err)
   }
@@ -371,13 +380,18 @@ func (w WebController) RecalculateCartTotal(c *gin.Context, userID, sessionID in
     cartTotal += item.PriceInt * item.Quantity
   }
 
-  updatedSession, err := w.queries.UpdateSessionTotal(c, db.UpdateSessionTotalParams{
+  updatedSession, err := qtx.UpdateSessionTotal(c, db.UpdateSessionTotalParams{
     UserID: userID,
     TotalInt: sql.NullInt32{
       Valid: true,
       Int32: cartTotal,
     },
   })
+  if err != nil {
+    panic(err)
+  }
+
+  err = tx.Commit()
   if err != nil {
     panic(err)
   }

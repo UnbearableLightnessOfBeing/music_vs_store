@@ -36,7 +36,7 @@ func main() {
   })
   r.LoadHTMLGlob("templates/**/*")
 
-  queries := driver.GetQueries()
+  queries, db := driver.GetQueriesWithDb()
 
   // sessions
   store := memstore.NewStore([]byte("secret"))
@@ -54,7 +54,7 @@ func main() {
   sessionsController := controllers.NewSessionsController(queries)
   dashboardController := controllers.NewDashboardController(queries)
 
-  webController := web.NewWebController(queries)
+  webController := web.NewWebController(queries, db)
 
   // web
   r.GET("/", webController.RenderMainPage)
