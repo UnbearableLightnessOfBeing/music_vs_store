@@ -1,0 +1,17 @@
+{{ define "web/checkout.html" }} 
+{{ template "layouts/header.html" . }}
+<div class="border border-rose-300 px-20 py-10 space-y-10">
+  <h1 class="text-4xl">Оформление заказа</h1>
+  {{ if .isLoggedIn }}
+  <div class="space-y-10">
+    logged in
+  </div>
+  {{ else }}
+  <div class="space-y-10">
+    NOT logged in
+  </div>
+  {{ end }}
+</div>
+{{ template "layouts/footer.html" }} 
+{{ end }}
+

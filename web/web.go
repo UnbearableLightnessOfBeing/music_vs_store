@@ -604,3 +604,15 @@ func (w WebController) DeleteCartItem(c *gin.Context) {
     "CartProductsCount": cartProductsCount,
   })
 }
+
+func (w WebController) RenderCheckoutPage(c *gin.Context) {
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
+
+  c.HTML(http.StatusOK, "web/checkout.html", gin.H{
+    "isLoggedIn": c.GetUint64("user_id") > 0,
+    "cartProductsCount": cartProductsCount,
+  })
+}
