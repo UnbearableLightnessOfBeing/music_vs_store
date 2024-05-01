@@ -290,12 +290,18 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 		panic("unauthorized")
 	}
 
+  tx, err := w.db.Begin()
+  if err != nil {
+    panic(err)
+  }
+  defer tx.Rollback()
+  qtx := w.queries.WithTx(tx)
+
 	var session db.ShoppingSession
-	var err error
-	session, err = w.queries.GetShoppingSessionByUserId(c, int32(userId))
+	session, err = qtx.GetShoppingSessionByUserId(c, int32(userId))
 	if err != nil {
 		if err == sql.ErrNoRows {
-			session, err = w.queries.CreateShoppingSession(c, int32(userId))
+			session, err = qtx.CreateShoppingSession(c, int32(userId))
 			if err != nil {
 				panic(err)
 			}
@@ -304,7 +310,7 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 		}
 	}
 
-	_, err = w.queries.CreateCartItem(c, db.CreateCartItemParams{
+	_, err = qtx.CreateCartItem(c, db.CreateCartItemParams{
 		SessionID: session.ID,
 		ProductID: cartItemParams.ProductID,
 		Quantity:  cartItemParams.Quantity,
@@ -315,7 +321,11 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 	}
 
   // update cart total
-  w.RecalculateCartTotal(c, int32(userId), session.ID)
+  RecalculateCartTotal(c, qtx, int32(userId), session.ID)
+
+  if err = tx.Commit(); err != nil {
+    panic(err)
+  }
 
 	c.HTML(http.StatusOK, "components/createdCartItem.html", gin.H{})
 }
@@ -362,15 +372,8 @@ type CartItemManipulation struct {
   ProductID int32 `form:"product_id" binding:"required"`
 }
 
-func (w WebController) RecalculateCartTotal(c *gin.Context, userID, sessionID int32) db.ShoppingSession {
-  tx, err := w.db.Begin()
-  if err != nil {
-    panic(err)
-  }
-  defer tx.Rollback()
-  qtx := w.queries.WithTx(tx)
-
-  products, err := qtx.GetProdutsInCart(c, sessionID)
+func RecalculateCartTotal(c *gin.Context, q *db.Queries, userID, sessionID int32) db.ShoppingSession {
+  products, err := q.GetProdutsInCart(c, sessionID)
   if err != nil {
     panic(err)
   }
@@ -380,18 +383,13 @@ func (w WebController) RecalculateCartTotal(c *gin.Context, userID, sessionID in
     cartTotal += item.PriceInt * item.Quantity
   }
 
-  updatedSession, err := qtx.UpdateSessionTotal(c, db.UpdateSessionTotalParams{
+  updatedSession, err := q.UpdateSessionTotal(c, db.UpdateSessionTotalParams{
     UserID: userID,
     TotalInt: sql.NullInt32{
       Valid: true,
       Int32: cartTotal,
     },
   })
-  if err != nil {
-    panic(err)
-  }
-
-  err = tx.Commit()
   if err != nil {
     panic(err)
   }
@@ -410,12 +408,19 @@ func (w WebController) ManupulateQuantity(c *gin.Context, operation string) {
     panic("user not authorized")
   }
 
-  session, err := w.queries.GetShoppingSessionByUserId(c, userID)
+  tx, err := w.db.Begin()
+  if err != nil {
+    panic(err)
+  }
+  defer tx.Rollback()
+  qtx := w.queries.WithTx(tx)
+
+  session, err := qtx.GetShoppingSessionByUserId(c, userID)
 	if err != nil {
 		panic(err)
 	}
 
-  cartItem, err := w.queries.GetCartItem(c, db.GetCartItemParams{
+  cartItem, err := qtx.GetCartItem(c, db.GetCartItemParams{
     SessionID: session.ID,
     ProductID: params.ProductID,
   })
@@ -427,7 +432,7 @@ func (w WebController) ManupulateQuantity(c *gin.Context, operation string) {
     targetQuantity--
   }
 
-  updatedItem, err := w.queries.UpdateCartItemQuantity(c, db.UpdateCartItemQuantityParams{
+  updatedItem, err := qtx.UpdateCartItemQuantity(c, db.UpdateCartItemQuantityParams{
     ID: cartItem.ID,
     Quantity: targetQuantity,
   })
@@ -435,12 +440,16 @@ func (w WebController) ManupulateQuantity(c *gin.Context, operation string) {
     panic(err)
   }
 
-  product ,err := w.queries.GetProduct(c, params.ProductID)
+  product ,err := qtx.GetProduct(c, params.ProductID)
   if err != nil {
     panic(err)
   }
 
-  updatedSession := w.RecalculateCartTotal(c, userID, session.ID)
+  updatedSession := RecalculateCartTotal(c, qtx, userID, session.ID)
+
+  if err = tx.Commit(); err != nil {
+    panic(err)
+  }
 
   c.HTML(http.StatusOK, "components/quantity.html", gin.H{
     "ID": params.ProductID,
@@ -466,17 +475,24 @@ func (w WebController) DeleteCartItem(c *gin.Context) {
   var params DeleteCartItem
   c.ShouldBindUri(&params)
 
+  tx, err := w.db.Begin()
+  if err != nil {
+    panic(err)
+  }
+  defer tx.Rollback()
+  qtx := w.queries.WithTx(tx)
+
   userID := helpers.GetSession(c)
   if userID == 0 {
     panic("user not authorized")
   }
 
-  session, err := w.queries.GetShoppingSessionByUserId(c, userID)
+  session, err := qtx.GetShoppingSessionByUserId(c, userID)
 	if err != nil {
 		panic(err)
 	}
 
-  if _, err := w.queries.DeleteCartItem(c, db.DeleteCartItemParams{
+  if _, err := qtx.DeleteCartItem(c, db.DeleteCartItemParams{
     SessionID: session.ID,
     ProductID: params.ProductID,
   }); err != nil {
@@ -484,7 +500,11 @@ func (w WebController) DeleteCartItem(c *gin.Context) {
   }
 
   // update cart total
-  updatedSession := w.RecalculateCartTotal(c, userID, session.ID)
+  updatedSession := RecalculateCartTotal(c, qtx, userID, session.ID)
+
+  if err = tx.Commit(); err != nil {
+    panic(err)
+  }
 
   if updatedSession.TotalInt.Int32 == 0 {
     c.Header("HX-Refresh", "true")
