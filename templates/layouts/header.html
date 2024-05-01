@@ -40,8 +40,8 @@
               />
             </svg>
             {{ if .isLoggedIn }}
-            <div class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-              2
+            <div id="cart-indicator" class="{{ if not .cartProductsCount }} hidden {{ end }} absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+              {{ .cartProductsCount }}
             </div>
             {{ end }}
           </a>

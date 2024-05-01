@@ -42,6 +42,24 @@ var pages = []PageLink{
 	{Name: "Контакты", Value: "contacts"},
 }
 
+func getCartProductsCount(c *gin.Context, q *db.Queries) (int32, error) {
+  userID := helpers.GetSession(c)
+
+  var cartProductsCount int64 = 0
+
+  session, err := q.GetShoppingSessionByUserId(c, userID)
+  if err != nil && err != sql.ErrNoRows {
+    return 0, err
+  }
+
+  cartProductsCount, err = q.GetCartProductsCount(c, session.ID)
+  if err != nil && err != sql.ErrNoRows {
+    return 0, err
+  }
+
+  return int32(cartProductsCount), nil
+}
+
 func (w WebController) RenderMainPage(c *gin.Context) {
 	categories, err := w.queries.ListCategories(c, db.ListCategoriesParams{
 		Limit:  10,
@@ -51,6 +69,11 @@ func (w WebController) RenderMainPage(c *gin.Context) {
 		panic(err)
 	}
 
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
+
 	c.HTML(http.StatusOK, "web/index.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
@@ -58,6 +81,7 @@ func (w WebController) RenderMainPage(c *gin.Context) {
 		},
 		"categories": categories,
 		"isLoggedIn": c.GetUint64("user_id") > 0,
+    "cartProductsCount": cartProductsCount,
 	})
 }
 
@@ -70,6 +94,11 @@ func (w WebController) RenderCataloguePage(c *gin.Context) {
 		panic(err)
 	}
 
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
+
 	c.HTML(http.StatusOK, "web/catalogue.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
@@ -77,46 +106,76 @@ func (w WebController) RenderCataloguePage(c *gin.Context) {
 		},
 		"categories": categories,
 		"isLoggedIn": c.GetUint64("user_id") > 0,
+    "cartProductsCount": cartProductsCount,
 	})
 }
 
 func (w WebController) RenderAboutPage(c *gin.Context) {
+
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
+
 	c.HTML(http.StatusOK, "web/about.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
 			CurrentPage: "about",
 		},
 		"message": "About page",
+		"isLoggedIn": c.GetUint64("user_id") > 0,
+    "cartProductsCount": cartProductsCount,
 	})
 }
 
 func (w WebController) RenderCommentsPage(c *gin.Context) {
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
+
 	c.HTML(http.StatusOK, "web/comments.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
 			CurrentPage: "comments",
 		},
 		"message": "Comments page",
+		"isLoggedIn": c.GetUint64("user_id") > 0,
+    "cartProductsCount": cartProductsCount,
 	})
 }
 
 func (w WebController) RenderDeliveryPage(c *gin.Context) {
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
+
 	c.HTML(http.StatusOK, "web/delivery.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
 			CurrentPage: "delivery",
 		},
 		"message": "Delivery page",
+		"isLoggedIn": c.GetUint64("user_id") > 0,
+    "cartProductsCount": cartProductsCount,
 	})
 }
 
 func (w WebController) RenderContactsPage(c *gin.Context) {
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
+
 	c.HTML(http.StatusOK, "web/contacts.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
 			CurrentPage: "contacts",
 		},
 		"message": "Contacts page",
+		"isLoggedIn": c.GetUint64("user_id") > 0,
+    "cartProductsCount": cartProductsCount,
 	})
 }
 
@@ -167,12 +226,18 @@ func (w WebController) RenderCategoryPage(c *gin.Context) {
 		panic(err)
 	}
 
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
+
 	c.HTML(http.StatusOK, "web/category.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
 			CurrentPage: "catalogue",
 		},
 		"isLoggedIn":   c.GetUint64("user_id") > 0,
+    "cartProductsCount": cartProductsCount,
 		"categoryName": category.Name,
 		"products":     products,
 		"labels":       labels,
@@ -233,6 +298,11 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 
 	isProductInCart := false
 
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
+
 	respondWithHTML := func() {
 		c.HTML(http.StatusOK, "web/product.html", gin.H{
 			"pages": PagesInfo{
@@ -240,6 +310,7 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 				CurrentPage: "catalogue",
 			},
 			"isLoggedIn":      c.GetUint64("user_id") > 0,
+      "cartProductsCount": cartProductsCount,
 			"product":         product,
 			"isProductInCart": isProductInCart,
 		})
@@ -323,20 +394,34 @@ func (w WebController) AddItemToCart(c *gin.Context) {
   // update cart total
   RecalculateCartTotal(c, qtx, int32(userId), session.ID)
 
+  cartProductsCount, err := getCartProductsCount(c, qtx)
+  if err != nil {
+    panic(err)
+  }
+
   if err = tx.Commit(); err != nil {
     panic(err)
   }
 
-	c.HTML(http.StatusOK, "components/createdCartItem.html", gin.H{})
+	c.HTML(http.StatusOK, "components/createdCartItem.html", gin.H{
+    "CartProductsCount": cartProductsCount,
+  })
 }
 
 func (w WebController) RenderCartPage(c *gin.Context) {
 	var cartProducts []db.GetProdutsInCartRow
   var session db.ShoppingSession
 
+
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
+
 	respondWithHTML := func() {
 		c.HTML(http.StatusOK, "web/cart.html", gin.H{
 			"isLoggedIn": c.GetUint64("user_id") > 0,
+      "cartProductsCount": cartProductsCount,
 			"products":   cartProducts,
       "session": session,
 		})
@@ -348,7 +433,6 @@ func (w WebController) RenderCartPage(c *gin.Context) {
 		return
 	}
 
-  var err error
 	session, err = w.queries.GetShoppingSessionByUserId(c, userID)
 	if err == sql.ErrNoRows {
 		respondWithHTML()
@@ -502,6 +586,11 @@ func (w WebController) DeleteCartItem(c *gin.Context) {
   // update cart total
   updatedSession := RecalculateCartTotal(c, qtx, userID, session.ID)
 
+  cartProductsCount, err := getCartProductsCount(c, qtx)
+  if err != nil {
+    panic(err)
+  }
+
   if err = tx.Commit(); err != nil {
     panic(err)
   }
@@ -512,5 +601,6 @@ func (w WebController) DeleteCartItem(c *gin.Context) {
 
   c.HTML(http.StatusOK, "components/delete_cart_item.html", gin.H{
     "CartTotal": updatedSession.TotalInt.Int32,
+    "CartProductsCount": cartProductsCount,
   })
 }

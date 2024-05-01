@@ -152,7 +152,7 @@ insert into products (name, price_int, label_id, images, description, in_stock) 
 insert into product_categories (product_id, category_id) values ('1', '2');
 insert into product_categories (product_id, category_id) values ('2', '2');
 
-insert into products (name, price_int, label_id, description, in_stock) values ('KAWAI CR-40 TRANSPARENCY', '4000', '3', 'cool piano', false);
+insert into products (name, price_int, label_id, description, in_stock) values ('KAWAI CR-40 TRANSPARENCY', '4000', '3', 'cool piano', true);
 insert into product_categories (product_id, category_id) values ('3', '1');
 
 -- pass: admin

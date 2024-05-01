@@ -1,3 +1,10 @@
 {{ define "components/delete_cart_item.html" }}
 <div id="cart-total" hx-swap-oob="true">Итоговая сумма: <span class="text-lg font-semibold">{{ .CartTotal }}.00 руб</span></div>
+<div 
+  id="cart-indicator" 
+  hx-swap-oob="true"
+  class="{{ if not .CartProductsCount }} hidden {{ end }} absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white"
+>
+  {{ .CartProductsCount }}
+</div>
 {{ end }}

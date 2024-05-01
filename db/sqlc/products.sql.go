@@ -12,6 +12,19 @@ import (
 	"github.com/lib/pq"
 )
 
+const getCartProductsCount = `-- name: GetCartProductsCount :one
+SELECT COUNT(*) FROM products p, cart_item c_i
+WHERE p.id = c_i.product_id
+  AND c_i.session_id = $1
+`
+
+func (q *Queries) GetCartProductsCount(ctx context.Context, sessionID int32) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getCartProductsCount, sessionID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getProduct = `-- name: GetProduct :one
 SELECT id, name, price_int, price_dec, label_id, images, description, in_stock FROM products
 WHERE id = $1 LIMIT 1
