@@ -611,8 +611,31 @@ func (w WebController) RenderCheckoutPage(c *gin.Context) {
     panic(err)
   }
 
+  userID := helpers.GetSession(c)
+  if userID == 0 {
+    panic("Unauthorized")
+  }
+
+  session, err := w.queries.GetShoppingSessionByUserId(c, userID)
+  if err != nil {
+    panic(err)
+  }
+
+  totalPrice := session.TotalInt.Int32
+
+  var discount int32 = 0
+  if totalPrice >= 10000 {
+    discount = 500 
+  }
+
+  finalTotal := totalPrice - discount
+
+
   c.HTML(http.StatusOK, "web/checkout.html", gin.H{
     "isLoggedIn": c.GetUint64("user_id") > 0,
     "cartProductsCount": cartProductsCount,
+    "totalPrice": totalPrice,
+    "discount": discount,
+    "finalTotal": finalTotal,
   })
 }
