@@ -3,8 +3,9 @@
 <div class="border border-rose-300 px-20 py-10 space-y-10">
   <h1 class="text-4xl">Оформление заказа</h1>
   {{ if .isLoggedIn }}
-  <div class="space-y-10">
-    logged in
+  <div class="grid grid-cols-[1fr_300px]">
+    <div class="border border-blue-200">form</div>
+    <div class="border border-sky-300">info</div>
   </div>
   {{ else }}
   <div class="space-y-10">

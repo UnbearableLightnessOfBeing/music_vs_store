@@ -802,6 +802,10 @@ video {
   grid-template-columns: 250px auto;
 }
 
+.grid-cols-\[1fr_300px\] {
+  grid-template-columns: 1fr 300px;
+}
+
 .flex-col {
   flex-direction: column;
 }
@@ -957,6 +961,16 @@ video {
 .border-slate-300 {
   --tw-border-opacity: 1;
   border-color: rgb(203 213 225 / var(--tw-border-opacity));
+}
+
+.border-blue-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(191 219 254 / var(--tw-border-opacity));
+}
+
+.border-sky-300 {
+  --tw-border-opacity: 1;
+  border-color: rgb(125 211 252 / var(--tw-border-opacity));
 }
 
 .bg-black {
