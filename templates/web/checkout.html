@@ -7,12 +7,101 @@
     <div class="border border-sky-300 col-start-2">
       <div>products - {{ .cartProductsCount}}</div>
       <div>total - {{ .totalPrice }}</div>
-      <div>discount - {{ .discount }}</div>
+      <div>delivery - {{ .deliveryPrice }}</div>
       <div>final total - {{ .finalTotal }}</div>
     </div>
-    <div class="border border-blue-200 col-start-1 row-start-1">
-      aboba 
-    </div>
+    <form 
+      hx-post="/orders"
+      hx-trigger="click from:#submit-button"
+      hx-target="this"
+      hx-target-400="#submit-error"
+      hx-swap="outerHTML"
+      class="block border border-blue-200 col-start-1 row-start-1"
+    >
+        <input type="number" name="user_id" value="{{ .userID }}" class="hidden" />
+        <input type="number" name="product_count" value="{{ .cartProductsCount }}" class="hidden" />
+        <input type="number" name="price_int" value="{{ .totalPrice }}" class="hidden" />
+        <input type="number" name="delivery_price_int" value="{{ .deliveryPrice }}" class="hidden" />
+        <input type="number" name="total_int" value="{{ .finalTotal }}" class="hidden" />
+        <div>
+          <label for="country_id">Country</label>
+          <select
+            name="country_id"
+            id="country_id"
+            class="border border-black"
+            value="1"
+          >
+            {{ range .countries }}
+            <option value="{{ .ID }}">{{ .Name }}</option>
+            {{ end }}
+          </select>
+        </div>
+        <div class="border border-pink-400 p-3">
+          {{ range .regionFields }}
+          <div>
+            <label for="{{ .IDName }}">{{ .Name }}</label>
+            <input
+              id="{{ .IDName }}"
+              name="{{ .IDName }}"
+              type="{{ .Type }}"
+              value=""
+              class="border border-black"
+            />
+          </div>
+          {{ end }}
+        </div>
+        <div>
+          <div>Способ доставки</div>
+          <select
+            name="delivery_method_id"
+            id="delivery_method_id"
+            class="border border-black"
+            value="1"
+          >
+            {{ range .deliveryMethods }}
+            <option value="{{ .ID }}">{{ .Name }}</option>
+            {{ end }}
+          </select>
+        </div>
+        <div>
+          <div>Способ оплаты</div>
+          <select
+            name="payment_method_id"
+            id="payment_method_id"
+            class="border border-black"
+            value="1"
+          >
+            {{ range .paymentMethods }}
+            <option value="{{ .ID }}">{{ .Name }}</option>
+            {{ end }}
+          </select>
+        </div>
+        <div class="border border-pink-400 p-3">
+          {{ range .personalInfoFields }}
+          <div>
+            <label for="{{ .IDName }}">{{ .Name }}</label>
+            <input
+              id="{{ .IDName }}"
+              name="{{ .IDName }}"
+              type="{{ .Type }}"
+              value=""
+              class="border border-black"
+            />
+          </div>
+          {{ end }}
+          <div>
+            <label for="customer_comment">Комментарий</label>
+            <textarea id="customer_comment" name="customer_comment" class="border border-black"></textarea>
+          </div>
+        </div>
+        <div id="submit-error" class="p-5 bg-pink-500 text-white">ha</div>
+        <div 
+          id="submit-button"
+          class="text-white text-2xl px-6 py-4 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-600 cursor-pointer w-fit"
+        >
+          Оформить заказ
+        </div>
+    </form>
   </div>
   {{ else }}
   <div class="space-y-10">
@@ -22,4 +111,3 @@
 </div>
 {{ template "layouts/footer.html" }} 
 {{ end }}
-

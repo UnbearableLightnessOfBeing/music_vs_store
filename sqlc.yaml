@@ -16,3 +16,42 @@ sql:
             go_struct_tag: 'form:"username"'
           - column: "users.email"
             go_struct_tag: 'form:"email"'
+
+          - column: "orders.user_id"
+            go_struct_tag: 'form:"user_id"'
+          - column: "orders.product_count"
+            go_struct_tag: 'form:"product_count"'
+          - column: "orders.price_int"
+            go_struct_tag: 'form:"price_int"'
+          - column: "orders.delivery_price_int"
+            go_struct_tag: 'form:"delivery_price_int"'
+          - column: "orders.total_int"
+            go_struct_tag: 'form:"total_int"'
+          - column: "orders.country_id"
+            go_struct_tag: 'form:"country_id"'
+          - column: "orders.district"
+            go_struct_tag: 'form:"district"'
+          - column: "orders.city"
+            go_struct_tag: 'form:"city"'
+          - column: "orders.postal_code"
+            go_struct_tag: 'form:"postal_code"'
+          - column: "orders.delivery_method_id"
+            go_struct_tag: 'form:"delivery_method_id"'
+          - column: "orders.payment_method_id"
+            go_struct_tag: 'form:"payment_method_id"'
+          - column: "orders.customer_firstname"
+            go_struct_tag: 'form:"customer_firstname"'
+          - column: "orders.cusotmer_middlename"
+            go_struct_tag: 'form:"customer_middlename"'
+          - column: "orders.customer_lastname"
+            go_struct_tag: 'form:"customer_lastname"'
+          - column: "orders.customer_phone_number"
+            go_struct_tag: 'form:"customer_phone_number"'
+          - column: "orders.customer_email"
+            go_struct_tag: 'form:"customer_email"'
+          - column: "orders.customer_address"
+            go_struct_tag: 'form:"customer_address"'
+          - column: "orders.customer_comment"
+            go_struct_tag: 'form:"customer_comment"'
+            nullable: true
+

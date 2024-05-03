@@ -14,9 +14,9 @@
   <div class="flex justify-end">
     <div class="space-y-4">
       <div id="cart-total">Итоговая сумма: <span class="text-lg font-semibold">{{ .session.TotalInt.Int32 }}.00 руб</span></div>
-      <div class="p-4 border border-gray-100 rounded-md hover:bg-slate-100 text-center cursor-pointer">
+      <a href="/checkout" class="block p-4 border border-gray-100 rounded-md hover:bg-slate-100 text-center cursor-pointer">
         Оформить заказ
-      </div>
+      </a>
     </div>
   </div>
   {{ else }}

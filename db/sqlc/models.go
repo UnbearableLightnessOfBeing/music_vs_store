@@ -30,13 +30,13 @@ type Comment struct {
 }
 
 type Country struct {
-	ID   int32          `json:"id"`
-	Name sql.NullString `json:"name"`
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
 }
 
 type DeliveryMethod struct {
-	ID   int32          `json:"id"`
-	Name sql.NullString `json:"name"`
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
 }
 
 type Label struct {
@@ -46,33 +46,33 @@ type Label struct {
 
 type Order struct {
 	ID                  int32          `json:"id"`
-	UserID              sql.NullInt32  `json:"user_id"`
-	ProductCount        int32          `json:"product_count"`
-	PriceInt            int32          `json:"price_int"`
+	UserID              int32          `form:"user_id" json:"user_id"`
+	ProductCount        int32          `form:"product_count" json:"product_count"`
+	PriceInt            int32          `form:"price_int" json:"price_int"`
 	PriceDec            sql.NullInt32  `json:"price_dec"`
-	DeliveryPriceInt    int32          `json:"delivery_price_int"`
+	DeliveryPriceInt    int32          `form:"delivery_price_int" json:"delivery_price_int"`
 	DeliveryPriceDec    sql.NullInt32  `json:"delivery_price_dec"`
-	TotalInt            int32          `json:"total_int"`
+	TotalInt            int32          `form:"total_int" json:"total_int"`
 	TotalDec            sql.NullInt32  `json:"total_dec"`
-	CountryID           sql.NullInt32  `json:"country_id"`
-	District            string         `json:"district"`
-	City                string         `json:"city"`
-	PostalCode          int32          `json:"postal_code"`
-	DeliveryMethodID    int32          `json:"delivery_method_id"`
-	PaymentMethodID     int32          `json:"payment_method_id"`
-	CustomerFirstname   string         `json:"customer_firstname"`
-	CusotmerMiddlename  string         `json:"cusotmer_middlename"`
-	CustomerLastname    string         `json:"customer_lastname"`
-	CustomerPhoneNumber string         `json:"customer_phone_number"`
-	CustomerEmail       string         `json:"customer_email"`
-	CustomerAddress     string         `json:"customer_address"`
-	CustomerComment     sql.NullString `json:"customer_comment"`
+	CountryID           int32          `form:"country_id" json:"country_id"`
+	District            string         `form:"district" json:"district"`
+	City                string         `form:"city" json:"city"`
+	PostalCode          int32          `form:"postal_code" json:"postal_code"`
+	DeliveryMethodID    int32          `form:"delivery_method_id" json:"delivery_method_id"`
+	PaymentMethodID     int32          `form:"payment_method_id" json:"payment_method_id"`
+	CustomerFirstname   string         `form:"customer_firstname" json:"customer_firstname"`
+	CusotmerMiddlename  string         `form:"customer_middlename" json:"cusotmer_middlename"`
+	CustomerLastname    string         `form:"customer_lastname" json:"customer_lastname"`
+	CustomerPhoneNumber string         `form:"customer_phone_number" json:"customer_phone_number"`
+	CustomerEmail       string         `form:"customer_email" json:"customer_email"`
+	CustomerAddress     string         `form:"customer_address" json:"customer_address"`
+	CustomerComment     sql.NullString `form:"customer_comment" json:"customer_comment"`
 	CreatedAt           sql.NullTime   `json:"created_at"`
 }
 
 type PaymentMethod struct {
-	ID   int32          `json:"id"`
-	Name sql.NullString `json:"name"`
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
 }
 
 type Product struct {
