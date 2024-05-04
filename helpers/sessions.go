@@ -12,7 +12,11 @@ func SetSession(c *gin.Context, userID int32) {
 
 func GetSession(c *gin.Context) int32 {
   session := sessions.Default(c)
-  return session.Get("id").(int32)
+  id, ok :=  session.Get("id").(int32)
+  if !ok {
+    return 0
+  }
+  return id
 }
 
 func ClearSession(c *gin.Context) {

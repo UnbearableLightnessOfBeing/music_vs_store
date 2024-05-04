@@ -5,6 +5,11 @@ module.exports = {
     extend: {
       fontFamily: {
         harlow: ["Harlow", "sans-serif"],
+      },
+      colors: {
+        primary: "#222222",
+        secondary: "rgb(217 119 6)",
+        hover: "rgb(241 245 249)",
       }
     },
   },
