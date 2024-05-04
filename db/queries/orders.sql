@@ -39,3 +39,7 @@ insert into orders (
   $18
 ) returning id;
 
+-- name: GetOrdersByUserId :many
+select * from orders
+where user_id = $1
+  order by id;

@@ -68,6 +68,7 @@ func main() {
   r.GET("/contacts", webController.RenderContactsPage)
   r.GET("/cart", webController.RenderCartPage)
   r.GET("/checkout", webController.RenderCheckoutPage)
+  r.GET("/orders", webController.RenderOrdersPage)
 
   // auth
   r.GET("/signup", usersController.CreateUserView)

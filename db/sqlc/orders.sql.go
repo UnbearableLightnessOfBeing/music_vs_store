@@ -98,3 +98,56 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (int32
 	err := row.Scan(&id)
 	return id, err
 }
+
+const getOrdersByUserId = `-- name: GetOrdersByUserId :many
+select id, user_id, product_count, price_int, price_dec, delivery_price_int, delivery_price_dec, total_int, total_dec, country_id, district, city, postal_code, delivery_method_id, payment_method_id, customer_firstname, cusotmer_middlename, customer_lastname, customer_phone_number, customer_email, customer_address, customer_comment, created_at from orders
+where user_id = $1
+  order by id
+`
+
+func (q *Queries) GetOrdersByUserId(ctx context.Context, userID int32) ([]Order, error) {
+	rows, err := q.db.QueryContext(ctx, getOrdersByUserId, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Order
+	for rows.Next() {
+		var i Order
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ProductCount,
+			&i.PriceInt,
+			&i.PriceDec,
+			&i.DeliveryPriceInt,
+			&i.DeliveryPriceDec,
+			&i.TotalInt,
+			&i.TotalDec,
+			&i.CountryID,
+			&i.District,
+			&i.City,
+			&i.PostalCode,
+			&i.DeliveryMethodID,
+			&i.PaymentMethodID,
+			&i.CustomerFirstname,
+			&i.CusotmerMiddlename,
+			&i.CustomerLastname,
+			&i.CustomerPhoneNumber,
+			&i.CustomerEmail,
+			&i.CustomerAddress,
+			&i.CustomerComment,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

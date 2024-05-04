@@ -631,9 +631,9 @@ func (w WebController) RenderCheckoutPage(c *gin.Context) {
 		panic(err)
 	}
 
-  if cartProductsCount == 0 {
+	if cartProductsCount == 0 {
 		c.Redirect(http.StatusMovedPermanently, "/cart")
-  }
+	}
 
 	userID := helpers.GetSession(c)
 
@@ -690,28 +690,28 @@ func (w WebController) RenderCheckoutPage(c *gin.Context) {
 }
 
 type OrderParams struct {
-	UserID              int32          `form:"user_id"`
-	ProductCount        int32          `form:"product_count"`
-	PriceInt            int32          `form:"price_int"`
-	DeliveryPriceInt    int32          `form:"delivery_price_int"`
-	TotalInt            int32          `form:"total_int"`
-	CountryID           int32          `form:"country_id"`
-	District            string         `form:"district"`
-	City                string         `form:"city"`
-	PostalCode          int32          `form:"postal_code"`
-	DeliveryMethodID    int32          `form:"delivery_method_id"`
-	PaymentMethodID     int32          `form:"payment_method_id"`
-	CustomerFirstname   string         `form:"customer_firstname"`
-	CusotmerMiddlename  string         `form:"customer_middlename"`
-	CustomerLastname    string         `form:"customer_lastname"`
-	CustomerPhoneNumber string         `form:"customer_phone_number"`
-	CustomerEmail       string         `form:"customer_email"`
-	CustomerAddress     string         `form:"customer_address"`
-	CustomerComment     sql.NullString 
+	UserID              int32  `form:"user_id"`
+	ProductCount        int32  `form:"product_count"`
+	PriceInt            int32  `form:"price_int"`
+	DeliveryPriceInt    int32  `form:"delivery_price_int"`
+	TotalInt            int32  `form:"total_int"`
+	CountryID           int32  `form:"country_id"`
+	District            string `form:"district"`
+	City                string `form:"city"`
+	PostalCode          int32  `form:"postal_code"`
+	DeliveryMethodID    int32  `form:"delivery_method_id"`
+	PaymentMethodID     int32  `form:"payment_method_id"`
+	CustomerFirstname   string `form:"customer_firstname"`
+	CusotmerMiddlename  string `form:"customer_middlename"`
+	CustomerLastname    string `form:"customer_lastname"`
+	CustomerPhoneNumber string `form:"customer_phone_number"`
+	CustomerEmail       string `form:"customer_email"`
+	CustomerAddress     string `form:"customer_address"`
+	CustomerComment     sql.NullString
 }
 
 type CommentParam struct {
-  CustomerComment *string `form:"customer_comment"`
+	CustomerComment *string `form:"customer_comment"`
 }
 
 func (w WebController) CreateOrder(c *gin.Context) {
@@ -720,88 +720,111 @@ func (w WebController) CreateOrder(c *gin.Context) {
 		panic(err)
 	}
 
-  if params.District == "" ||
-     params.City == "" ||
-     params.PostalCode == 0 ||
-     params.CustomerFirstname == "" ||
-     params.CustomerLastname == "" ||
-     params.CusotmerMiddlename == "" ||
-     params.CustomerPhoneNumber == "" ||
-     params.CustomerEmail == "" ||
-     params.CustomerAddress == "" {
-    c.Header("HX-Retarget", "#submit-error")
-    c.HTML(http.StatusBadRequest, "components/create_order_error.html", gin.H{
-      "message": "Проверте все ли поля заполнены",
-    })
-    return
-  }
+	if params.District == "" ||
+		params.City == "" ||
+		params.PostalCode == 0 ||
+		params.CustomerFirstname == "" ||
+		params.CustomerLastname == "" ||
+		params.CusotmerMiddlename == "" ||
+		params.CustomerPhoneNumber == "" ||
+		params.CustomerEmail == "" ||
+		params.CustomerAddress == "" {
+		c.Header("HX-Retarget", "#submit-error")
+		c.HTML(http.StatusBadRequest, "components/create_order_error.html", gin.H{
+			"message": "Проверте все ли поля заполнены",
+		})
+		return
+	}
 
-  var commentParam CommentParam
-  if err := c.ShouldBind(&commentParam); err != nil {
-    panic(err)
-  }
+	var commentParam CommentParam
+	if err := c.ShouldBind(&commentParam); err != nil {
+		panic(err)
+	}
 
-  if *commentParam.CustomerComment == "" || commentParam.CustomerComment == nil {
-    params.CustomerComment = sql.NullString{
-      Valid: false,
-      String: "",
-    }
-  } else {
-    params.CustomerComment = sql.NullString{
-      Valid: true,
-      String: *commentParam.CustomerComment,
-    }
-  }
+	if *commentParam.CustomerComment == "" || commentParam.CustomerComment == nil {
+		params.CustomerComment = sql.NullString{
+			Valid:  false,
+			String: "",
+		}
+	} else {
+		params.CustomerComment = sql.NullString{
+			Valid:  true,
+			String: *commentParam.CustomerComment,
+		}
+	}
 
-  session, err  := w.queries.GetShoppingSessionByUserId(c, params.UserID)
-  if err != nil {
-    panic(err)
-  }
+	session, err := w.queries.GetShoppingSessionByUserId(c, params.UserID)
+	if err != nil {
+		panic(err)
+	}
 
-  cartProducts, err := w.queries.GetProdutsInCart(c, session.ID)
-  if err != nil {
-    panic(err)
-  }
-  if len(cartProducts) == 0 {
-    panic("no products in cart")
-  }
+	cartProducts, err := w.queries.GetProdutsInCart(c, session.ID)
+	if err != nil {
+		panic(err)
+	}
+	if len(cartProducts) == 0 {
+		panic("no products in cart")
+	}
 
-  tx, err := w.db.Begin()
-  if err != nil {
-    panic(err)
-  }
-  defer tx.Rollback()
-  qtx := w.queries.WithTx(tx)
+	tx, err := w.db.Begin()
+	if err != nil {
+		panic(err)
+	}
+	defer tx.Rollback()
+	qtx := w.queries.WithTx(tx)
 
-  // create new order
+	// create new order
 	newOrderID, err := qtx.CreateOrder(c, db.CreateOrderParams(params))
+	if err != nil {
+		panic(err)
+	}
+
+	// add products_order relationships
+	for _, cartProduct := range cartProducts {
+		_, err := qtx.AddProductToOrder(c, db.AddProductToOrderParams{
+			OrderID:   newOrderID,
+			ProductID: cartProduct.ID,
+			Count:     cartProduct.Quantity,
+		})
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// delete session
+	_, err = qtx.DeleteSessionByUserId(c, params.UserID)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		panic(err)
+	}
+
+	c.HTML(http.StatusOK, "components/order_created.html", gin.H{
+		"orderID": newOrderID,
+	})
+}
+
+func (w WebController) RenderOrdersPage(c *gin.Context) {
+	userID := helpers.GetSession(c)
+	if userID == 0 {
+		c.Redirect(http.StatusMovedPermanently, "/")
+	}
+
+  cartProductsCount, err := getCartProductsCount(c, w.queries)
   if err != nil {
     panic(err)
   }
 
-  // add products_order relationships 
-  for _, cartProduct := range cartProducts {
-    _, err := qtx.AddProductToOrder(c, db.AddProductToOrderParams{
-      OrderID: newOrderID,
-      ProductID: cartProduct.ID,
-      Count: cartProduct.Quantity,
-    })
-    if err != nil {
-      panic(err)
-    }
-  }
-  
-  // delete session
-  _, err = qtx.DeleteSessionByUserId(c, params.UserID)
-  if err != nil {
-    panic(err)
-  }
+	orders, err := w.queries.GetOrdersByUserId(c, userID)
+	if err != nil {
+		panic(err)
+	}
 
-  if err := tx.Commit(); err != nil {
-    panic(err)
-  }
-
-  c.HTML(http.StatusOK, "components/order_created.html", gin.H{
-    "orderID": newOrderID,
-  })
+	c.HTML(http.StatusOK, "web/orders.html", gin.H{
+		"isLoggedIn": c.GetUint64("user_id") > 0,
+		"cartProductsCount":  cartProductsCount,
+		"orders":     orders,
+	})
 }

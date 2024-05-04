@@ -1,0 +1,20 @@
+{{ define "web/orders.html" }}
+{{ template "layouts/header.html" . }}
+{{ if not .isLoggedIn }}
+<div class="text-xl text-red-400 font-semibold">NOT logged in</div>
+{{ else }}
+<div class="p-4 border border-emerald-400 space-y-4">
+  {{ if not .orders}}
+  <div class="text-sky-400 text-xl">no orders yet</div>
+  {{ else }}
+    {{ range .orders }}
+    <div class="p-4 border border-amber-300 rounded-md">
+      <div>city: {{ .City }}</div>
+      <div>total: {{ .TotalInt }}</div>
+    </div>
+    {{ end }}
+  {{ end }}
+</div>
+{{ end }}
+{{ template "layouts/footer.html" . }}
+{{ end }}
