@@ -1,73 +1,82 @@
 {{ define "web/category.html" }} {{ template "layouts/header.html" . }}
-<form
-  hx-get="/catalogue/{{ .slug }}/htmx"
-  hx-params="*"
-  hx-target="#products"
-  hx-trigger="click from:#apply"
-  hx-swap="outerHTML transition:true"
-  class="grid grid-cols-[250px_auto] max-w-[1400px] mx-auto"
->
-  <div class="border border-red-400 space-y-4">
-    <div>Filters</div>
-    <div>
-      <div>Price</div>
-      <div class="space-y-2">
-        <label for="min_price">min</label>
-        <input
-          id="min_price"
-          class="border border-black"
-          type="number"
-          value=""
-          name="min_price"
-        />
-        <br />
-        <label for="max_price">max</label>
-        <input
-          id="max_price"
-          class="border border-black"
-          type="number"
-          value=""
-          name="max_price"
-        />
-        <br />
-        <label for="label_id">label</label>
-        <select
-          name="label_id"
-          id="label_id"
-          class="border border-black"
-          value="0"
-        >
-          <option value="0" class="hidden">Please select option</option>
-          {{ range .labels }}
-          <option value="{{ .ID }}">{{ .Name }}</option>
-          {{ end }}
-        </select>
+<div class="max-w-[1400px] mx-auto space-y-8">
+  <div class="flex gap-2">
+    <a href="/" class="hover:underline opacity-60 hover:opacity-100">Главная</a>
+    <span>/</span>
+    <a href="/catalogue" class="hover:underline opacity-60 hover:opacity-100">Каталог</a>
+    <span>/</span>
+    <div>{{ .categoryName }}</div>
+  </div>
+  <form
+    hx-get="/catalogue/{{ .slug }}/htmx"
+    hx-params="*"
+    hx-target="#products"
+    hx-trigger="click from:#apply"
+    hx-swap="outerHTML transition:true"
+    class="grid grid-cols-[250px_auto]"
+  >
+    <div class="border border-red-400 space-y-4">
+      <div>Filters</div>
+      <div>
+        <div>Price</div>
         <div class="space-y-2">
-          <label for="price_sorting">Сортировка</label>
-          <select 
+          <label for="min_price">min</label>
+          <input
+            id="min_price"
             class="border border-black"
-            name="price_sorting"
-            id="price_sorting"
-            >
-            <option value="" {{ if (eq .priceSorting "") }} selected {{ end }}>Не сортировать</option>
-            <option value="ASC" {{ if (eq .priceSorting "ASC") }} selected {{ end }}>По возрастанию цены</option>
-            <option value="DESC" {{ if (eq .priceSorting "DESC") }} selected {{ end }}>По убыванию цены</option>
+            type="number"
+            value=""
+            name="min_price"
+          />
+          <br />
+          <label for="max_price">max</label>
+          <input
+            id="max_price"
+            class="border border-black"
+            type="number"
+            value=""
+            name="max_price"
+          />
+          <br />
+          <label for="label_id">label</label>
+          <select
+            name="label_id"
+            id="label_id"
+            class="border border-black"
+            value="0"
+          >
+            <option value="0" class="hidden">Please select option</option>
+            {{ range .labels }}
+            <option value="{{ .ID }}">{{ .Name }}</option>
+            {{ end }}
           </select>
+          <div class="space-y-2">
+            <label for="price_sorting">Сортировка</label>
+            <select 
+              class="border border-black"
+              name="price_sorting"
+              id="price_sorting"
+              >
+              <option value="" {{ if (eq .priceSorting "") }} selected {{ end }}>Не сортировать</option>
+              <option value="ASC" {{ if (eq .priceSorting "ASC") }} selected {{ end }}>По возрастанию цены</option>
+              <option value="DESC" {{ if (eq .priceSorting "DESC") }} selected {{ end }}>По убыванию цены</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-4">
+        <div id="apply" class="px-4 py-2 bg-green-400 text-white cursor-pointer">
+          Apply
+        </div>
+        <div id="reset" class="px-4 py-2 bg-lime-500 text-white cursor-pointer">
+          Reset
         </div>
       </div>
     </div>
-    <div class="flex gap-4">
-      <div id="apply" class="px-4 py-2 bg-green-400 text-white cursor-pointer">
-        Apply
-      </div>
-      <div id="reset" class="px-4 py-2 bg-lime-500 text-white cursor-pointer">
-        Reset
-      </div>
+    <div class="border border-blue-400 px-6 py-3 text-primary space-y-4">
+      <h1 class="text-2xl">{{ .categoryName }}</h1>
+      {{ template "components/products.html" . }}
     </div>
-  </div>
-  <div class="border border-blue-400 p-6">
-    <h1 class="text-2xl text-green-400">{{ .categoryName }}</h1>
-    {{ template "components/products.html" . }}
-  </div>
-</form>
+  </form>
+</div>
 {{ template "layouts/footer.html" . }} {{ end }}

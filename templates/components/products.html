@@ -1,20 +1,24 @@
 {{ define "components/products.html" }}
-<div id="products">
+<div id="products" class="space-y-2">
   {{ if not .products }}
   <div>no products</div>
   {{ else }}
-  <div>Всего товаров: {{ len .products }} </div>
-  <div class="px-4 py-2 border border-red-400 rounded-xl grid grid-cols-[1fr_1fr_1fr] gap-4">
+  <div class="text-lg font-semibold">Всего {{ len .products }} товаров</div>
+  <div class="grid grid-cols-[1fr_1fr_1fr] gap-4">
     {{ range .products }}
     <a 
       href="/catalogue/{{ $.slug }}/{{ .ID }}"
-      class="block px-4 py-2 rounded-md border border-black text-emerald-500 cursor-pointer hover:bg-slate-100"
+      class="block p-4 rounded-md shadow-md shadow-[rgba(28,28,28,0.1)] cursor-pointer hover:bg-hover transition space-y-4 min-w-[290px]"
     >
-      <div>{{ .Name }}</div>
-      <div>{{ .PriceInt }}</div>
-      {{ if .Description.Valid }}
-      <div class="whitespace-pre-wrap">{{ .Description.Value }}</div>
-      {{ end }}
+      <img src="{{ index .Images 0 }}" class="h-[300px] w-full object-cover">
+      <div class="text-center text-lg font-semibold">{{ .Name }}</div>
+      <div class="text-center text-md font-bold">{{ .PriceInt }}.00 руб.</div>
+      <div class="flex justify-center gap-4 w-full items-center">
+        <div class="px-4 py-2 border border-primary hover:bg-primary hover:text-white rounded-sm transition">Подробнее</div>
+        {{ if $.isLoggedIn }}
+        <div id="to-cart" class="px-4 py-2 bg-secondary text-white transition hover:text-secondary hover:bg-transparent border border-secondary rounded-sm">В корзину</div>
+        {{ end }}
+      </div>
     </a>
     {{ end }}
   </div>
