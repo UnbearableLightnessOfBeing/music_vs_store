@@ -1,6 +1,6 @@
-{{ define "home/signup.html" }}
-  {{ template "layouts/header.html"}}
-  <h1>{{ .title }}</h1>
+{{ define "web/signup.html" }}
+  {{ template "layouts/header.html" . }}
+  <h1 class="text-4xl text-primary">Регистрация пользователя</h1>
   <form action="/signup" method="POST">
     <div>
       <label for="username">Name</label>
@@ -23,6 +23,6 @@
   {{ if .errorText }}
   <div style="padding: 10px; border: 1px solid red; background: pink; color: white;">{{ .errorText }}</div>
   {{ end }}
-  {{ template "layouts/footer.html"}}
+  {{ template "layouts/footer.html" . }}
 {{ end }}
 

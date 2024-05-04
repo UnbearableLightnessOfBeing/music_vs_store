@@ -24,34 +24,41 @@ func (q UsersController) ListUsers(c *gin.Context) {
 		panic(err)
 	}
 
-  categories, err := q.queries.ListCategories(c, db.ListCategoriesParams{
-    Limit: 10,
-    Offset: 0,
-  })
-  if err != nil {
-    panic(err)
-  }
+	categories, err := q.queries.ListCategories(c, db.ListCategoriesParams{
+		Limit:  10,
+		Offset: 0,
+	})
+	if err != nil {
+		panic(err)
+	}
 
 	c.HTML(http.StatusOK, "home/index.html", gin.H{
-		"title": "Hello GinGonic",
-		"users": users,
+		"title":      "Hello GinGonic",
+		"users":      users,
 		"categories": categories,
-    "isLoggedIn": c.GetUint64("user_id") > 0,
+		"isLoggedIn": c.GetUint64("user_id") > 0,
 	})
 }
 
-func (q UsersController) CreateUserView(c *gin.Context) {
-	c.HTML(http.StatusOK, "home/signup.html", gin.H{
-		"title": "Create new account",
-	})
-}
+// func (q UsersController) CreateUserView(c *gin.Context) {
+// 	c.HTML(http.StatusOK, "web/signup.html", gin.H{
+// 		"title": "Create new account",
+// 	})
+// }
 
-func (q UsersController) LoginView(c *gin.Context) {
-	c.HTML(http.StatusOK, "home/login.html", gin.H{})
-}
+// func (q UsersController) LoginView(c *gin.Context) {
+// 	categories, err := web.GetCategories(c, q.queries)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	c.HTML(http.StatusOK, "home/login.html", gin.H{
+// 		"isLoggedIn": c.GetUint64("user_id") > 0,
+// 		"categories": categories,
+// 	})
+// }
 
 func respondWithError(c *gin.Context, endpoint string, status int, message string) {
-	c.HTML(status, "home/" + endpoint + ".html", gin.H{
+	c.HTML(status, "web/"+endpoint+".html", gin.H{
 		"title":     "Create new account",
 		"errorText": message,
 	})

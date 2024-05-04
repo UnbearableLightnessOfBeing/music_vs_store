@@ -50,7 +50,7 @@ func main() {
   r.Use(authMiddleware.RequireAuth())
 
   // controllers
-  usersController := controllers.NewUsersController(queries)
+  // usersController := controllers.NewUsersController(queries)
   sessionsController := controllers.NewSessionsController(queries)
   dashboardController := controllers.NewDashboardController(queries)
 
@@ -71,8 +71,8 @@ func main() {
   r.GET("/orders", webController.RenderOrdersPage)
 
   // auth
-  r.GET("/signup", usersController.CreateUserView)
-  r.GET("/login", usersController.LoginView)
+  r.GET("/signup", webController.RenderSignupPage)
+  r.GET("/login", webController.RenderLoginPage)
   r.GET("/admin", authMiddleware.RequireAdmin(), dashboardController.Index)
 
   r.POST("/signup", sessionsController.Signup)

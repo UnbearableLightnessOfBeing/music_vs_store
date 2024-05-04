@@ -33,7 +33,7 @@
             {{ range $value := .pages.Pages }}
               <a
                 class="text-md hover:underline w-fit"
-                href="{{ $value.Value }}"
+                href="/{{ $value.Value }}"
               >
                 {{ $value.Name }}
               </a>
@@ -47,7 +47,7 @@
               {{ if lt $index 7 }}
               <a
                 class="text-md hover:underline w-fit"
-                href="{{ $value.Slug }}"
+                href="/catalogue/{{ $value.Slug }}"
               >
                 {{ $value.Name }}
               </a>

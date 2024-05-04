@@ -1,5 +1,5 @@
-{{ define "home/login.html" }}
-  {{ template "layouts/header.html"}}
+{{ define "web/login.html" }}
+  {{ template "layouts/header.html" . }}
   <h1>Login with your credentials</h1>
   <form action="/login" method="POST">
     <div>
@@ -15,5 +15,5 @@
   {{ if .errorText }}
   <div style="padding: 10px; border: 1px solid red; background: pink; color: white;">{{ .errorText }}</div>
   {{ end }}
-  {{ template "layouts/footer.html"}}
+  {{ template "layouts/footer.html" . }}
 {{ end }}

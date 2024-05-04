@@ -87,6 +87,7 @@ type LoginFields struct {
 }
 
 func (q SessionsController) Login(c *gin.Context) {
+
 	var params LoginFields
 	c.ShouldBind(&params)
 
