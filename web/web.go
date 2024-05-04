@@ -720,8 +720,19 @@ func (w WebController) CreateOrder(c *gin.Context) {
 		panic(err)
 	}
 
-  if params.City == "" {
-    c.HTML(http.StatusBadRequest, "components/create_order_error.html", gin.H{})
+  if params.District == "" ||
+     params.City == "" ||
+     params.PostalCode == 0 ||
+     params.CustomerFirstname == "" ||
+     params.CustomerLastname == "" ||
+     params.CusotmerMiddlename == "" ||
+     params.CustomerPhoneNumber == "" ||
+     params.CustomerEmail == "" ||
+     params.CustomerAddress == "" {
+    c.Header("HX-Retarget", "#submit-error")
+    c.HTML(http.StatusBadRequest, "components/create_order_error.html", gin.H{
+      "message": "Проверте все ли поля заполнены",
+    })
     return
   }
 
@@ -742,8 +753,51 @@ func (w WebController) CreateOrder(c *gin.Context) {
     }
   }
 
-	newOrderID, err := w.queries.CreateOrder(c, db.CreateOrderParams(params))
+  session, err  := w.queries.GetShoppingSessionByUserId(c, params.UserID)
   if err != nil {
+    panic(err)
+  }
+
+  cartProducts, err := w.queries.GetProdutsInCart(c, session.ID)
+  if err != nil {
+    panic(err)
+  }
+  if len(cartProducts) == 0 {
+    panic("no products in cart")
+  }
+
+  tx, err := w.db.Begin()
+  if err != nil {
+    panic(err)
+  }
+  defer tx.Rollback()
+  qtx := w.queries.WithTx(tx)
+
+  // create new order
+	newOrderID, err := qtx.CreateOrder(c, db.CreateOrderParams(params))
+  if err != nil {
+    panic(err)
+  }
+
+  // add products_order relationships 
+  for _, cartProduct := range cartProducts {
+    _, err := qtx.AddProductToOrder(c, db.AddProductToOrderParams{
+      OrderID: newOrderID,
+      ProductID: cartProduct.ID,
+      Count: cartProduct.Quantity,
+    })
+    if err != nil {
+      panic(err)
+    }
+  }
+  
+  // delete session
+  _, err = qtx.DeleteSessionByUserId(c, params.UserID)
+  if err != nil {
+    panic(err)
+  }
+
+  if err := tx.Commit(); err != nil {
     panic(err)
   }
 

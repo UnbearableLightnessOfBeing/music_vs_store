@@ -3,7 +3,7 @@
 <div class="border border-rose-300 px-20 py-10 space-y-10">
   <h1 class="text-4xl">Оформление заказа</h1>
   {{ if .isLoggedIn }}
-  <div class="grid grid-cols-[1fr_300px]">
+  <div id="success" hx-ext="response-targets" class="grid grid-cols-[1fr_300px]">
     <div class="border border-sky-300 col-start-2">
       <div>products - {{ .cartProductsCount}}</div>
       <div>total - {{ .totalPrice }}</div>
@@ -13,9 +13,9 @@
     <form 
       hx-post="/orders"
       hx-trigger="click from:#submit-button"
-      hx-target="this"
-      hx-target-400="#submit-error"
-      hx-swap="outerHTML"
+      hx-target="#success"
+      hx-target-errors="#submit-error"
+      hx-swap="outerHTML transition:true"
       class="block border border-blue-200 col-start-1 row-start-1"
     >
         <input type="number" name="user_id" value="{{ .userID }}" class="hidden" />
@@ -94,7 +94,7 @@
             <textarea id="customer_comment" name="customer_comment" class="border border-black"></textarea>
           </div>
         </div>
-        <div id="submit-error" class="p-5 bg-pink-500 text-white">ha</div>
+        <div id="submit-error" class="p-5 bg-pink-500 text-white hidden"></div>
         <div 
           id="submit-button"
           class="text-white text-2xl px-6 py-4 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-600 cursor-pointer w-fit"
