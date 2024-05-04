@@ -42,6 +42,17 @@ var pages = []PageLink{
 	{Name: "Контакты", Value: "contacts"},
 }
 
+func getCategories(c *gin.Context, q *db.Queries) ([]db.Category, error) {
+	categories, err := q.ListCategories(c, db.ListCategoriesParams{
+		Limit:  10,
+		Offset: 0,
+	})
+	if err != nil {
+    return nil, err
+	}
+  return categories, nil
+}
+
 func getCartProductsCount(c *gin.Context, q *db.Queries) (int32, error) {
 	userID := helpers.GetSession(c)
 
@@ -61,13 +72,10 @@ func getCartProductsCount(c *gin.Context, q *db.Queries) (int32, error) {
 }
 
 func (w WebController) RenderMainPage(c *gin.Context) {
-	categories, err := w.queries.ListCategories(c, db.ListCategoriesParams{
-		Limit:  10,
-		Offset: 0,
-	})
-	if err != nil {
-		panic(err)
-	}
+  categories, err := getCategories(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries)
 	if err != nil {
@@ -86,13 +94,10 @@ func (w WebController) RenderMainPage(c *gin.Context) {
 }
 
 func (w WebController) RenderCataloguePage(c *gin.Context) {
-	categories, err := w.queries.ListCategories(c, db.ListCategoriesParams{
-		Limit:  999,
-		Offset: 0,
-	})
-	if err != nil {
-		panic(err)
-	}
+  categories, err := getCategories(c, w.queries)
+  if err != nil {
+    panic(err)
+  }
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries)
 	if err != nil {

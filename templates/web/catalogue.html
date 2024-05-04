@@ -10,7 +10,7 @@
                   <span class="sr-only">{{ .Name }}</span>
                 </a>
                 <img
-                  alt="Electronics"
+                  alt="{{ .Name }}"
                   class="rounded-lg object-cover w-full group-hover:opacity-50 transition-opacity"
                   {{ if .ImgUrl.Valid }}
                   src="{{ .ImgUrl.Value }}"
