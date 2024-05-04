@@ -155,3 +155,40 @@ func (q *Queries) GetProdutsInCart(ctx context.Context, sessionID int32) ([]GetP
 	}
 	return items, nil
 }
+
+const searchProducts = `-- name: SearchProducts :many
+select id, name, price_int, price_dec, label_id, images, description, in_stock from products
+where LOWER(name) like $1
+`
+
+func (q *Queries) SearchProducts(ctx context.Context, name string) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, searchProducts, name)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Product
+	for rows.Next() {
+		var i Product
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.PriceInt,
+			&i.PriceDec,
+			&i.LabelID,
+			pq.Array(&i.Images),
+			&i.Description,
+			&i.InStock,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

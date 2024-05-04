@@ -69,6 +69,7 @@ func main() {
   r.GET("/cart", webController.RenderCartPage)
   r.GET("/checkout", webController.RenderCheckoutPage)
   r.GET("/orders", webController.RenderOrdersPage)
+  r.GET("/search", webController.RenderSearchPage)
 
   // auth
   r.GET("/signup", webController.RenderSignupPage)
@@ -80,13 +81,13 @@ func main() {
   r.POST("/logout", sessionsController.Logout)
 
   // htmx
-  // cart item
   r.POST("/add-to-cart", webController.AddItemToCart)
   r.POST("/decrement-quantity", webController.DecrementQuantity)
   r.POST("/increment-quantity", webController.IncrementQuantity)
   r.DELETE("/delete-cart-item/:product_id", webController.DeleteCartItem)
-  // checkout
   r.POST("/orders", webController.CreateOrder)
+  r.POST("/search", webController.SearchItems)
+
 
   // admin api
   r.POST("/admin/categories", authMiddleware.RequireAdmin(), dashboardController.CreateCategory)

@@ -6,6 +6,7 @@ import (
 	"music_vs_store/helpers"
 	"net/http"
 	"slices"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -874,5 +875,51 @@ func (w WebController) RenderSignupPage(c *gin.Context) {
 		},
 		"isLoggedIn": c.GetUint64("user_id") > 0,
 		"categories": categories,
+	})
+}
+
+func (w WebController) RenderSearchPage(c *gin.Context) {
+	categories, err := getCategories(c, w.queries)
+	if err != nil {
+		panic(err)
+	}
+
+	c.HTML(http.StatusOK, "web/search.html", gin.H{
+		"pages": PagesInfo{
+			Pages:       pages,
+			CurrentPage: "signup",
+		},
+		"isLoggedIn": c.GetUint64("user_id") > 0,
+		"categories": categories,
+	})
+}
+
+type SearchParams struct {
+	Query string `form:"search"`
+}
+
+func (w WebController) SearchItems(c *gin.Context) {
+	var params SearchParams
+	if err := c.ShouldBind(&params); err != nil {
+		panic(err)
+	}
+
+  if params.Query == "" {
+		c.HTML(http.StatusOK, "components/search_products.html", gin.H{
+      "isInputEmpty": true,
+    })
+    return
+  }
+
+	results, err := w.queries.SearchProducts(c, "%"+strings.ToLower(params.Query)+"%")
+	if err == sql.ErrNoRows {
+		c.HTML(http.StatusOK, "components/search_products.html", gin.H{})
+    return
+	} else if err != nil {
+		panic(err)
+	}
+
+	c.HTML(http.StatusOK, "components/search_products.html", gin.H{
+		"results": results,
 	})
 }

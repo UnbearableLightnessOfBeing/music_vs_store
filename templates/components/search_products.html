@@ -1,0 +1,15 @@
+{{ define "components/search_products.html" }}
+<div id="search-result" class="border border-secondary space-y-4">
+  {{ if .results }}
+    {{ range .results }}
+      <div class="p-4 border border-secondary">{{ .Name }}</div> 
+    {{ end }}
+  {{ else }}
+    {{ if .isInputEmpty }}
+      type in your query
+    {{ else }}
+      no products found
+    {{ end }}
+  {{ end }}
+</div>
+{{ end }}

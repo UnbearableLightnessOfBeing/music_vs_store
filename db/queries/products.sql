@@ -23,3 +23,7 @@ ORDER BY p.id asc;
 SELECT COUNT(*) FROM products p, cart_item c_i
 WHERE p.id = c_i.product_id
   AND c_i.session_id = $1;
+
+-- name: SearchProducts :many
+select * from products
+where LOWER(name) like $1;

@@ -1,0 +1,22 @@
+{{ define "web/search.html" }}
+{{ template "layouts/header.html" . }}
+<div class="space-y-10">
+  <div class="flex gap-4 items-center">
+    <input id="search" type="text" name="search" class="border border-primary">
+    <div 
+      hx-post="/search"
+      hx-include="[name='search']"
+      hx-target="#search-result"
+      hx-swap="outerHTML transition:true"
+      class="p-2 border border-primary cursor-pointer"
+    >
+      Search 
+    </div>
+  </div>
+  <div id="search-result" class="border border-secondary space-y-4">
+    Type your query in and submit to see search results
+  </div>
+
+</div>
+{{ template "layouts/footer.html" . }}
+{{ end }}
