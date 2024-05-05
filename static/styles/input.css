@@ -21,3 +21,18 @@
 .remove-arrow {
     -moz-appearance: textfield;
 }
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-track {
+    background: rgb(241 245 249);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(217, 119, 6, 0.3);
+    border-radius: 5px;
+    transition: all 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(217, 119, 6, 1);
+}
