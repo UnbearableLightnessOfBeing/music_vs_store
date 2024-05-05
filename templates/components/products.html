@@ -16,10 +16,7 @@
       {{ end }}
       <div class="text-center text-lg font-semibold">{{ .Name }}</div>
       <div class="text-center text-md font-bold">{{ .PriceInt }}.00 руб.</div>
-      <form 
-        hx-post="/add-to-cart"
-        hx-swap="outerHTML transition:true"
-        hx-trigger="click from:find #to-cart"
+      <div 
         class="flex justify-center gap-4 w-full items-center">
         <a
           href="/catalogue/{{ $.slug }}/{{ .ID }}"
@@ -36,7 +33,7 @@
           В корзину
         </div>
         {{ end }} -->
-      </form>
+      </div>
     </div>
     {{ end }}
   </div>
