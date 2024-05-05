@@ -1,5 +1,14 @@
 {{ define "web/product.html" }} {{ template "layouts/header.html" . }}
-<div class="flex flex-col gap-10 text-primary">
+<div class="flex flex-col gap-10 text-primary max-w-[1400px] mx-auto">
+  <div class="flex gap-2">
+    <a href="/" class="hover:underline opacity-60 hover:opacity-100">Главная</a>
+    <span>/</span>
+    <a href="/catalogue" class="hover:underline opacity-60 hover:opacity-100">Каталог</a>
+    <span>/</span>
+    <a href="/catalogue/{{ .currentCategory.Slug }}" class="hover:underline opacity-60 hover:opacity-100">{{ .currentCategory.Name }}</a>
+    <span>/</span>
+    <div>{{ .product.Name }}</div>
+  </div>
   <div class="mx-auto">
     <section class="w-full">
       <div class="container grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-8 px-4 md:px-6 max-w-[1200px]">

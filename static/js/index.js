@@ -48,7 +48,10 @@ if (resetButton) {
 // product page
 let price = 0
 const priceEl = document.getElementById("product-price")
-const priceStr = priceEl.innerText
+let priceStr = ""
+if (priceStr) {
+  priceStr = priceEl.innerText
+}
 const split = priceStr.split(" ")
 if (split.length) {
   const decimal = split[0]
@@ -93,35 +96,56 @@ if (quantity && inc && dec) {
 // }).mount();
 //
 
-const main = new Splide("#main-carousel", {
-  type: "slide",
-  rewind: true,
-  pagination: false,
-  arrows: true,
-  perMove: 1,
-})
+const mainCarousel = document.getElementById("main-carousel")
+const thumbnails = document.getElementById("thumbnail-carousel")
 
-const thumnails = new Splide('#thumbnail-carousel', {
-  fixedWidth: 100,
-  fixedHeight: 80,
-  perPage: 4,
-  gap: 10,
-  rewind: true,
-  pagination: false,
-  arrows: false,
-  focus: 'center',
-  isNavigation: true,
-  breakpoints: {
-    600: {
-      fixedWidth: 60,
-      fixedHeight: 44
+if (mainCarousel && thumbnails) {
+  const main = new Splide("#main-carousel", {
+    type: "slide",
+    rewind: true,
+    pagination: false,
+    arrows: true,
+    perMove: 1,
+  })
+
+  const thumnails = new Splide('#thumbnail-carousel', {
+    fixedWidth: 100,
+    fixedHeight: 80,
+    perPage: 4,
+    gap: 10,
+    rewind: true,
+    pagination: false,
+    arrows: false,
+    focus: 'center',
+    isNavigation: true,
+    breakpoints: {
+      600: {
+        fixedWidth: 60,
+        fixedHeight: 44
+      }
     }
-  }
-});
+  });
 
-if (main && thumnails) {
   main.sync(thumnails)
   main.mount()
   thumnails.mount()
 }
+
+const brands = document.getElementById("brands")
+if (brands) {
+  const splide = new Splide( '#brands', {
+    type   : 'loop',
+    drag   : 'free',
+    focus  : 'center',
+    perPage: 4,
+    arrows: false,
+    pagination: false,
+    autoScroll: {
+      speed: 1,
+    },
+  } );
+
+  splide.mount(window.splide.Extensions);
+}
+
 

@@ -1,5 +1,77 @@
 {{ define "web/about.html" }}
   {{ template "layouts/header.html" . }}
-  <h1 class="text-2xl text-green-400">{{ .message }}</h1>
+  <div class="space-y-8 max-w-[1400px] mx-auto">
+    <div class="flex gap-2">
+      <a href="/" class="hover:underline opacity-60 hover:opacity-100">Главная</a>
+      <span>/</span>
+      <div>О магазине</div>
+    </div>
+    <div class="space-y-4">
+      <h1 class="text-2xl">О магазине</h1>
+      <div class="border border-hover rounded-sm px-4 py-3 space-y-4 max-w-[1000px]">
+        <div class="space-y-2">
+          <div class="text-lg font-semibold">Интернет-магазин музыкальных инструментов «Music VS Store</div>
+          <p>
+            Интернет-магазин музыкальных инструментов «Music VS Store» — интернет-магазин, специализирующийся на продаже музыкальных инструментов и профессионального звукового оборудования.
+          </p>
+        </div>
+        <div class="grid grid-cols-[1fr_1fr] gap-4">
+          <div class="shadow-md shadow-hover p-2 rounded-sm hover:bg-hover transition group hover:scale-[102%] hover:shadow-lg">
+            <div class="text-lg font-semibold group-hover:text-secondary transition">Качество</div>
+            <p>Мы официальные дилеры, самых крупных поставщиков музыкальных инструментов на территории Р.Ф.</p>
+          </div>
+          <div class="shadow-md shadow-hover p-2 rounded-sm hover:bg-hover transition group hover:scale-[102%] hover:shadow-lg">
+            <div class="text-lg font-semibold group-hover:text-secondary transition">Сервис</div>
+            <p>Консультации квалифицированных менеджеров, доставка в удобное для вас время, Гарантийное и постгарантийное обслуживание.</p>
+          </div>
+          <div class="shadow-md shadow-hover p-2 rounded-sm hover:bg-hover transition group hover:scale-[102%] hover:shadow-lg">
+            <div class="text-lg font-semibold group-hover:text-secondary transition">Удобство оплаты</div>
+            <p>Вы можете выбрать подходящую вам схему оплаты (наличный, безналичный расчет, банковской карточкой), или покупку в рассрочку и кредит с выбором срока, процентной ставки и размера первого взноса.</p>
+          </div>
+          <div class="shadow-md shadow-hover p-2 rounded-sm hover:bg-hover transition group hover:scale-[102%] hover:shadow-lg">
+            <div class="text-lg font-semibold group-hover:text-secondary transition">Интернет-магазин</div>
+            <p>Выбирайте товар и совершайте покупки, получая дополнительные скидки и бонусы.</p>
+          </div>
+          <div class="shadow-md shadow-hover p-2 rounded-sm hover:bg-hover transition group hover:scale-[102%] hover:shadow-lg">
+            <div class="text-lg font-semibold group-hover:text-secondary transition">Доставка в регионы</div>
+            <p>При покупке от 10000р Осуществляем доставку оборудования прямо к вам домой или в офис - в черте города, поездки в область обсуждаются индивидуально.</p>
+          </div>
+          <div class="shadow-md shadow-hover p-2 rounded-sm hover:bg-hover transition group hover:scale-[102%] hover:shadow-lg">
+            <div class="text-lg font-semibold group-hover:text-secondary transition">Работа с юридическими лицами</div>
+            <p>Работая с юридическими лицами, мы предоставляем полный комплект документов. Также предлагаем выгодные условия сотрудничества для бюджетных организаций.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="space-y-4">
+      <h1 class="text-2xl uppercase">Бренды магазина</h1>
+      <div class="bg-hover shadow-md shadow-hover border border-hover rounded-sm max-w-[1000px]">
+        <section id="brands" class="splide w-full">
+          <div class="splide__track">
+            <ul class="splide__list">
+                <li class="splide__slide">
+                  <img class="w-full h-full object-cover" src="https://ariatorg.ru/assets/images/brands/ABK.jpg" alt="image">
+                </li>
+                <li class="splide__slide">
+                  <img class="w-full h-full object-cover" src="https://ariatorg.ru/assets/images/brands/akai.jpg" alt="image">
+                </li>
+                <li class="splide__slide">
+                  <img class="w-full h-full object-cover" src="https://ariatorg.ru/assets/images/brands/img_1005436.jpg" alt="image">
+                </li>
+                <li class="splide__slide">
+                  <img class="w-full h-full object-cover" src="https://ariatorg.ru/assets/images/brands/bji4ny34en4gsw4k8socw40sg.png" alt="image">
+                </li>
+                <li class="splide__slide">
+                  <img class="w-full h-full object-cover" src="https://ariatorg.ru/assets/images/brands/Alhambra1.jpg" alt="image">
+                </li>
+                <li class="splide__slide">
+                  <img class="w-full h-full object-cover" src="https://ariatorg.ru/assets/images/brands/Alikante.jpg" alt="image">
+                </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
   {{ template "layouts/footer.html" . }}
 {{ end }}

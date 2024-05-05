@@ -302,6 +302,11 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 		panic(err)
 	}
 
+	category, err := w.queries.GetCategoryBySlug(c, productPage.Category)
+	if err != nil {
+		panic(err)
+	}
+
 	product, err := w.queries.GetProduct(c, productPage.ProductID)
 	if err != nil {
 		panic(err)
@@ -338,6 +343,7 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 			"product":           product,
 			"isProductInCart":   isProductInCart,
 			"labelName":         labelName,
+			"currentCategory":   category,
 		})
 	}
 
