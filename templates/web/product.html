@@ -1,6 +1,6 @@
 {{ define "web/product.html" }} {{ template "layouts/header.html" . }}
-<div class="flex flex-col min-h-screen text-primary">
-  <div class="flex-1 mx-auto">
+<div class="flex flex-col gap-10 text-primary">
+  <div class="mx-auto">
     <section class="w-full">
       <div class="container grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-8 px-4 md:px-6 max-w-[1200px]">
         <div class="grid gap-4">
@@ -107,6 +107,20 @@
         </div>
       </div>
     </section>
+  </div>
+  <div class="space-y-4">
+    <h2 class="text-2xl font-bold">О товаре</h2>
+    <div>
+      <div class="flex">
+        <div class="px-6 py-3 border-t border-l border-r border-hover bg-white font-semibold cursor-pointer mb-[-1px] hover:bg-hover">Описание</div>
+        <div class="px-6 py-3 border-t border-r border-hover cursor-pointer mb-[-1px] hover:bg-hover">Характеристики</div>
+      </div>
+      <div class="px-10 py-7 border border-hover">
+        {{ if .product.Description.Valid }}
+        <p>{{ .product.Description.Value }}</p>
+        {{ end }}
+      </div>
+    </div>
   </div>
 </div>
 {{ template "layouts/footer.html" . }} {{ end }}
