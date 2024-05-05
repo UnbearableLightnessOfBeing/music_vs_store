@@ -307,6 +307,18 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 		panic(err)
 	}
 
+	labelName := ""
+	if product.LabelID.Valid {
+		productLabel, err := w.queries.GetLabel(c, product.LabelID.Int32)
+		if err == sql.ErrNoRows {
+			labelName = ""
+		} else if err != nil {
+			panic(err)
+		} else {
+			labelName = productLabel.Name
+		}
+	}
+
 	isProductInCart := false
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries)
@@ -325,6 +337,7 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 			"categories":        categories,
 			"product":           product,
 			"isProductInCart":   isProductInCart,
+			"labelName":         labelName,
 		})
 	}
 
@@ -904,17 +917,17 @@ func (w WebController) SearchItems(c *gin.Context) {
 		panic(err)
 	}
 
-  if params.Query == "" {
+	if params.Query == "" {
 		c.HTML(http.StatusOK, "components/search_products.html", gin.H{
-      "isInputEmpty": true,
-    })
-    return
-  }
+			"isInputEmpty": true,
+		})
+		return
+	}
 
 	results, err := w.queries.SearchProducts(c, "%"+strings.ToLower(params.Query)+"%")
 	if err == sql.ErrNoRows {
 		c.HTML(http.StatusOK, "components/search_products.html", gin.H{})
-    return
+		return
 	} else if err != nil {
 		panic(err)
 	}

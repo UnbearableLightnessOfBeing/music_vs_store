@@ -1,7 +1,7 @@
 {{ define "web/product.html" }} {{ template "layouts/header.html" . }}
-<div class="flex flex-col min-h-screen">
+<div class="flex flex-col min-h-screen text-primary">
   <div class="flex-1 mx-auto">
-    <section class="w-full py-12 md:py-24 lg:py-32">
+    <section class="w-full">
       <div class="container grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-8 px-4 md:px-6 max-w-[1200px]">
         <div class="grid gap-4">
           <section id="main-carousel" class="splide border border-gray-100 rounded-xl overflow-hidden">
@@ -40,32 +40,39 @@
           </section>
         </div>
         <div class="grid gap-6">
-          <div>
+          <div class="space-y-4">
             <h1 class="text-3xl font-bold">{{ .product.Name }}</h1>
             <div class="flex gap-4">
-              <div>ID товара: {{ .product.ID }}</div>
-              <div>В наличии: 
+              <div class="text-lg">ID товара: <span class="font-semibold">{{ .product.ID }}</span></div>
+              <div class="text-lg">В наличии: 
                 {{ if .product.InStock }} 
+                <span class="font-semibold text-emerald-400">
                   ДА
+                </span>
                 {{ else }}
+                <span class="font-semibold text-red-400">
                   НЕТ
-                {{ end }}</div>
+                </span>
+                {{ end }}
+              </div>
             </div>
           </div>
-          <div class="max-w-[400px] overflow-hidden overflow-ellipsis">
-            <div>Производитель: {{ if .product.LabelID.Valid }} {{ .product.LabelID.Value }} {{ end }}</div>
-            <p class="border border-red-400 overflow-hidden overflow-ellipsis line-clamp-5">
-              {{ if .product.Description.Valid }} {{ .product.Description.Value }} {{ end }}
+          <div class="max-w-[400px] overflow-hidden overflow-ellipsis space-y-2">
+            <div class="text-lg">Производитель: <span class="font-semibold">{{ .labelName }}</span></div>
+            {{ if .product.Description.Valid }}
+            <p class="border border-hover bg-hover rounded-md p-1 italic overflow-hidden overflow-ellipsis line-clamp-5">
+              {{ .product.Description.Value }}
             </p>
+            {{ end }}
           </div>
-          <div class="flex items-center gap-4">
-            <span class="text-4xl font-bold">{{ .product.PriceInt }}.00 руб</span>
+          <div class="flex items-center gap-4 text-lg">
+            Цена: <span id="product-price" class="text-4xl font-bold">{{ .product.PriceInt }}.00 руб</span>
           </div>
           <div class="grid gap-4">
             <div class="grid gap-2">
               {{ if .product.InStock }}
               <form 
-                class="flex items-center gap-2"
+                class="space-y-2"
                 hx-trigger="click from:#to-cart"
                 hx-params="*"
                 hx-post="/add-to-cart"
@@ -77,12 +84,17 @@
                   {{ if .isProductInCart }}
                     {{ template "components/createdCartItem.html" . }} 
                   {{ else }}
-                  <div id="cart-add-swap">
-                    <input type="number" name="quantity" value="1">
-                    <div id="to-cart" class="px-4 py-2 rounded-md border border-slate-300 cursor-pointer hover:bg-gray-100">В корзину</div>
+                  <div id="cart-add-swap" class="flex flex-col gap-2">
+                    <div class="flex">
+                      <div id="decrement-quantity" class="border-t border-l border-b border-primary bg-hover text-primary rounded-l-md h-[30px] w-[30px] text-center text-xl cursor-pointer hover:bg-primary hover:text-white transition">-</div>
+                      <input id="quantity" type="number" name="quantity" value="1" class="border border-primary max-w-[30px] h-[30px] text-center pointer-events-none p-0 m-0 remove-arrow">
+                      <div id="increment-quantity" class="border-t border-r border-b border-primary bg-hover text-primary rounded-r-md h-[30px] w-[30px] text-center text-xl cursor-pointer hover:bg-primary hover:text-white transition">+</div>
+                      <div class="text-lg ml-12">Общая сумма: <span id="total" class="font-semibold">{{ .product.PriceInt }}.00 руб</span></div>
+                    </div>
+                    <div id="to-cart" class="px-4 py-2 rounded-sm border border-primary cursor-pointer hover:bg-primary hover:text-white hover:border-primary transition w-fit">В корзину</div>
                   </div>
                   {{ end }}
-                <div class="px-4 py-2 rounded-md border border-slate-300 cursor-pointer hover:bg-gray-100">Купить сейчас</div>
+                <div class="px-4 py-2 rounded-sm border border-secondary cursor-pointer hover:bg-secondary hover:text-white transition w-fit">Купить сейчас</div>
                 {{ else }}
                 <a href="/login" class="hover:underline text-slate-400 hover:text-black">Чтобы купить товар или добавить его в корзину, войдите в аккаунт</a>
                 {{ end }}

@@ -9,6 +9,19 @@ import (
 	"context"
 )
 
+const getLabel = `-- name: GetLabel :one
+select id, name from labels
+where id = $1
+limit 1
+`
+
+func (q *Queries) GetLabel(ctx context.Context, id int32) (Label, error) {
+	row := q.db.QueryRowContext(ctx, getLabel, id)
+	var i Label
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
+}
+
 const listLabels = `-- name: ListLabels :many
 select id, name from labels
 order by id

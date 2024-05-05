@@ -45,6 +45,44 @@ if (resetButton) {
   })
 }
 
+// product page
+let price = 0
+const priceEl = document.getElementById("product-price")
+const priceStr = priceEl.innerText
+const split = priceStr.split(" ")
+if (split.length) {
+  const decimal = split[0]
+  const decSplit = decimal.split(".")
+  if (decSplit.length) {
+    price = decSplit[0]
+  }
+}
+
+const totalEl = document.getElementById("total")
+
+const setTotalPrice = (quantity) => {
+  if (totalEl) {
+    totalEl.innerText = `${Number(quantity) * price}.00 руб`
+  }
+}
+
+const quantity = document.getElementById("quantity")
+const inc = document.getElementById("increment-quantity")
+const dec = document.getElementById("decrement-quantity")
+if (quantity && inc && dec) {
+  inc.addEventListener("click", () => {
+    quantity.value++
+    setTotalPrice(quantity.value)
+  })
+
+  dec.addEventListener("click", () => {
+    if (quantity.value > 1) {
+      quantity.value--
+      setTotalPrice(quantity.value)
+    }
+  })
+}
+
 // splide
 // new Splide(".splide", {
 //   perPage: 4,

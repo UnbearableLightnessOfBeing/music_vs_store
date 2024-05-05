@@ -1,7 +1,7 @@
 {{ define "components/products.html" }}
 <div id="products" class="space-y-2">
   {{ if not .products }}
-  <div>no products</div>
+  <div class="text-lg text-primary text-semibold opacity-70">Товаров не найдено</div>
   {{ else }}
   <div class="text-lg font-semibold">Всего {{ len .products }} товаров</div>
   <div class="grid grid-cols-[1fr_1fr_1fr] gap-4">
