@@ -7,53 +7,57 @@
     <span>/</span>
     <div>{{ .categoryName }}</div>
   </div>
-  <form
-    hx-get="/catalogue/{{ .slug }}/htmx"
-    hx-params="*"
-    hx-target="#products"
-    hx-trigger="click from:#apply"
-    hx-swap="outerHTML transition:true"
+  <div
     class="grid grid-cols-[250px_auto]"
   >
-    <div class="border border-red-400 space-y-4">
-      <div>Filters</div>
-      <div>
-        <div>Price</div>
+    <form 
+      hx-get="/catalogue/{{ .slug }}/htmx"
+      hx-params="*"
+      hx-target="#products"
+      hx-trigger="click from:#apply"
+      hx-swap="outerHTML transition:true"
+      class="shadow-md shadow-hover space-y-3 p-4 h-fit"
+    >
+      <div class="text-lg font-semibold text-center">Фильтр по параметрам</div>
+      <div class="space-y-2">
+        <div class="text-center">Цена руб.</div>
         <div class="space-y-2">
-          <label for="min_price">min</label>
-          <input
-            id="min_price"
-            class="border border-black"
-            type="number"
-            value=""
-            name="min_price"
-          />
-          <br />
-          <label for="max_price">max</label>
-          <input
-            id="max_price"
-            class="border border-black"
-            type="number"
-            value=""
-            name="max_price"
-          />
-          <br />
-          <label for="label_id">label</label>
-          <select
-            name="label_id"
-            id="label_id"
-            class="border border-black"
-            value="0"
-          >
-            <option value="0" class="hidden">Please select option</option>
-            {{ range .labels }}
-            <option value="{{ .ID }}">{{ .Name }}</option>
-            {{ end }}
-          </select>
+          <div class="flex justify-center items-center gap-2">
+            <input
+              id="min_price"
+              class="border border-primary max-w-[100px] rounded-sm"
+              type="number"
+              value=""
+              name="min_price"
+              placeholder="min"
+            />
+            <input
+              id="max_price"
+              class="border border-primary max-w-[100px] rounded-sm"
+              type="number"
+              value=""
+              name="max_price"
+              placeholder="max"
+            />
+          </div>
+          <div class="space-y-1">
+            <label for="label_id" class="block text-center">Производитель</label>
+            <select
+              name="label_id"
+              id="label_id"
+              class="border border-primary p-1 rounded-sm"
+              value="0"
+            >
+              <option value="0" class="hidden">Выберите производителя</option>
+              {{ range .labels }}
+              <option value="{{ .ID }}">{{ .Name }}</option>
+              {{ end }}
+            </select>
+          </div>
           <div class="space-y-2">
             <label for="price_sorting">Сортировка</label>
             <select 
-              class="border border-black"
+              class="border border-primary p-1 rounded-sm"
               name="price_sorting"
               id="price_sorting"
               >
@@ -65,18 +69,18 @@
         </div>
       </div>
       <div class="flex gap-4">
-        <div id="apply" class="px-4 py-2 bg-green-400 text-white cursor-pointer">
-          Apply
+        <div id="apply" class="px-4 py-2 border border-primary bg-primary text-white cursor-pointer transition hover:bg-hover hover:text-primary">
+          Применить
         </div>
-        <div id="reset" class="px-4 py-2 bg-lime-500 text-white cursor-pointer">
-          Reset
+        <div id="reset" class="px-4 py-2 border border-transparent text-secondary cursor-pointer hover:border-secondary">
+          Сброс
         </div>
       </div>
-    </div>
-    <div class="border border-blue-400 px-6 py-3 text-primary space-y-4">
+    </form>
+    <div class="px-6 py-3 text-primary space-y-4">
       <h1 class="text-2xl">{{ .categoryName }}</h1>
       {{ template "components/products.html" . }}
     </div>
-  </form>
+  </div>
 </div>
 {{ template "layouts/footer.html" . }} {{ end }}

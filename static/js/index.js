@@ -30,8 +30,8 @@ if (logout) {
 }
 
 // all inputs
-const inputsWithNums = document.querySelectorAll("#min_price, #max_price, #label_id")
-const inputsWithText = document.querySelectorAll("#price_sorting")
+const inputsWithNums = document.querySelectorAll("#label_id")
+const inputsWithText = document.querySelectorAll("#price_sorting, #min_price, #max_price")
 // reset button
 const resetButton = document.getElementById("reset")
 if (resetButton) {
@@ -81,6 +81,9 @@ const thumnails = new Splide('#thumbnail-carousel', {
   }
 });
 
-main.sync(thumnails)
-main.mount()
-thumnails.mount()
+if (main && thumnails) {
+  main.sync(thumnails)
+  main.mount()
+  thumnails.mount()
+}
+
