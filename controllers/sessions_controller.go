@@ -31,7 +31,7 @@ func (q SessionsController) Signup(c *gin.Context) {
 	if len(params.Username) == 0 ||
 		len(params.Email) == 0 ||
 		len(params.Password) == 0 {
-		respondWithError(c, "signup", http.StatusBadRequest, "Fill out the form")
+		respondWithError(c, "signup", http.StatusBadRequest, "Заполните поля")
 		return
 	}
 
@@ -98,12 +98,12 @@ func (q SessionsController) Login(c *gin.Context) {
 
 	if len(params.Email) == 0 ||
 		len(params.Password) == 0 {
-		respondWithError(c, "login", http.StatusBadRequest, "Fill out the form")
+		respondWithError(c, "login", http.StatusBadRequest, "Заполните поля")
 		return
 	}
 
 	if !helpers.IsPasswordValid(user.Password, params.Password) {
-		respondWithError(c, "login", http.StatusUnauthorized, "Wrong credentials")
+		respondWithError(c, "login", http.StatusUnauthorized, "Неверные данные")
 		return
 	}
 
