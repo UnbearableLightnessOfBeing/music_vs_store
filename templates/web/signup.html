@@ -1,28 +1,63 @@
 {{ define "web/signup.html" }}
   {{ template "layouts/header.html" . }}
-  <h1 class="text-4xl text-primary">Регистрация пользователя</h1>
-  <form action="/signup" method="POST">
-    <div>
-      <label for="username">Name</label>
-      <input type="text" id="username" name="username">
+<div class="px-20 py-10 space-y-10 max-w-[1400px] mx-auto text-priamry">
+  <div class="flex gap-2">
+    <a href="/" class="hover:underline opacity-60 hover:opacity-100">Главная</a>
+    <span>/</span>
+    <div>Регистрация</div>
+  </div>
+  <h1 class="text-4xl">Регистрация пользователя</h1>
+  <div class="grid grid-cols-2 gap-x-10">
+    <form action="/signup" method="POST" class="space-y-6">
+      <div>
+        <input 
+          type="text" 
+          id="username" 
+          name="username"
+          placeholder="Имя пользователя"
+          class="px-4 py-2 border border-hover rounded-sm w-full outline-1 outline-secondary bg-gray-50"
+        >
+      </div>
+      <div>
+        <input 
+          type="email" 
+          id="email" 
+          name="email"
+          placeholder="Email"
+          class="px-4 py-2 border border-hover rounded-sm w-full outline-1 outline-secondary bg-gray-50"
+        >
+      </div>
+      <div>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          placeholder="Пароль"
+          class="px-4 py-2 border border-hover rounded-sm w-full outline-1 outline-secondary bg-gray-50"
+        >
+      </div>
+      <div>
+        <input 
+          type="password" 
+          id="repeat_password" 
+          name="repeat_password"
+          placeholder="Повторите пароль"
+          class="px-4 py-2 border border-hover rounded-sm w-full outline-1 outline-secondary bg-gray-50"
+        >
+      </div>
+      <button type="submit" class="px-8 py-3 rounded-sm border border-secondary text-lg font-semibold hover:bg-secondary hover:text-white transition w-full">Зарегистрировать</button>
+      {{ if .errorText }}
+        <div id="submit-error" class="px-4 py-2 bg-rose-400 bg-opacity-80 font-semibold w-fit rounded-sm text-white text-lg flex gap-2 items-center">
+          <svg class="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-384c13.3 0 24 10.7 24 24V264c0 13.3-10.7 24-24 24s-24-10.7-24-24V152c0-13.3 10.7-24 24-24zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg>
+          <div>{{ .errorText }}</div> 
+        </div>
+      {{ end }}
+    </form>
+    <div class="border border-hover px-16 py-12 space-y-4 shadow-lg shadow-hover h-fit">
+      <div class="text-3xl ">Зачем нужна регистрация?</div>
+      <div>Зарегистрировавшись на сайте, Вы сможете получить личный кабинет, что позволит Вам отслеживать историю заказов, быстрее оформлять заказы в нашем Интернет магазине. Вся информация о Вас будет доступна в любое время, и ее не нужно будет вводить повторно.</div>
     </div>
-    <div>
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email">
-    </div>
-    <div>
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password">
-    </div>
-    <div>
-      <label for="repeat_password">Repeat password</label>
-      <input type="password" id="repeat_password" name="repeat_password">
-    </div>
-    <button type="submit">Submit</button>
-  </form>
-  {{ if .errorText }}
-  <div style="padding: 10px; border: 1px solid red; background: pink; color: white;">{{ .errorText }}</div>
-  {{ end }}
-  {{ template "layouts/footer.html" . }}
+  </div>
+{{ template "layouts/footer.html" . }}
 {{ end }}
 
