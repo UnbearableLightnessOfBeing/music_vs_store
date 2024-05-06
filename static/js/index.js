@@ -49,7 +49,7 @@ if (resetButton) {
 let price = 0
 const priceEl = document.getElementById("product-price")
 let priceStr = ""
-if (priceStr) {
+if (priceEl) {
   priceStr = priceEl.innerText
 }
 const split = priceStr.split(" ")

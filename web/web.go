@@ -457,7 +457,7 @@ func (w WebController) RenderCartPage(c *gin.Context) {
 		c.HTML(http.StatusOK, "web/cart.html", gin.H{
 			"pages": PagesInfo{
 				Pages:       pages,
-				CurrentPage: "catalogue",
+				CurrentPage: "cart",
 			},
 			"isLoggedIn":        c.GetUint64("user_id") > 0,
 			"cartProductsCount": cartProductsCount,
