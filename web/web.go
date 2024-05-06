@@ -832,6 +832,32 @@ func (w WebController) CreateOrder(c *gin.Context) {
 	})
 }
 
+func createdTimeFormatted(time string) string {
+  split := strings.Split(time, " ") 
+  if len(split) < 2 {
+    return ""
+  }
+
+  date := split[0]
+  splitDate := strings.Split(date, "-")
+  if len(splitDate) < 3 {
+    date = ""
+  } else {
+    slices.Reverse(splitDate)
+    date = strings.Join(splitDate, ".")
+  }
+
+  dateTime := split[1]
+  splitDateTime := strings.Split(dateTime, ".")
+  if len(splitDateTime) < 1 {
+    dateTime = ""
+  } else {
+    dateTime = splitDateTime[0]
+  }
+
+  return date + " " + dateTime
+}
+
 func (w WebController) RenderOrdersPage(c *gin.Context) {
 	categories, err := getCategories(c, w.queries)
 	if err != nil {
@@ -862,6 +888,7 @@ func (w WebController) RenderOrdersPage(c *gin.Context) {
 		"cartProductsCount": cartProductsCount,
 		"categories":        categories,
 		"orders":            orders,
+		"ordersCount":       len(orders),
 	})
 }
 

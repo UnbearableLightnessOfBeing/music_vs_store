@@ -100,20 +100,47 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (int32
 }
 
 const getOrdersByUserId = `-- name: GetOrdersByUserId :many
-select id, user_id, product_count, price_int, price_dec, delivery_price_int, delivery_price_dec, total_int, total_dec, country_id, district, city, postal_code, delivery_method_id, payment_method_id, customer_firstname, cusotmer_middlename, customer_lastname, customer_phone_number, customer_email, customer_address, customer_comment, created_at from orders
+select id, user_id, product_count, price_int, price_dec, delivery_price_int, delivery_price_dec, total_int, total_dec, country_id, district, city, postal_code, delivery_method_id, payment_method_id, customer_firstname, cusotmer_middlename, customer_lastname, customer_phone_number, customer_email, customer_address, customer_comment, created_at, TO_CHAR(created_at, 'DD.MM.YYYY HH:MM:SS') as created_formatted from orders
 where user_id = $1
   order by id
 `
 
-func (q *Queries) GetOrdersByUserId(ctx context.Context, userID int32) ([]Order, error) {
+type GetOrdersByUserIdRow struct {
+	ID                  int32          `json:"id"`
+	UserID              int32          `form:"user_id" json:"user_id"`
+	ProductCount        int32          `form:"product_count" json:"product_count"`
+	PriceInt            int32          `form:"price_int" json:"price_int"`
+	PriceDec            sql.NullInt32  `json:"price_dec"`
+	DeliveryPriceInt    int32          `form:"delivery_price_int" json:"delivery_price_int"`
+	DeliveryPriceDec    sql.NullInt32  `json:"delivery_price_dec"`
+	TotalInt            int32          `form:"total_int" json:"total_int"`
+	TotalDec            sql.NullInt32  `json:"total_dec"`
+	CountryID           int32          `form:"country_id" json:"country_id"`
+	District            string         `form:"district" json:"district"`
+	City                string         `form:"city" json:"city"`
+	PostalCode          int32          `form:"postal_code" json:"postal_code"`
+	DeliveryMethodID    int32          `form:"delivery_method_id" json:"delivery_method_id"`
+	PaymentMethodID     int32          `form:"payment_method_id" json:"payment_method_id"`
+	CustomerFirstname   string         `form:"customer_firstname" json:"customer_firstname"`
+	CusotmerMiddlename  string         `form:"customer_middlename" json:"cusotmer_middlename"`
+	CustomerLastname    string         `form:"customer_lastname" json:"customer_lastname"`
+	CustomerPhoneNumber string         `form:"customer_phone_number" json:"customer_phone_number"`
+	CustomerEmail       string         `form:"customer_email" json:"customer_email"`
+	CustomerAddress     string         `form:"customer_address" json:"customer_address"`
+	CustomerComment     sql.NullString `form:"customer_comment" json:"customer_comment"`
+	CreatedAt           sql.NullTime   `json:"created_at"`
+	CreatedFormatted    string         `json:"created_formatted"`
+}
+
+func (q *Queries) GetOrdersByUserId(ctx context.Context, userID int32) ([]GetOrdersByUserIdRow, error) {
 	rows, err := q.db.QueryContext(ctx, getOrdersByUserId, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Order
+	var items []GetOrdersByUserIdRow
 	for rows.Next() {
-		var i Order
+		var i GetOrdersByUserIdRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.UserID,
@@ -138,6 +165,7 @@ func (q *Queries) GetOrdersByUserId(ctx context.Context, userID int32) ([]Order,
 			&i.CustomerAddress,
 			&i.CustomerComment,
 			&i.CreatedAt,
+			&i.CreatedFormatted,
 		); err != nil {
 			return nil, err
 		}

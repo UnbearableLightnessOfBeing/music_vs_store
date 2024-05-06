@@ -1,20 +1,40 @@
 {{ define "web/orders.html" }}
 {{ template "layouts/header.html" . }}
-{{ if not .isLoggedIn }}
-<div class="text-xl text-red-400 font-semibold">NOT logged in</div>
-{{ else }}
-<div class="p-4 border border-emerald-400 space-y-4">
-  {{ if not .orders}}
-  <div class="text-sky-400 text-xl">no orders yet</div>
+<div class="px-20 py-10 space-y-6 max-w-[1400px] mx-auto text-priamry">
+  <div class="flex gap-2">
+    <a href="/" class="hover:underline opacity-60 hover:opacity-100">Главная</a>
+    <span>/</span>
+    <div>Заказы</div>
+  </div>
+  <h1 class="text-4xl">Мои заказы</h1>
+  <div class="text-xl">Всего заказов: {{ .ordersCount }}</div>
+  {{ if not .isLoggedIn }}
+  <div class="text-xl text-red-400 font-semibold">NOT logged in</div>
   {{ else }}
-    {{ range .orders }}
-    <div class="p-4 border border-amber-300 rounded-md">
-      <div>city: {{ .City }}</div>
-      <div>total: {{ .TotalInt }}</div>
-    </div>
+  <div class="p-4 space-y-4">
+    {{ if not .orders}}
+    <div class="text-xl">У Вас пока нет заказов</div>
+    {{ else }}
+      {{ range .orders }}
+      <div class="p-4 border border-hover rounded-sm grid grid-cols-6 gap-y-2 shadow-md shadow-hover">
+        <div class="border-b border-hover px-2 py-2 font-semibold bg-hover">Заказ №</div>
+        <div class="border-b border-hover px-2 py-2 font-semibold bg-hover">Дата и время заказа</div>
+        <div class="border-b border-hover px-2 py-2 font-semibold bg-hover">Сумма</div>
+        <div class="border-b border-hover px-2 py-2 font-semibold bg-hover">Способ оплаты</div>
+        <div class="border-b border-hover px-2 py-2 font-semibold bg-hover">Доставка</div>
+        <div class="border-b border-hover px-2 py-2 font-semibold bg-hover"></div>
+
+        <div class="px-2 py-2">{{ .ID }}</div>
+        <div class="px-2 py-2">{{ .CreatedFormatted }}</div>
+        <div class="px-2 py-2">{{ .TotalInt }}.00 руб</div>
+        <div class="px-2 py-2">payment_method: {{ .PaymentMethodID }}</div>
+        <div class="px-2 py-2">deliv_method: {{ .DeliveryMethodID }}</div>
+        <a href="/orders/{{ .ID }}" class="block underline hover:text-secondary px-2 py-2">Подробнее</a>
+      </div>
+      {{ end }}
     {{ end }}
+  </div>
   {{ end }}
 </div>
-{{ end }}
 {{ template "layouts/footer.html" . }}
 {{ end }}

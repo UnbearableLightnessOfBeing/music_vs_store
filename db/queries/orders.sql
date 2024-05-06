@@ -40,6 +40,6 @@ insert into orders (
 ) returning id;
 
 -- name: GetOrdersByUserId :many
-select * from orders
+select *, TO_CHAR(created_at, 'DD.MM.YYYY HH:MM:SS') as created_formatted from orders
 where user_id = $1
   order by id;
