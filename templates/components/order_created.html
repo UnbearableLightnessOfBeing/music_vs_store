@@ -1,5 +1,8 @@
 {{ define "components/order_created.html" }}
-<div class="block border border-yellow-200 col-start-1 row-start-1">new order created: {{ .orderID }}</div>
+<div class="block col-start-1 row-start-1 space-y-6 text-primary">
+  <div class="text-2xl font-semibold">Спасибо за оформления заказа!</div>
+  <div>Детали заказа можно посмотреть здесь: <a href="/orders/{{ .orderID }}" class="underline hover:text-secondary">ЗАКАЗ №{{ .orderID }}</a></div>
+</div>
 <div 
   id="cart-indicator" 
   hx-swap-oob="true"

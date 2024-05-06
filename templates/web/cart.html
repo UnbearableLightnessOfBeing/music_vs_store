@@ -9,13 +9,12 @@
   {{ if .isLoggedIn }}
   <div class="space-y-6">
     {{ if not .products }}
-    <div class="text-pink-400">You have no products in cart</div>
+    <div class="text-lg">В корзине нет товаров</div>
     {{ else }} 
       {{ range .products }} 
       {{ template "components/cartItem.html" . }}
     {{ end }}
   </div>
-  {{ end }}
   <div class="flex justify-end">
     <div class="space-y-4">
       <div id="cart-total">Итоговая сумма: <span class="text-lg font-semibold">{{ .session.TotalInt.Int32 }}.00 руб</span></div>
@@ -24,6 +23,7 @@
       </a>
     </div>
   </div>
+  {{ end }}
   {{ else }}
   <a href="/login" class="hover:underline text-slate-400 hover:text-black">Чтобы добавить товары в корзину, войдите в аккаунт</a>
   {{ end }}

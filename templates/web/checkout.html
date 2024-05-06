@@ -1,14 +1,37 @@
 {{ define "web/checkout.html" }} 
 {{ template "layouts/header.html" . }}
-<div class="border border-rose-300 px-20 py-10 space-y-10">
+<div class="px-20 py-10 space-y-10 max-w-[1400px] mx-auto text-primary">
+  <div class="flex gap-2">
+    <a href="/" class="hover:underline opacity-60 hover:opacity-100">Главная</a>
+    <span>/</span>
+    <div>Оформление заказа</div>
+  </div>
   <h1 class="text-4xl">Оформление заказа</h1>
   {{ if .isLoggedIn }}
-  <div id="success" hx-ext="response-targets" class="grid grid-cols-[1fr_300px]">
-    <div class="border border-sky-300 col-start-2">
-      <div>products - {{ .cartProductsCount}}</div>
-      <div>total - {{ .totalPrice }}</div>
-      <div>delivery - {{ .deliveryPrice }}</div>
-      <div>final total - {{ .finalTotal }}</div>
+  <div id="success" hx-ext="response-targets" class="grid grid-cols-[1fr_300px] gap-x-10">
+    <div class="border border-hover col-start-2 px-5 py-6 pt-0 h-fit shadow-md shadow-hover">
+      <div class="flex justify-between items-center h-[80px] border-b border-hover">
+        <div>Ваш заказ</div>
+        <a href="/cart" class="block underline hover:text-secondary">Изменить</a>
+      </div>
+      <div class="py-6 space-y-4 border-b border-hover">
+        <div class="flex justify-between items-center">
+          <div>Товаров</div>
+          <div class="font-semibold">{{ .cartProductsCount}}</div>
+        </div>
+        <div class="flex justify-between items-center">
+          <div>На сумму</div>
+          <div class="font-semibold">{{ .totalPrice }}.00 руб</div>
+        </div>
+        <div class="flex justify-between items-center">
+          <div>Доставка</div>
+          <div class="font-semibold">{{ .deliveryPrice }}.00 руб</div>
+        </div>
+      </div>
+        <div class="flex justify-between items-center mt-6 text-xl">
+          <div>Итого</div>
+          <div class="font-semibold">{{ .finalTotal }}.00 руб</div>
+        </div>
     </div>
     <form 
       hx-post="/orders"
@@ -16,90 +39,119 @@
       hx-target="#success"
       hx-target-errors="#submit-error"
       hx-swap="outerHTML transition:true"
-      class="block border border-blue-200 col-start-1 row-start-1"
+      class="block col-start-1 row-start-1 space-y-6"
     >
         <input type="number" name="user_id" value="{{ .userID }}" class="hidden" />
         <input type="number" name="product_count" value="{{ .cartProductsCount }}" class="hidden" />
         <input type="number" name="price_int" value="{{ .totalPrice }}" class="hidden" />
         <input type="number" name="delivery_price_int" value="{{ .deliveryPrice }}" class="hidden" />
         <input type="number" name="total_int" value="{{ .finalTotal }}" class="hidden" />
-        <div>
-          <label for="country_id">Country</label>
-          <select
-            name="country_id"
-            id="country_id"
-            class="border border-black"
-            value="1"
-          >
-            {{ range .countries }}
-            <option value="{{ .ID }}">{{ .Name }}</option>
-            {{ end }}
-          </select>
-        </div>
-        <div class="border border-pink-400 p-3">
-          {{ range .regionFields }}
-          <div>
-            <label for="{{ .IDName }}">{{ .Name }}</label>
-            <input
-              id="{{ .IDName }}"
-              name="{{ .IDName }}"
-              type="{{ .Type }}"
-              value=""
-              class="border border-black"
-            />
+        <div class="border border-hover px-6 py-8 space-y-6 shadow-md shadow-hover" style="margin-top: 0">
+          <div class="flex gap-6 items-center">
+            <svg class="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M408 120c0 54.6-73.1 151.9-105.2 192c-7.7 9.6-22 9.6-29.6 0C241.1 271.9 168 174.6 168 120C168 53.7 221.7 0 288 0s120 53.7 120 120zm8 80.4c3.5-6.9 6.7-13.8 9.6-20.6c.5-1.2 1-2.5 1.5-3.7l116-46.4C558.9 123.4 576 135 576 152V422.8c0 9.8-6 18.6-15.1 22.3L416 503V200.4zM137.6 138.3c2.4 14.1 7.2 28.3 12.8 41.5c2.9 6.8 6.1 13.7 9.6 20.6V451.8L32.9 502.7C17.1 509 0 497.4 0 480.4V209.6c0-9.8 6-18.6 15.1-22.3l122.6-49zM327.8 332c13.9-17.4 35.7-45.7 56.2-77V504.3L192 449.4V255c20.5 31.3 42.3 59.6 56.2 77c20.5 25.6 59.1 25.6 79.6 0zM288 152a40 40 0 1 0 0-80 40 40 0 1 0 0 80z"/></svg>
+            <h2 class="text-2xl">Адрес доставки</h2>
           </div>
-          {{ end }}
-        </div>
-        <div>
-          <div>Способ доставки</div>
-          <select
-            name="delivery_method_id"
-            id="delivery_method_id"
-            class="border border-black"
-            value="1"
-          >
-            {{ range .deliveryMethods }}
-            <option value="{{ .ID }}">{{ .Name }}</option>
+          <div class="spce-y-2">
+            <label for="country_id" class="block"><span class="font-bold text-red-400">*</span> Страна</label>
+            <select
+              name="country_id"
+              id="country_id"
+              value="1"
+              class="px-4 py-2 border border-hover rounded-sm w-full outline-1 outline-secondary bg-gray-50"
+            >
+              {{ range .countries }}
+              <option value="{{ .ID }}">{{ .Name }}</option>
+              {{ end }}
+            </select>
+          </div>
+          <div class="space-y-4">
+            {{ range .regionFields }}
+            <div class="space-y-2">
+              <label for="{{ .IDName }}" class="block"><span class="font-bold text-red-400">*</span> {{ .Name }}</label>
+              <input
+                id="{{ .IDName }}"
+                name="{{ .IDName }}"
+                type="{{ .Type }}"
+                placeholder="Введите {{ .Name }}"
+                value=""
+                class="px-4 py-2 border border-hover rounded-sm w-full outline-1 outline-secondary bg-gray-50"
+              />
+            </div>
             {{ end }}
-          </select>
+          </div>
         </div>
-        <div>
-          <div>Способ оплаты</div>
-          <select
-            name="payment_method_id"
-            id="payment_method_id"
-            class="border border-black"
-            value="1"
-          >
-            {{ range .paymentMethods }}
-            <option value="{{ .ID }}">{{ .Name }}</option>
-            {{ end }}
-          </select>
+        <div class="border border-hover px-6 py-8 space-y-6 shadow-md shadow-hover">
+          <div class="flex gap-6 items-center">
+            <svg class="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+            <h2 class="text-2xl">Способ доставки</h2>
+          </div>
+          <div class="space-y-2">
+            <label for="delivery_method_id" class="block"><span class="font-bold text-red-400">*</span> Способ доставки</label>
+            <select
+              name="delivery_method_id"
+              id="delivery_method_id"
+              value="1"
+              class="px-4 py-2 border border-hover rounded-sm w-full outline-1 outline-secondary bg-gray-50"
+            >
+              {{ range .deliveryMethods }}
+              <option value="{{ .ID }}">{{ .Name }}</option>
+              {{ end }}
+            </select>
+          </div>
+          <div class="flex gap-6 items-center">
+            <svg class="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M312 24V34.5c6.4 1.2 12.6 2.7 18.2 4.2c12.8 3.4 20.4 16.6 17 29.4s-16.6 20.4-29.4 17c-10.9-2.9-21.1-4.9-30.2-5c-7.3-.1-14.7 1.7-19.4 4.4c-2.1 1.3-3.1 2.4-3.5 3c-.3 .5-.7 1.2-.7 2.8c0 .3 0 .5 0 .6c.2 .2 .9 1.2 3.3 2.6c5.8 3.5 14.4 6.2 27.4 10.1l.9 .3c11.1 3.3 25.9 7.8 37.9 15.3c13.7 8.6 26.1 22.9 26.4 44.9c.3 22.5-11.4 38.9-26.7 48.5c-6.7 4.1-13.9 7-21.3 8.8V232c0 13.3-10.7 24-24 24s-24-10.7-24-24V220.6c-9.5-2.3-18.2-5.3-25.6-7.8c-2.1-.7-4.1-1.4-6-2c-12.6-4.2-19.4-17.8-15.2-30.4s17.8-19.4 30.4-15.2c2.6 .9 5 1.7 7.3 2.5c13.6 4.6 23.4 7.9 33.9 8.3c8 .3 15.1-1.6 19.2-4.1c1.9-1.2 2.8-2.2 3.2-2.9c.4-.6 .9-1.8 .8-4.1l0-.2c0-1 0-2.1-4-4.6c-5.7-3.6-14.3-6.4-27.1-10.3l-1.9-.6c-10.8-3.2-25-7.5-36.4-14.4c-13.5-8.1-26.5-22-26.6-44.1c-.1-22.9 12.9-38.6 27.7-47.4c6.4-3.8 13.3-6.4 20.2-8.2V24c0-13.3 10.7-24 24-24s24 10.7 24 24zM568.2 336.3c13.1 17.8 9.3 42.8-8.5 55.9L433.1 485.5c-23.4 17.2-51.6 26.5-80.7 26.5H192 32c-17.7 0-32-14.3-32-32V416c0-17.7 14.3-32 32-32H68.8l44.9-36c22.7-18.2 50.9-28 80-28H272h16 64c17.7 0 32 14.3 32 32s-14.3 32-32 32H288 272c-8.8 0-16 7.2-16 16s7.2 16 16 16H392.6l119.7-88.2c17.8-13.1 42.8-9.3 55.9 8.5zM193.6 384l0 0-.9 0c.3 0 .6 0 .9 0z"/></svg>
+            <h2 class="text-2xl">Способ оплаты</h2>
+          </div>
+          <div class="space-y-2">
+            <label for="payment_method_id" class="block"><span class="font-bold text-red-400">*</span> Способ оплаты</label>
+            <select
+              name="payment_method_id"
+              id="payment_method_id"
+              value="1"
+              class="px-4 py-2 border border-hover rounded-sm w-full outline-1 outline-secondary bg-gray-50"
+            >
+              {{ range .paymentMethods }}
+              <option value="{{ .ID }}">{{ .Name }}</option>
+              {{ end }}
+            </select>
+          </div>
         </div>
-        <div class="border border-pink-400 p-3">
+        <div class="border border-hover px-6 py-8 space-y-6 shadow-md shadow-hover">
+          <div class="flex gap-6 items-center">
+            <svg  class="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H322.8c-3.1-8.8-3.7-18.4-1.4-27.8l15-60.1c2.8-11.3 8.6-21.5 16.8-29.7l40.3-40.3c-32.1-31-75.7-50.1-123.9-50.1H178.3zm435.5-68.3c-15.6-15.6-40.9-15.6-56.6 0l-29.4 29.4 71 71 29.4-29.4c15.6-15.6 15.6-40.9 0-56.6l-14.4-14.4zM375.9 417c-4.1 4.1-7 9.2-8.4 14.9l-15 60.1c-1.4 5.5 .2 11.2 4.2 15.2s9.7 5.6 15.2 4.2l60.1-15c5.6-1.4 10.8-4.3 14.9-8.4L576.1 358.7l-71-71L375.9 417z"/></svg>
+            <h2 class="text-2xl">Введите ваши данные</h2>
+          </div>
           {{ range .personalInfoFields }}
-          <div>
-            <label for="{{ .IDName }}">{{ .Name }}</label>
+          <div class="space-y-2">
+            <label for="{{ .IDName }}" class="block"><span class="font-bold text-red-400">*</span> {{ .Name }}</label>
             <input
               id="{{ .IDName }}"
               name="{{ .IDName }}"
               type="{{ .Type }}"
               value=""
-              class="border border-black"
+              placeholder="Введите {{ .Name }}"
+              class="px-4 py-2 border border-hover rounded-sm w-full outline-1 outline-secondary bg-gray-50"
             />
           </div>
           {{ end }}
-          <div>
-            <label for="customer_comment">Комментарий</label>
-            <textarea id="customer_comment" name="customer_comment" class="border border-black"></textarea>
+          <div class="space-y-2">
+            <label for="customer_comment" class="block">Комментарий</label>
+            <textarea 
+              id="customer_comment" 
+              name="customer_comment" 
+              placeholder="Ваш комментарий"
+              class="px-4 py-2 border border-hover rounded-sm w-full outline-1 outline-secondary bg-gray-50"
+            ></textarea>
           </div>
-        </div>
-        <div id="submit-error" class="p-5 bg-pink-500 text-white hidden"></div>
-        <div 
-          id="submit-button"
-          class="text-white text-2xl px-6 py-4 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-600 cursor-pointer w-fit"
-        >
-          Оформить заказ
+          <div id="submit-error" class="p-5 bg-pink-500 text-white hidden"></div>
+
+          <div><span class="font-bold text-red-400">*</span> Поля обязательные для заполнения</div>
+          <div 
+            id="submit-button"
+            class="text-white text-2xl px-8 py-5 rounded-sm bg-primary hover:bg-slate-700 active:bg-slate-600 cursor-pointer w-fit"
+          >
+            Оформить заказ
+          </div>
         </div>
     </form>
   </div>
