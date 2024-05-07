@@ -27,8 +27,8 @@
         <div class="px-2 py-2">{{ .ID }}</div>
         <div class="px-2 py-2">{{ .CreatedFormatted }}</div>
         <div class="px-2 py-2">{{ .TotalInt }}.00 руб</div>
-        <div class="px-2 py-2">payment_method: {{ .PaymentMethodID }}</div>
-        <div class="px-2 py-2">deliv_method: {{ .DeliveryMethodID }}</div>
+        <div class="px-2 py-2">{{ .PaymentName.Value }}</div>
+        <div class="px-2 py-2">{{ .DeliveryName.Value }}</div>
         <a href="/orders/{{ .ID }}" class="block underline hover:text-secondary px-2 py-2">Подробнее</a>
       </div>
       {{ end }}

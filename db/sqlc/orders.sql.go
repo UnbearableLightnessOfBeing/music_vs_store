@@ -100,9 +100,17 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (int32
 }
 
 const getOrdersByUserId = `-- name: GetOrdersByUserId :many
-select id, user_id, product_count, price_int, price_dec, delivery_price_int, delivery_price_dec, total_int, total_dec, country_id, district, city, postal_code, delivery_method_id, payment_method_id, customer_firstname, cusotmer_middlename, customer_lastname, customer_phone_number, customer_email, customer_address, customer_comment, created_at, TO_CHAR(created_at, 'DD.MM.YYYY HH:MM:SS') as created_formatted from orders
-where user_id = $1
-  order by id
+select o.id, o.user_id, o.product_count, o.price_int, o.price_dec, o.delivery_price_int, o.delivery_price_dec, o.total_int, o.total_dec, o.country_id, o.district, o.city, o.postal_code, o.delivery_method_id, o.payment_method_id, o.customer_firstname, o.cusotmer_middlename, o.customer_lastname, o.customer_phone_number, o.customer_email, o.customer_address, o.customer_comment, o.created_at, 
+  TO_CHAR(o.created_at, 'DD.MM.YYYY HH:MM:SS') as created_formatted ,
+  p.name as payment_name,
+  d.name as delivery_name
+  from orders o
+  left join payment_methods p
+  on o.payment_method_id = p.id
+  left join delivery_methods d
+  on o.delivery_method_id = d.id
+where o.user_id = $1
+order by o.id
 `
 
 type GetOrdersByUserIdRow struct {
@@ -130,6 +138,8 @@ type GetOrdersByUserIdRow struct {
 	CustomerComment     sql.NullString `form:"customer_comment" json:"customer_comment"`
 	CreatedAt           sql.NullTime   `json:"created_at"`
 	CreatedFormatted    string         `json:"created_formatted"`
+	PaymentName         sql.NullString `json:"payment_name"`
+	DeliveryName        sql.NullString `json:"delivery_name"`
 }
 
 func (q *Queries) GetOrdersByUserId(ctx context.Context, userID int32) ([]GetOrdersByUserIdRow, error) {
@@ -166,6 +176,8 @@ func (q *Queries) GetOrdersByUserId(ctx context.Context, userID int32) ([]GetOrd
 			&i.CustomerComment,
 			&i.CreatedAt,
 			&i.CreatedFormatted,
+			&i.PaymentName,
+			&i.DeliveryName,
 		); err != nil {
 			return nil, err
 		}

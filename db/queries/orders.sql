@@ -40,6 +40,14 @@ insert into orders (
 ) returning id;
 
 -- name: GetOrdersByUserId :many
-select *, TO_CHAR(created_at, 'DD.MM.YYYY HH:MM:SS') as created_formatted from orders
-where user_id = $1
-  order by id;
+select o.*, 
+  TO_CHAR(o.created_at, 'DD.MM.YYYY HH:MM:SS') as created_formatted ,
+  p.name as payment_name,
+  d.name as delivery_name
+  from orders o
+  left join payment_methods p
+  on o.payment_method_id = p.id
+  left join delivery_methods d
+  on o.delivery_method_id = d.id
+where o.user_id = $1
+order by o.id;
