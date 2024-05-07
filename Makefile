@@ -25,7 +25,13 @@ run-css-server:
 clear-images:
 	rm -rf ./storage/images/*
 
-reset-db:
-	make migrate-down && make migrate-up && make clear-images
+copy-dump: 
+	docker cp ./db/seeders/initial_seed.sql music_vs_store_postgres:/root/dump.sql
 
-.PHONY: postgres createdb dropdb migrate-up migrate-down sqlc test run-css-server clear-images
+run-seeder:
+	docker exec -it music_vs_store_postgres psql -U admin -d music_vs_store_db -c '\i root/dump.sql'
+
+reset-db:
+	make migrate-down && make migrate-up && make clear-images && make copy-dump && make run-seeder
+
+.PHONY: postgres createdb dropdb migrate-up migrate-down sqlc test run-css-server clear-images copy-dump run-seeder reset-db
