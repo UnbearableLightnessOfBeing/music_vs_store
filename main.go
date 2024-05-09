@@ -47,8 +47,13 @@ func main() {
   store := memstore.NewStore([]byte("secret"))
   r.Use(sessions.Sessions("users", store))
 
+  r.Use(func(c *gin.Context) {
+    c.Header("Cache-Control", "no-store, no-cache, must-revalidate")
+    c.Next()
+  })
+
   // for TESTING
-  r.Use(middlewares.LoginForTesting())
+  // r.Use(middlewares.LoginForTesting())
 
   // middlewares
   authMiddleware := middlewares.NewAuthMiddleware(queries)

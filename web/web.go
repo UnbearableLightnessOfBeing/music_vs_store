@@ -49,7 +49,9 @@ func (w WebController) RenderMainPage(c *gin.Context) {
 		panic(err)
 	}
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +73,9 @@ func (w WebController) RenderCataloguePage(c *gin.Context) {
 		panic(err)
 	}
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -93,7 +97,9 @@ func (w WebController) RenderAboutPage(c *gin.Context) {
 		panic(err)
 	}
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -116,7 +122,9 @@ func (w WebController) RenderCommentsPage(c *gin.Context) {
 		panic(err)
 	}
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -139,7 +147,9 @@ func (w WebController) RenderDeliveryPage(c *gin.Context) {
 		panic(err)
 	}
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -162,7 +172,9 @@ func (w WebController) RenderContactsPage(c *gin.Context) {
 		panic(err)
 	}
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -231,7 +243,9 @@ func (w WebController) RenderCategoryPage(c *gin.Context) {
 		panic(err)
 	}
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -320,7 +334,9 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 
 	isProductInCart := false
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -418,7 +434,9 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 	// update cart total
 	recalculateCartTotal(c, qtx, int32(userId), session.ID)
 
-	cartProductsCount, err := getCartProductsCount(c, qtx)
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, qtx, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -441,7 +459,9 @@ func (w WebController) RenderCartPage(c *gin.Context) {
 	var cartProducts []db.GetProdutsInCartRow
 	var session db.ShoppingSession
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -460,7 +480,6 @@ func (w WebController) RenderCartPage(c *gin.Context) {
 		})
 	}
 
-	userID := helpers.GetSession(c)
 	if userID == 0 {
 		respondWithHTML()
 		return
@@ -594,7 +613,7 @@ func (w WebController) DeleteCartItem(c *gin.Context) {
 	// update cart total
 	updatedSession := recalculateCartTotal(c, qtx, userID, session.ID)
 
-	cartProductsCount, err := getCartProductsCount(c, qtx)
+	cartProductsCount, err := getCartProductsCount(c, qtx, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -640,7 +659,9 @@ func (w WebController) RenderCheckoutPage(c *gin.Context) {
 		panic(err)
 	}
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+	userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -649,8 +670,6 @@ func (w WebController) RenderCheckoutPage(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, "/cart")
 		return
 	}
-
-	userID := helpers.GetSession(c)
 
 	session, err := w.queries.GetShoppingSessionByUserId(c, userID)
 	if err == sql.ErrNoRows {
@@ -862,9 +881,10 @@ func (w WebController) RenderOrdersPage(c *gin.Context) {
 	userID := helpers.GetSession(c)
 	if userID == 0 {
 		c.Redirect(http.StatusMovedPermanently, "/")
+    panic("no user")
 	}
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -907,7 +927,7 @@ func (w WebController) RenderOrderPage(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, "/")
 	}
 
-	cartProductsCount, err := getCartProductsCount(c, w.queries)
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}

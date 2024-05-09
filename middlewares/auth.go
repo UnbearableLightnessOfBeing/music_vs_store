@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"log"
 	db "music_vs_store/db/sqlc"
 	"net/http"
@@ -24,8 +23,6 @@ func (m AuthMiddleware) RequireAuth() gin.HandlerFunc {
   return func(c *gin.Context) {
     session := sessions.Default(c)
     sessionID := session.Get("id")
-
-    fmt.Println("session id:", sessionID)
 
     isUserPresent := true
 
@@ -55,8 +52,6 @@ func (m AuthMiddleware) RequireAdmin() gin.HandlerFunc {
   return func(c *gin.Context) {
     session := sessions.Default(c)
     sessionID := session.Get("id")
-
-    fmt.Println("session id from middleware:", sessionID)
 
     if sessionID != nil {
       user, err := m.queries.GetUser(c, sessionID.(int32))

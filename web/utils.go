@@ -3,7 +3,6 @@ package web
 import (
 	"database/sql"
 	db "music_vs_store/db/sqlc"
-	"music_vs_store/helpers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,9 +18,7 @@ func getCategories(c *gin.Context, q *db.Queries) ([]db.Category, error) {
 	return categories, nil
 }
 
-func getCartProductsCount(c *gin.Context, q *db.Queries) (int32, error) {
-	userID := helpers.GetSession(c)
-
+func getCartProductsCount(c *gin.Context, q *db.Queries, userID int32) (int32, error) {
 	var cartProductsCount int64 = 0
 
 	session, err := q.GetShoppingSessionByUserId(c, userID)
