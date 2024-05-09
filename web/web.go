@@ -983,7 +983,7 @@ func (w WebController) RenderSearchPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "web/search.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
-			CurrentPage: "signup",
+			CurrentPage: "search",
 		},
 		"isLoggedIn": c.GetUint64("user_id") > 0,
 		"categories": categories,
@@ -1016,6 +1016,6 @@ func (w WebController) SearchItems(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "components/search_products.html", gin.H{
-		"results": results,
+		"products": results,
 	})
 }

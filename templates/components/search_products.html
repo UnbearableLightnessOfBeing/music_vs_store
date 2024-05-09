@@ -1,14 +1,12 @@
 {{ define "components/search_products.html" }}
-<div id="search-result" class="border border-secondary space-y-4">
-  {{ if .results }}
-    {{ range .results }}
-      <div class="p-4 border border-secondary">{{ .Name }}</div> 
-    {{ end }}
+<div id="search-result" class="space-y-4">
+  {{ if .products }}
+      {{ template "components/products.html" . }}
   {{ else }}
     {{ if .isInputEmpty }}
-      type in your query
+      <div class="text-slate-500">Введите запрос, чтобы найти товар</div>
     {{ else }}
-      no products found
+      <div class="text-slate-500">По Вашему запросу ничего не найдено</div>
     {{ end }}
   {{ end }}
 </div>

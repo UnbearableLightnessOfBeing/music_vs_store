@@ -25,6 +25,10 @@ func Mul(param1 int32, param2 int32) int32 {
   return param1 * param2
 }
 
+func Arr(elements ...any) []any {
+  return elements
+}
+
 func main() {
 	r := gin.Default()
   r.Static("/styles", "./static/styles")
@@ -33,6 +37,7 @@ func main() {
   r.Static("/storage", "./storage/images/")
   r.SetFuncMap(template.FuncMap{
     "mul": Mul,
+    "arr": Arr,
   })
   r.LoadHTMLGlob("templates/**/*")
 

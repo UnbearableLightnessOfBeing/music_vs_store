@@ -4,9 +4,9 @@
   <div class="text-lg text-primary text-semibold opacity-70">Товаров не найдено</div>
   {{ else }}
   <div class="text-lg font-semibold">Всего {{ len .products }} товаров</div>
-  <div class="grid grid-cols-[1fr_1fr_1fr] gap-4">
+  <div class="grid grid-cols-3 gap-4">
     {{ range .products }}
-    <div 
+    <!--<div 
       class="block p-4 rounded-md shadow-md shadow-[rgba(28,28,28,0.1)] cursor-pointer hover:bg-hover transition space-y-4 min-w-[290px]"
     >
       {{ if .Images }}
@@ -32,9 +32,10 @@
           class="px-4 py-2 bg-secondary text-white transition hover:text-secondary hover:bg-transparent border border-secondary rounded-sm">
           В корзину
         </div>
-        {{ end }} -->
+        {{ end }}
       </div>
-    </div>
+    </div> -->
+    {{ template "components/product_card.html" (arr $.slug .) }}
     {{ end }}
   </div>
   {{ end }}
