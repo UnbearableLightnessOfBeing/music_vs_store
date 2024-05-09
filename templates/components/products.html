@@ -6,36 +6,7 @@
   <div class="text-lg font-semibold">Всего {{ len .products }} товаров</div>
   <div class="grid grid-cols-3 gap-4">
     {{ range .products }}
-    <!--<div 
-      class="block p-4 rounded-md shadow-md shadow-[rgba(28,28,28,0.1)] cursor-pointer hover:bg-hover transition space-y-4 min-w-[290px]"
-    >
-      {{ if .Images }}
-      <img src="{{ index .Images 0 }}" class="h-[300px] w-full object-cover">
-      {{ else }}
-      <img src="/assets/images/no-image.jpg" class="h-[300px] w-full object-cover">
-      {{ end }}
-      <div class="text-center text-lg font-semibold">{{ .Name }}</div>
-      <div class="text-center text-md font-bold">{{ .PriceInt }}.00 руб.</div>
-      <div 
-        class="flex justify-center gap-4 w-full items-center">
-        <a
-          href="/catalogue/{{ $.slug }}/{{ .ID }}"
-          class="block px-4 py-2 border border-primary hover:bg-primary hover:text-white rounded-sm transition">
-        Подробнее
-        </a>
-        <!-- Maybe sometime in the future =) -->
-        <!--{{ if $.isLoggedIn }}
-        <input class="hidden" type="number" name="id" value="{{ .ID }}">
-        <input class="hidden" type="number" name="quantity" value="1">
-        <div 
-          id="to-cart" 
-          class="px-4 py-2 bg-secondary text-white transition hover:text-secondary hover:bg-transparent border border-secondary rounded-sm">
-          В корзину
-        </div>
-        {{ end }}
-      </div>
-    </div> -->
-    {{ template "components/product_card.html" (arr $.slug .) }}
+    {{ template "components/product_card.html" (arr $.isLoggedIn .) }}
     {{ end }}
   </div>
   {{ end }}

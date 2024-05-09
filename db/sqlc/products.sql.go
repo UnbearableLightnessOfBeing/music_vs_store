@@ -159,6 +159,8 @@ func (q *Queries) GetProdutsInCart(ctx context.Context, sessionID int32) ([]GetP
 const searchProducts = `-- name: SearchProducts :many
 select id, name, price_int, price_dec, label_id, images, description, in_stock from products
 where LOWER(name) like $1
+ OR LOWER(description) like $1
+order by id
 `
 
 func (q *Queries) SearchProducts(ctx context.Context, name string) ([]Product, error) {

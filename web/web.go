@@ -286,7 +286,6 @@ func (w WebController) RenderProducts(c *gin.Context) {
 }
 
 type ProductPage struct {
-	Category  string `uri:"slug" binding:"required"`
 	ProductID int32  `uri:"id" binding:"required"`
 }
 
@@ -299,11 +298,6 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 	var productPage ProductPage
 
 	if err := c.ShouldBindUri(&productPage); err != nil {
-		panic(err)
-	}
-
-	category, err := w.queries.GetCategoryBySlug(c, productPage.Category)
-	if err != nil {
 		panic(err)
 	}
 
@@ -335,7 +329,7 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 		c.HTML(http.StatusOK, "web/product.html", gin.H{
 			"pages": PagesInfo{
 				Pages:       pages,
-				CurrentPage: "catalogue",
+				CurrentPage: "product",
 			},
 			"isLoggedIn":        c.GetUint64("user_id") > 0,
 			"cartProductsCount": cartProductsCount,
@@ -343,7 +337,6 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 			"product":           product,
 			"isProductInCart":   isProductInCart,
 			"labelName":         labelName,
-			"currentCategory":   category,
 		})
 	}
 

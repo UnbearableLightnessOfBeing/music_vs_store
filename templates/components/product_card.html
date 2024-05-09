@@ -1,10 +1,9 @@
 {{ define "components/product_card.html" }}
-{{ $slug := index . 0 }}
+{{ $isLoggedIn := index . 0 }}
 {{ $product := index . 1 }}
 <div
   class="block p-4 rounded-md shadow-md shadow-[rgba(28,28,28,0.1)] cursor-pointer hover:bg-hover transition space-y-4 min-w-[290px]"
 >
-  <div>slug - {{ $slug }}</div>
   {{ if $product.Images }}
   <img src="{{ index $product.Images 0 }}" class="h-[300px] w-full object-cover" />
   {{ else }}
@@ -17,14 +16,14 @@
   <div class="text-center text-md font-bold">{{ $product.PriceInt }}.00 руб.</div>
   <div class="flex justify-center gap-4 w-full items-center">
     <a
-      href="/catalogue/{{ $slug }}/{{ $product.ID }}"
+      href="/products/{{ $product.ID }}"
       class="block px-4 py-2 border border-primary hover:bg-primary hover:text-white rounded-sm transition"
     >
       Подробнее
     </a>
     <!-- Maybe sometime in the future =) -->
-    <!--{{ if $.isLoggedIn }}
-        <input class="hidden" type="number" name="id" value="{{ .ID }}">
+    <!--{{ if $isLoggedIn }}
+        <input class="hidden" type="number" name="id" value="{{ $product.ID }}">
         <input class="hidden" type="number" name="quantity" value="1">
         <div 
           id="to-cart" 

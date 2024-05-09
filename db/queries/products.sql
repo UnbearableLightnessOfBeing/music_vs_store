@@ -26,4 +26,6 @@ WHERE p.id = c_i.product_id
 
 -- name: SearchProducts :many
 select * from products
-where LOWER(name) like $1;
+where LOWER(name) like $1
+ OR LOWER(description) like $1
+order by id;
