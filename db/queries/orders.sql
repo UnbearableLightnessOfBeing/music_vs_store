@@ -51,3 +51,29 @@ select o.*,
   on o.delivery_method_id = d.id
 where o.user_id = $1
 order by o.id;
+
+-- name: GetOrder :one
+select o.*,
+  TO_CHAR(o.created_at, 'DD.MM.YYYY HH:MM') as created_formatted ,
+  p.name as payment_name,
+  d.name as delivery_name
+  from orders o
+  left join payment_methods p
+  on o.payment_method_id = p.id
+  left join delivery_methods d
+  on o.delivery_method_id = d.id
+where o.id = $1
+limit 1;
+
+-- name: GetOrderProducts :many
+select 
+  p.name,
+  p.images,
+  p_o.count,
+  p.price_int,
+  p.price_int * p_o.count as product_total
+from products p join product_orders p_o
+  on p.id = p_o.product_id
+where p_o.order_id = $1
+order by p.id;
+  

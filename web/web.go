@@ -654,6 +654,7 @@ func (w WebController) RenderCheckoutPage(c *gin.Context) {
 
 	if cartProductsCount == 0 {
 		c.Redirect(http.StatusMovedPermanently, "/cart")
+		return
 	}
 
 	userID := helpers.GetSession(c)
@@ -661,6 +662,7 @@ func (w WebController) RenderCheckoutPage(c *gin.Context) {
 	session, err := w.queries.GetShoppingSessionByUserId(c, userID)
 	if err == sql.ErrNoRows {
 		c.Redirect(http.StatusMovedPermanently, "/")
+		return
 	} else if err != nil {
 		panic(err)
 	}
@@ -833,29 +835,29 @@ func (w WebController) CreateOrder(c *gin.Context) {
 }
 
 func createdTimeFormatted(time string) string {
-  split := strings.Split(time, " ") 
-  if len(split) < 2 {
-    return ""
-  }
+	split := strings.Split(time, " ")
+	if len(split) < 2 {
+		return ""
+	}
 
-  date := split[0]
-  splitDate := strings.Split(date, "-")
-  if len(splitDate) < 3 {
-    date = ""
-  } else {
-    slices.Reverse(splitDate)
-    date = strings.Join(splitDate, ".")
-  }
+	date := split[0]
+	splitDate := strings.Split(date, "-")
+	if len(splitDate) < 3 {
+		date = ""
+	} else {
+		slices.Reverse(splitDate)
+		date = strings.Join(splitDate, ".")
+	}
 
-  dateTime := split[1]
-  splitDateTime := strings.Split(dateTime, ".")
-  if len(splitDateTime) < 1 {
-    dateTime = ""
-  } else {
-    dateTime = splitDateTime[0]
-  }
+	dateTime := split[1]
+	splitDateTime := strings.Split(dateTime, ".")
+	if len(splitDateTime) < 1 {
+		dateTime = ""
+	} else {
+		dateTime = splitDateTime[0]
+	}
 
-  return date + " " + dateTime
+	return date + " " + dateTime
 }
 
 func (w WebController) RenderOrdersPage(c *gin.Context) {
@@ -882,13 +884,61 @@ func (w WebController) RenderOrdersPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "web/orders.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
-			CurrentPage: "",
+			CurrentPage: "orders",
 		},
 		"isLoggedIn":        c.GetUint64("user_id") > 0,
 		"cartProductsCount": cartProductsCount,
 		"categories":        categories,
 		"orders":            orders,
 		"ordersCount":       len(orders),
+	})
+}
+
+type OrderPage struct {
+	OrderID int32 `uri:"id" binding:"required"`
+}
+
+func (w WebController) RenderOrderPage(c *gin.Context) {
+	var orderPage OrderPage
+	if err := c.ShouldBindUri(&orderPage); err != nil {
+		panic(err)
+	}
+
+	categories, err := getCategories(c, w.queries)
+	if err != nil {
+		panic(err)
+	}
+
+	userID := helpers.GetSession(c)
+	if userID == 0 {
+		c.Redirect(http.StatusMovedPermanently, "/")
+	}
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries)
+	if err != nil {
+		panic(err)
+	}
+
+	order, err := w.queries.GetOrder(c, orderPage.OrderID)
+	if err != nil {
+		panic(err)
+	}
+
+	orderProducts, err := w.queries.GetOrderProducts(c, order.ID)
+	if err != nil {
+		panic(err)
+	}
+
+	c.HTML(http.StatusOK, "web/order.html", gin.H{
+		"pages": PagesInfo{
+			Pages:       pages,
+			CurrentPage: "orders",
+		},
+		"isLoggedIn":        c.GetUint64("user_id") > 0,
+		"cartProductsCount": cartProductsCount,
+		"categories":        categories,
+		"order":             order,
+		"orderProducts":     orderProducts,
 	})
 }
 

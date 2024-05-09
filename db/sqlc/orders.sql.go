@@ -8,6 +8,8 @@ package db
 import (
 	"context"
 	"database/sql"
+
+	"github.com/lib/pq"
 )
 
 const createOrder = `-- name: CreateOrder :one
@@ -97,6 +99,133 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (int32
 	var id int32
 	err := row.Scan(&id)
 	return id, err
+}
+
+const getOrder = `-- name: GetOrder :one
+select o.id, o.user_id, o.product_count, o.price_int, o.price_dec, o.delivery_price_int, o.delivery_price_dec, o.total_int, o.total_dec, o.country_id, o.district, o.city, o.postal_code, o.delivery_method_id, o.payment_method_id, o.customer_firstname, o.cusotmer_middlename, o.customer_lastname, o.customer_phone_number, o.customer_email, o.customer_address, o.customer_comment, o.created_at,
+  TO_CHAR(o.created_at, 'DD.MM.YYYY HH:MM') as created_formatted ,
+  p.name as payment_name,
+  d.name as delivery_name
+  from orders o
+  left join payment_methods p
+  on o.payment_method_id = p.id
+  left join delivery_methods d
+  on o.delivery_method_id = d.id
+where o.id = $1
+limit 1
+`
+
+type GetOrderRow struct {
+	ID                  int32          `json:"id"`
+	UserID              int32          `form:"user_id" json:"user_id"`
+	ProductCount        int32          `form:"product_count" json:"product_count"`
+	PriceInt            int32          `form:"price_int" json:"price_int"`
+	PriceDec            sql.NullInt32  `json:"price_dec"`
+	DeliveryPriceInt    int32          `form:"delivery_price_int" json:"delivery_price_int"`
+	DeliveryPriceDec    sql.NullInt32  `json:"delivery_price_dec"`
+	TotalInt            int32          `form:"total_int" json:"total_int"`
+	TotalDec            sql.NullInt32  `json:"total_dec"`
+	CountryID           int32          `form:"country_id" json:"country_id"`
+	District            string         `form:"district" json:"district"`
+	City                string         `form:"city" json:"city"`
+	PostalCode          int32          `form:"postal_code" json:"postal_code"`
+	DeliveryMethodID    int32          `form:"delivery_method_id" json:"delivery_method_id"`
+	PaymentMethodID     int32          `form:"payment_method_id" json:"payment_method_id"`
+	CustomerFirstname   string         `form:"customer_firstname" json:"customer_firstname"`
+	CusotmerMiddlename  string         `form:"customer_middlename" json:"cusotmer_middlename"`
+	CustomerLastname    string         `form:"customer_lastname" json:"customer_lastname"`
+	CustomerPhoneNumber string         `form:"customer_phone_number" json:"customer_phone_number"`
+	CustomerEmail       string         `form:"customer_email" json:"customer_email"`
+	CustomerAddress     string         `form:"customer_address" json:"customer_address"`
+	CustomerComment     sql.NullString `form:"customer_comment" json:"customer_comment"`
+	CreatedAt           sql.NullTime   `json:"created_at"`
+	CreatedFormatted    string         `json:"created_formatted"`
+	PaymentName         sql.NullString `json:"payment_name"`
+	DeliveryName        sql.NullString `json:"delivery_name"`
+}
+
+func (q *Queries) GetOrder(ctx context.Context, id int32) (GetOrderRow, error) {
+	row := q.db.QueryRowContext(ctx, getOrder, id)
+	var i GetOrderRow
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.ProductCount,
+		&i.PriceInt,
+		&i.PriceDec,
+		&i.DeliveryPriceInt,
+		&i.DeliveryPriceDec,
+		&i.TotalInt,
+		&i.TotalDec,
+		&i.CountryID,
+		&i.District,
+		&i.City,
+		&i.PostalCode,
+		&i.DeliveryMethodID,
+		&i.PaymentMethodID,
+		&i.CustomerFirstname,
+		&i.CusotmerMiddlename,
+		&i.CustomerLastname,
+		&i.CustomerPhoneNumber,
+		&i.CustomerEmail,
+		&i.CustomerAddress,
+		&i.CustomerComment,
+		&i.CreatedAt,
+		&i.CreatedFormatted,
+		&i.PaymentName,
+		&i.DeliveryName,
+	)
+	return i, err
+}
+
+const getOrderProducts = `-- name: GetOrderProducts :many
+select 
+  p.name,
+  p.images,
+  p_o.count,
+  p.price_int,
+  p.price_int * p_o.count as product_total
+from products p join product_orders p_o
+  on p.id = p_o.product_id
+where p_o.order_id = $1
+order by p.id
+`
+
+type GetOrderProductsRow struct {
+	Name         string   `json:"name"`
+	Images       []string `json:"images"`
+	Count        int32    `json:"count"`
+	PriceInt     int32    `json:"price_int"`
+	ProductTotal int32    `json:"product_total"`
+}
+
+func (q *Queries) GetOrderProducts(ctx context.Context, orderID int32) ([]GetOrderProductsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getOrderProducts, orderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetOrderProductsRow
+	for rows.Next() {
+		var i GetOrderProductsRow
+		if err := rows.Scan(
+			&i.Name,
+			pq.Array(&i.Images),
+			&i.Count,
+			&i.PriceInt,
+			&i.ProductTotal,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getOrdersByUserId = `-- name: GetOrdersByUserId :many
