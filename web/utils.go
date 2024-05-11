@@ -3,6 +3,7 @@ package web
 import (
 	"database/sql"
 	db "music_vs_store/db/sqlc"
+	"slices"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,6 +33,19 @@ func getCartProductsCount(c *gin.Context, q *db.Queries, userID int32) (int32, e
 	}
 
 	return int32(cartProductsCount), nil
+}
+
+func productIsInCart(c *gin.Context, q *db.Queries, sessionID, productID int32) (bool, error) {
+  cartProducts, err := q.GetProdutsInCart(c, sessionID)
+  if err != nil && err != sql.ErrNoRows {
+    return false, err
+  } 
+
+  isInCart := slices.ContainsFunc(cartProducts, func(product db.GetProdutsInCartRow) bool {
+    return product.ID == productID
+  })
+
+  return isInCart, nil
 }
 
 func recalculateCartTotal(c *gin.Context, q *db.Queries, userID, sessionID int32) db.ShoppingSession {

@@ -65,7 +65,7 @@
           <div class="max-w-[400px] overflow-hidden overflow-ellipsis space-y-2">
             <div class="text-lg">Производитель: <span class="font-semibold">{{ .labelName }}</span></div>
             {{ if .product.Description.Valid }}
-            <p class="border border-hover bg-hover rounded-md p-1 italic overflow-hidden overflow-ellipsis line-clamp-5">
+            <p class="rounded-md p-1 italic overflow-hidden overflow-ellipsis line-clamp-5">
               {{ .product.Description.Value }}
             </p>
             {{ end }}
@@ -99,7 +99,14 @@
                     <div id="to-cart" class="px-4 py-2 rounded-sm border border-primary cursor-pointer hover:bg-primary hover:text-white hover:border-primary transition w-fit">В корзину</div>
                   </div>
                   {{ end }}
-                <div class="px-4 py-2 rounded-sm border border-secondary cursor-pointer hover:bg-secondary hover:text-white transition w-fit">Купить сейчас</div>
+                <div 
+                  hx-trigger="click"
+                  hx-post="/buy-product"
+                  hx-include="[name='id'],[name='quantity']"
+                  class="px-4 py-2 rounded-sm border border-secondary cursor-pointer hover:bg-secondary hover:text-white transition w-fit"
+                >
+                  Купить сейчас
+                </div>
                 {{ else }}
                 <a href="/login" class="hover:underline text-slate-400 hover:text-black">Чтобы купить товар или добавить его в корзину, войдите в аккаунт</a>
                 {{ end }}

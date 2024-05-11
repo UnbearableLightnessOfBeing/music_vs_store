@@ -398,7 +398,7 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 
 	userId := c.GetUint64("user_id")
 	if userId == 0 {
-		panic("unauthorized")
+		panic("unauthorized action")
 	}
 
 	tx, err := w.db.Begin()
@@ -420,6 +420,15 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 			panic(err)
 		}
 	}
+
+  isPorductInCart, err := productIsInCart(c, qtx, session.ID, cartItemParams.ProductID)
+  if err != nil {
+    panic(err)
+  }
+
+  if isPorductInCart {
+    panic("Produt is already in cart")
+  }
 
 	_, err = qtx.CreateCartItem(c, db.CreateCartItemParams{
 		SessionID: session.ID,
@@ -448,6 +457,11 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 	c.HTML(http.StatusOK, "components/createdCartItem.html", gin.H{
 		"CartProductsCount": cartProductsCount,
 	})
+}
+
+func (w WebController) BuyProduct(c *gin.Context) {
+	c.Header("HX-Redirect", "/checkout")
+  w.AddItemToCart(c)
 }
 
 func (w WebController) RenderCartPage(c *gin.Context) {

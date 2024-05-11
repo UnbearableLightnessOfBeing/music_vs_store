@@ -53,7 +53,7 @@ func main() {
   })
 
   // for TESTING
-  // r.Use(middlewares.LoginForTesting())
+  r.Use(middlewares.LoginForTesting())
 
   // middlewares
   authMiddleware := middlewares.NewAuthMiddleware(queries)
@@ -93,6 +93,7 @@ func main() {
 
   // htmx
   r.POST("/add-to-cart", webController.AddItemToCart)
+  r.POST("/buy-product", webController.BuyProduct)
   r.POST("/decrement-quantity", webController.DecrementQuantity)
   r.POST("/increment-quantity", webController.IncrementQuantity)
   r.DELETE("/delete-cart-item/:product_id", webController.DeleteCartItem)
