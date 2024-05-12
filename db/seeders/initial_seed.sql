@@ -1,10 +1,10 @@
-INSERT INTO categories (name, slug, img_url) VALUES ('Клавишные инструменты', 'keyboards', '/assets/images/categories/keyboards.jpg');
-INSERT INTO categories (name, slug, img_url) VALUES ('Гитары', 'guitars', '/assets/images/categories/guitars.jpg');
-INSERT INTO categories (name, slug, img_url) VALUES ('Духовые инструменты', 'wind-instruments', '/assets/images/categories/wind-instruments.jpg');
-INSERT INTO categories (name, slug, img_url) VALUES ('Ударные инструменты', 'percussion', '/assets/images/categories/percussion.jpg');
-INSERT INTO categories (name, slug, img_url) VALUES ('Звуковое оборудование', 'sound-equipment', '/assets/images/categories/sound-equipment.jpg');
-INSERT INTO categories (name, slug, img_url) VALUES ('Микрофоны', 'mics', '/assets/images/categories/mics.jpg');
-INSERT INTO categories (name, slug, img_url) VALUES ('Разъемы и кабели', 'cables', '/assets/images/categories/cables.jpg');
+INSERT INTO categories (name, slug, img_url) VALUES ('Клавишные инструменты', 'keyboards', '/assets/images/categories/клавиши.jpg');
+INSERT INTO categories (name, slug, img_url) VALUES ('Гитары', 'guitars', '/assets/images/categories/гитара.jpg');
+INSERT INTO categories (name, slug, img_url) VALUES ('Духовые инструменты', 'wind-instruments', '/assets/images/categories/духовые.jpg');
+INSERT INTO categories (name, slug, img_url) VALUES ('Ударные инструменты', 'percussion', '/assets/images/categories/барабаны.jpg');
+INSERT INTO categories (name, slug, img_url) VALUES ('Звуковое оборудование', 'sound-equipment', '/assets/images/categories/звуковое оборудование.jpg');
+INSERT INTO categories (name, slug, img_url) VALUES ('Микрофоны', 'mics', '/assets/images/categories/микрофоны.jpg');
+INSERT INTO categories (name, slug, img_url) VALUES ('Разъемы и кабели', 'cables', '/assets/images/categories/кабели.jpg');
 
 insert into labels (name) values ('Honor');
 insert into labels (name) values ('Huawey');
