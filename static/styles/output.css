@@ -1072,6 +1072,10 @@ video {
   white-space: nowrap;
 }
 
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
+}
+
 .rounded-full {
   border-radius: 9999px;
 }

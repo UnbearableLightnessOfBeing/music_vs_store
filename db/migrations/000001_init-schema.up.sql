@@ -6,6 +6,7 @@ CREATE TABLE "products" (
   "label_id" integer DEFAULT null,
   "images" varchar[] DEFAULT null,
   "description" text DEFAULT null,
+  "characteristics" text DEFAULT null,
   "in_stock" bool NOT NULL
 );
 

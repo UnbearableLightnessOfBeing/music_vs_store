@@ -11,9 +11,16 @@ insert into labels (name) values ('Huawey');
 insert into labels (name) values ('LG');
 
 insert into products (name, price_int, label_id, images, description, in_stock) values ('Alhambra', '1200', '1','{ "/assets/images/products/alhambra.jpg", "/assets/images/products/alhambra_1.jpg", "/assets/images/products/alhambra_2.jpg" }'::varchar[], 'cool guitar', true);
-insert into products (name, price_int, label_id, images, description, in_stock) values ('ALMANSA', '900', '2','{ "/assets/images/products/almansa.jpg", "/assets/images/products/almansa_1.jpg", "/assets/images/products/almansa_2.jpg", "/assets/images/products/almansa_3.jpg", "/assets/images/products/almansa_4.jpg", "/assets/images/products/almansa_5.jpg", "/assets/images/products/almansa_6.jpg" }'::varchar[], 'ALMANSA 402 Cedro – 6-струнная полноразмерная классическая гитара.
+insert into products (name, price_int, label_id, images, description, in_stock, characteristics) values ('ALMANSA', '900', '2','{ "/assets/images/products/almansa.jpg", "/assets/images/products/almansa_1.jpg", "/assets/images/products/almansa_2.jpg", "/assets/images/products/almansa_3.jpg", "/assets/images/products/almansa_4.jpg", "/assets/images/products/almansa_5.jpg", "/assets/images/products/almansa_6.jpg" }'::varchar[], 'ALMANSA 402 Cedro – 6-струнная полноразмерная классическая гитара.
 Модель из серии гитар (Estudio). Верхняя дека из массива кедра, корпус из слоеного красного дерева, гриф из красного дерева с накладкой из индийского палисандра. Мензура 650 мм, ширина верхнего порожка 52 мм. Глянцевая отделка.
-Произведена в Испании.', true);
+Произведена в Испании.', true, 'Мензура: 650мм.
+Ширина верхнего порожка: 52мм.
+Верхняя дека: массив красного кедра.
+Задняя дека и обечайка: красное дерево.
+Гриф: красное дерево.
+Накладка грифа: индийский палисандр.
+Колковая механика: никелированная.
+Окантовка: только сверху.');
 insert into product_categories (product_id, category_id) values ('1', '2');
 insert into product_categories (product_id, category_id) values ('2', '2');
 

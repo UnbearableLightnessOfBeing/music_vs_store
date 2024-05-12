@@ -133,12 +133,21 @@
     <h2 class="text-2xl font-bold">О товаре</h2>
     <div>
       <div class="flex">
-        <div class="px-6 py-3 border-t border-l border-r border-hover bg-white font-semibold cursor-pointer mb-[-1px] hover:bg-hover">Описание</div>
-        <div class="px-6 py-3 border-t border-r border-hover cursor-pointer mb-[-1px] hover:bg-hover">Характеристики</div>
+        <div id="desc-tab" class="px-6 py-3 border-t border-l border-r border-hover bg-white font-semibold cursor-pointer mb-[-1px] hover:bg-hover">Описание</div>
+        <div id="chars-tab" class="px-6 py-3 border-t border-r border-hover cursor-pointer mb-[-1px] hover:bg-hover">Характеристики</div>
       </div>
-      <div class="px-10 py-7 border border-hover">
+      <div id="desc" class="px-10 py-7 border border-hover">
         {{ if .product.Description.Valid }}
         <p>{{ .product.Description.Value }}</p>
+        {{ else }}
+        <p>Нет описания</p>
+        {{ end }}
+      </div>
+      <div id="chars" class="hidden px-10 py-7 border border-hover">
+        {{ if .product.Characteristics.Valid }}
+        <p class="whitespace-pre-wrap">{{ .product.Characteristics.Value }}</p>
+        {{ else }}
+        <p>Характеристики не указаны</p>
         {{ end }}
       </div>
     </div>

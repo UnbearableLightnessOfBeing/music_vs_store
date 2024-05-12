@@ -1080,12 +1080,12 @@ func (w WebController) CreateComment(c *gin.Context) {
 		panic(err)
 	}
 
-  comments, err := w.queries.GetComments(c)
-  if err != nil {
-    panic(err)
-  }
+	comments, err := w.queries.GetComments(c)
+	if err != nil {
+		panic(err)
+	}
 
 	c.HTML(http.StatusOK, "components/create_comment.html", gin.H{
-    "comments": comments,
-  })
+		"comments": comments,
+	})
 }

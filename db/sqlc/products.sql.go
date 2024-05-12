@@ -26,7 +26,7 @@ func (q *Queries) GetCartProductsCount(ctx context.Context, sessionID int32) (in
 }
 
 const getProduct = `-- name: GetProduct :one
-SELECT id, name, price_int, price_dec, label_id, images, description, in_stock FROM products
+SELECT id, name, price_int, price_dec, label_id, images, description, characteristics, in_stock FROM products
 WHERE id = $1 LIMIT 1
 `
 
@@ -41,13 +41,14 @@ func (q *Queries) GetProduct(ctx context.Context, id int32) (Product, error) {
 		&i.LabelID,
 		pq.Array(&i.Images),
 		&i.Description,
+		&i.Characteristics,
 		&i.InStock,
 	)
 	return i, err
 }
 
 const getProductsByCategory = `-- name: GetProductsByCategory :many
-SELECT p.id, p.name, p.price_int, p.price_dec, p.label_id, p.images, p.description, p.in_stock FROM products p, product_categories p_c
+SELECT p.id, p.name, p.price_int, p.price_dec, p.label_id, p.images, p.description, p.characteristics, p.in_stock FROM products p, product_categories p_c
 WHERE p.id = p_c.product_id
   AND $1 = p_c.category_id 
   AND (CASE WHEN $2::integer > 0 THEN p.price_int >= $2 ELSE p.price_int > 0 END)
@@ -89,6 +90,7 @@ func (q *Queries) GetProductsByCategory(ctx context.Context, arg GetProductsByCa
 			&i.LabelID,
 			pq.Array(&i.Images),
 			&i.Description,
+			&i.Characteristics,
 			&i.InStock,
 		); err != nil {
 			return nil, err
@@ -105,22 +107,23 @@ func (q *Queries) GetProductsByCategory(ctx context.Context, arg GetProductsByCa
 }
 
 const getProdutsInCart = `-- name: GetProdutsInCart :many
-SELECT p.id, p.name, p.price_int, p.price_dec, p.label_id, p.images, p.description, p.in_stock, c_i.quantity FROM products p, cart_item c_i
+SELECT p.id, p.name, p.price_int, p.price_dec, p.label_id, p.images, p.description, p.characteristics, p.in_stock, c_i.quantity FROM products p, cart_item c_i
 WHERE p.id = c_i.product_id
   AND c_i.session_id = $1
 ORDER BY p.id asc
 `
 
 type GetProdutsInCartRow struct {
-	ID          int32          `json:"id"`
-	Name        string         `json:"name"`
-	PriceInt    int32          `json:"price_int"`
-	PriceDec    sql.NullInt32  `json:"price_dec"`
-	LabelID     sql.NullInt32  `json:"label_id"`
-	Images      []string       `json:"images"`
-	Description sql.NullString `json:"description"`
-	InStock     bool           `json:"in_stock"`
-	Quantity    int32          `json:"quantity"`
+	ID              int32          `json:"id"`
+	Name            string         `json:"name"`
+	PriceInt        int32          `json:"price_int"`
+	PriceDec        sql.NullInt32  `json:"price_dec"`
+	LabelID         sql.NullInt32  `json:"label_id"`
+	Images          []string       `json:"images"`
+	Description     sql.NullString `json:"description"`
+	Characteristics sql.NullString `json:"characteristics"`
+	InStock         bool           `json:"in_stock"`
+	Quantity        int32          `json:"quantity"`
 }
 
 func (q *Queries) GetProdutsInCart(ctx context.Context, sessionID int32) ([]GetProdutsInCartRow, error) {
@@ -140,6 +143,7 @@ func (q *Queries) GetProdutsInCart(ctx context.Context, sessionID int32) ([]GetP
 			&i.LabelID,
 			pq.Array(&i.Images),
 			&i.Description,
+			&i.Characteristics,
 			&i.InStock,
 			&i.Quantity,
 		); err != nil {
@@ -157,7 +161,7 @@ func (q *Queries) GetProdutsInCart(ctx context.Context, sessionID int32) ([]GetP
 }
 
 const searchProducts = `-- name: SearchProducts :many
-select id, name, price_int, price_dec, label_id, images, description, in_stock from products
+select id, name, price_int, price_dec, label_id, images, description, characteristics, in_stock from products
 where LOWER(name) like $1
  OR LOWER(description) like $1
 order by id
@@ -180,6 +184,7 @@ func (q *Queries) SearchProducts(ctx context.Context, name string) ([]Product, e
 			&i.LabelID,
 			pq.Array(&i.Images),
 			&i.Description,
+			&i.Characteristics,
 			&i.InStock,
 		); err != nil {
 			return nil, err

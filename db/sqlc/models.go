@@ -77,14 +77,15 @@ type PaymentMethod struct {
 }
 
 type Product struct {
-	ID          int32          `json:"id"`
-	Name        string         `json:"name"`
-	PriceInt    int32          `json:"price_int"`
-	PriceDec    sql.NullInt32  `json:"price_dec"`
-	LabelID     sql.NullInt32  `json:"label_id"`
-	Images      []string       `json:"images"`
-	Description sql.NullString `json:"description"`
-	InStock     bool           `json:"in_stock"`
+	ID              int32          `json:"id"`
+	Name            string         `json:"name"`
+	PriceInt        int32          `json:"price_int"`
+	PriceDec        sql.NullInt32  `json:"price_dec"`
+	LabelID         sql.NullInt32  `json:"label_id"`
+	Images          []string       `json:"images"`
+	Description     sql.NullString `json:"description"`
+	Characteristics sql.NullString `json:"characteristics"`
+	InStock         bool           `json:"in_stock"`
 }
 
 type ProductCategory struct {

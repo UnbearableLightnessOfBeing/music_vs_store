@@ -86,6 +86,37 @@ if (quantity && inc && dec) {
   })
 }
 
+const charsTab = document.getElementById("chars-tab")
+const descTab = document.getElementById("desc-tab")
+
+const chars = document.getElementById("chars")
+const desc = document.getElementById("desc")
+
+if (charsTab) {
+  charsTab.addEventListener("click", () => {
+    desc.classList.add("hidden") 
+    chars.classList.remove("hidden") 
+
+    descTab.classList.remove("bg-white")
+    descTab.classList.remove("font-semibold")
+    charsTab.classList.add("bg-white") 
+    charsTab.classList.add("font-semibold") 
+  })
+}
+
+if (descTab) {
+  descTab.addEventListener("click", () => {
+    chars.classList.add("hidden") 
+    desc.classList.remove("hidden") 
+
+    charsTab.classList.remove("bg-white")
+    charsTab.classList.remove("font-semibold")
+    descTab.classList.add("bg-white") 
+    descTab.classList.add("font-semibold") 
+  })
+}
+
+
 // splide
 // new Splide(".splide", {
 //   perPage: 4,
