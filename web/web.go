@@ -49,7 +49,7 @@ func (w WebController) RenderMainPage(c *gin.Context) {
 		panic(err)
 	}
 
-  userID := helpers.GetSession(c)
+	userID := helpers.GetSession(c)
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
@@ -73,7 +73,7 @@ func (w WebController) RenderCataloguePage(c *gin.Context) {
 		panic(err)
 	}
 
-  userID := helpers.GetSession(c)
+	userID := helpers.GetSession(c)
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
@@ -97,12 +97,14 @@ func (w WebController) RenderAboutPage(c *gin.Context) {
 		panic(err)
 	}
 
-  userID := helpers.GetSession(c)
+	userID := helpers.GetSession(c)
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
 		panic(err)
 	}
+
+	// comments, err :=
 
 	c.HTML(http.StatusOK, "web/about.html", gin.H{
 		"pages": PagesInfo{
@@ -122,9 +124,14 @@ func (w WebController) RenderCommentsPage(c *gin.Context) {
 		panic(err)
 	}
 
-  userID := helpers.GetSession(c)
+	userID := helpers.GetSession(c)
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
+	if err != nil {
+		panic(err)
+	}
+
+	comments, err := w.queries.GetComments(c)
 	if err != nil {
 		panic(err)
 	}
@@ -138,6 +145,7 @@ func (w WebController) RenderCommentsPage(c *gin.Context) {
 		"isLoggedIn":        c.GetUint64("user_id") > 0,
 		"cartProductsCount": cartProductsCount,
 		"categories":        categories,
+		"comments":          comments,
 	})
 }
 
@@ -147,7 +155,7 @@ func (w WebController) RenderDeliveryPage(c *gin.Context) {
 		panic(err)
 	}
 
-  userID := helpers.GetSession(c)
+	userID := helpers.GetSession(c)
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
@@ -172,7 +180,7 @@ func (w WebController) RenderContactsPage(c *gin.Context) {
 		panic(err)
 	}
 
-  userID := helpers.GetSession(c)
+	userID := helpers.GetSession(c)
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
@@ -243,7 +251,7 @@ func (w WebController) RenderCategoryPage(c *gin.Context) {
 		panic(err)
 	}
 
-  userID := helpers.GetSession(c)
+	userID := helpers.GetSession(c)
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
@@ -300,7 +308,7 @@ func (w WebController) RenderProducts(c *gin.Context) {
 }
 
 type ProductPage struct {
-	ProductID int32  `uri:"id" binding:"required"`
+	ProductID int32 `uri:"id" binding:"required"`
 }
 
 func (w WebController) RenderProductPage(c *gin.Context) {
@@ -334,7 +342,7 @@ func (w WebController) RenderProductPage(c *gin.Context) {
 
 	isProductInCart := false
 
-  userID := helpers.GetSession(c)
+	userID := helpers.GetSession(c)
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
@@ -421,14 +429,14 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 		}
 	}
 
-  isPorductInCart, err := productIsInCart(c, qtx, session.ID, cartItemParams.ProductID)
-  if err != nil {
-    panic(err)
-  }
+	isPorductInCart, err := productIsInCart(c, qtx, session.ID, cartItemParams.ProductID)
+	if err != nil {
+		panic(err)
+	}
 
-  if isPorductInCart {
-    panic("Produt is already in cart")
-  }
+	if isPorductInCart {
+		panic("Produt is already in cart")
+	}
 
 	_, err = qtx.CreateCartItem(c, db.CreateCartItemParams{
 		SessionID: session.ID,
@@ -443,7 +451,7 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 	// update cart total
 	recalculateCartTotal(c, qtx, int32(userId), session.ID)
 
-  userID := helpers.GetSession(c)
+	userID := helpers.GetSession(c)
 
 	cartProductsCount, err := getCartProductsCount(c, qtx, userID)
 	if err != nil {
@@ -461,7 +469,7 @@ func (w WebController) AddItemToCart(c *gin.Context) {
 
 func (w WebController) BuyProduct(c *gin.Context) {
 	c.Header("HX-Redirect", "/checkout")
-  w.AddItemToCart(c)
+	w.AddItemToCart(c)
 }
 
 func (w WebController) RenderCartPage(c *gin.Context) {
@@ -473,7 +481,7 @@ func (w WebController) RenderCartPage(c *gin.Context) {
 	var cartProducts []db.GetProdutsInCartRow
 	var session db.ShoppingSession
 
-  userID := helpers.GetSession(c)
+	userID := helpers.GetSession(c)
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
 	if err != nil {
@@ -895,7 +903,7 @@ func (w WebController) RenderOrdersPage(c *gin.Context) {
 	userID := helpers.GetSession(c)
 	if userID == 0 {
 		c.Redirect(http.StatusMovedPermanently, "/")
-    panic("no user")
+		panic("no user")
 	}
 
 	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
@@ -1045,4 +1053,39 @@ func (w WebController) SearchItems(c *gin.Context) {
 	c.HTML(http.StatusOK, "components/search_products.html", gin.H{
 		"products": results,
 	})
+}
+
+type AddCommentParams struct {
+	Name string `form:"customer_name" binding:"required"`
+	Text string `form:"comment" binding:"required"`
+}
+
+func (w WebController) CreateComment(c *gin.Context) {
+	var commentParams AddCommentParams
+	if err := c.ShouldBind(&commentParams); err != nil {
+		panic(err)
+	}
+
+	userID := helpers.GetSession(c)
+	if userID == 0 {
+		panic("unauthorized action")
+	}
+
+	_, err := w.queries.CreateComment(c, db.CreateCommentParams{
+		UserID: userID,
+		Name:   commentParams.Name,
+		Text:   commentParams.Text,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+  comments, err := w.queries.GetComments(c)
+  if err != nil {
+    panic(err)
+  }
+
+	c.HTML(http.StatusOK, "components/create_comment.html", gin.H{
+    "comments": comments,
+  })
 }

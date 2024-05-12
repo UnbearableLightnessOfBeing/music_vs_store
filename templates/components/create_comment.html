@@ -1,0 +1,15 @@
+{{ define "components/create_comment.html" }}
+<div class="text-xl text-primary">Спасибо за Ваш отзыв</div>
+
+
+<div id="comments-container" hx-swap-oob="true" class="grid md:grid-cols-2 lg:grid-cols-3 rounded-md bg-hover gap-4 px-8 py-12">
+  {{ range .comments }}
+  <div class="bg-white rounded-md shadow-md shadow-[rgba(29,29,29,0.1)] px-4 py-6 space-y-4">
+    <div class="text-lg font-semibold">{{ .Name }}</div>
+    <p>
+      {{ .Text }}
+    </p>
+  </div>
+  {{ end }}
+</div>
+{{ end }}

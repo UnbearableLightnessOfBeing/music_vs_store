@@ -8,50 +8,27 @@
     </div>
     <div class="space-y-4">
       <h1 class="text-2xl font-semibold">Что говорят наши клиенты</h1>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 rounded-md bg-hover gap-4 px-8 py-12">
-        <div class="bg-white rounded-md shadow-md shadow-[rgba(29,29,29,0.1)] px-4 py-6 space-y-4">
-          <div class="text-lg font-semibold">Анна</div>
-          <p>
-            Заказали через интернет-магазин цифровое фортепиано NUX WK-400 RW. Товар пришел очень быстро. Качественно упакован. Инструмент потрясающий от внешнего вида до звучания!!! Идеальный бюджетный вариант!!
-            Менеджеры магазина отлично работают - быстро отвечают на все вопросы.
-          </p>
-        </div>
-        <div class="bg-white rounded-md shadow-md shadow-[rgba(29,29,29,0.1)] px-4 py-6 space-y-4">
-          <div class="text-lg font-semibold">Николай</div>
-          <p>
-            Благодарю сотрудников интернет-магазина за быструю работу и внимательность. Заказал на сайте синтезатор Касио WR7600 в кредит, буквально через 3 дня после оплаты банка получил в отделении СДЭК. Все как ожидал и в дальнейшем буду пользоваться услугами этого магазина с огромным выбором и приятным обслуживанием.
-          </p>
-        </div>
-        <div class="bg-white rounded-md shadow-md shadow-[rgba(29,29,29,0.1)] px-4 py-6 space-y-4">
-          <div class="text-lg font-semibold">Наталья</div>
-          <p>
-            Заказывала инструмент (Yamaha 164 WA) через интернет. Доставили в короткий срок в Москву. Спасибо магазину за ненавязчивое обслуживание и качественный сервис.
-          </p>
-        </div>
-        <div class="bg-white rounded-md shadow-md shadow-[rgba(29,29,29,0.1)] px-4 py-6 space-y-4">
-          <div class="text-lg font-semibold">Александр</div>
-          <p>
-            Отличное обслуживание! Выбирая классическую гитару, не только позволили поиграть на нескольких инструментах, но еще и предложили другие подходящие варианты, в итоге гитара купилась несколько дороже, чем планировалось, но звук превзошел все ожидания. Всем советую этот интернет-магазин!
-          </p>
-        </div>
-        <div class="bg-white rounded-md shadow-md shadow-[rgba(29,29,29,0.1)] px-4 py-6 space-y-4">
-          <div class="text-lg font-semibold">Виктория</div>
-          <p>
-            В январе приобрели в интернет-магазине Классика пианино YAMAHA для обучения в муз. школе.  Менеджер очень внимательно отнёсся к нашей просьбе, и доставка была точно по дате и времени.
-          </p>
-        </div>
-        <div class="bg-white rounded-md shadow-md shadow-[rgba(29,29,29,0.1)] px-4 py-6 space-y-4">
-          <div class="text-lg font-semibold">Татьяна</div>
-          <p>
-            Первый раз заказывала инструмент через интернет. Долго сомневалась, но, так как в нашем городе не было нужной нам гитары, решились и все же заказали. Гитара пришла и была отлично упакована. От заказа остались в восторге. Спасибо вам за работу!
-          </p>
-        </div>
+      <div id="comments-container" class="grid md:grid-cols-2 lg:grid-cols-3 rounded-md bg-hover gap-4 px-8 py-12">
+          {{ range .comments }}
+          <div class="bg-white rounded-md shadow-md shadow-[rgba(29,29,29,0.1)] px-4 py-6 space-y-4">
+            <div class="text-lg font-semibold">{{ .Name }}</div>
+            <p>
+              {{ .Text }}
+            </p>
+          </div>
+          {{ end }}
       </div>
     </div>
     <div class="space-y-4">
       <h2 class="text-2xl font-semibold">Добавить отзыв</h2>
       {{ if .isLoggedIn }}
-      <form class="space-y-3 max-w-[750px]">
+      <form 
+        hx-post="/comments"
+        hx-trigger="click from:#add-comment"
+        hx-params="*"
+        hx-swap="outerHTML"
+        class="space-y-3 max-w-[750px]"
+      >
         <div class="space-y-1">
           <label for="customer_name" class="block text-sm">Представтесь</label>
           <input id="customer_name" type="text" name="customer_name" class="block px-1 py-2 bg-hover border border-[rgba(29,29,29,0.1)] w-full max-w-[350px] outline-secondary">
@@ -60,7 +37,7 @@
           <label for="comment" class="block text-sm">Отзыв</label>
           <textarea id="comment" name="comment" cols="150" rows="10" class="block px-1 py-2 bg-hover border border-[rgba(29,29,29,0.1)] w-full outline-secondary"></textarea>
         </div>
-        <div class="px-10 py-4 bg-secondary text-white w-fit rounded-sm font-semibold mx-auto cursor-pointer hover:bg-opacity-70">Отправить отзыв</div>
+        <div id="add-comment" class="px-10 py-4 bg-secondary text-white w-fit rounded-sm font-semibold mx-auto cursor-pointer hover:bg-opacity-70">Отправить отзыв</div>
       </form>
       {{ else }}
       <a href="/login" class="block w-fit hover:underline text-slate-400 hover:text-black">Чтобы оставить отзыв, войдите в аккаунт</a>

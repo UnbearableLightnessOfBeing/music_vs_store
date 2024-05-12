@@ -99,7 +99,7 @@ func main() {
   r.DELETE("/delete-cart-item/:product_id", webController.DeleteCartItem)
   r.POST("/orders", webController.CreateOrder)
   r.POST("/search", webController.SearchItems)
-
+  r.POST("/comments", webController.CreateComment)
 
   // admin api
   r.POST("/admin/categories", authMiddleware.RequireAdmin(), dashboardController.CreateCategory)
