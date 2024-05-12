@@ -13,7 +13,14 @@
   />
   {{ end }}
   <div class="text-center text-lg font-semibold">{{ $product.Name }}</div>
-  <div class="text-center text-md font-bold">{{ $product.PriceInt }}.00 руб.</div>
+  <div class="flex justify-between px-10">
+    <div>Цена:</div>
+    <div class="text-center text-md font-bold">{{ $product.PriceInt }}.00 руб.</div>
+  </div>
+  <div class="flex justify-between px-10">
+    <div>В наличии:</div>
+    <div class="text-center text-md font-bold">{{ if $product.InStock }}<span class="text-green-400">ДА</span>{{ else }}<span class="text-rose-400">НЕТ</span>{{ end }}</div>
+  </div>
   <div class="flex justify-center gap-4 w-full items-center">
     <a
       href="/products/{{ $product.ID }}"

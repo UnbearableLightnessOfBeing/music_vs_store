@@ -138,7 +138,7 @@
       </div>
       <div id="desc" class="px-10 py-7 border border-hover">
         {{ if .product.Description.Valid }}
-        <p>{{ .product.Description.Value }}</p>
+        <p class="whitespace-pre-wrap">{{ .product.Description.Value }}</p>
         {{ else }}
         <p>Нет описания</p>
         {{ end }}
