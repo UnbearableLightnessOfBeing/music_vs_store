@@ -1,6 +1,6 @@
 {{ define "web/checkout.html" }} 
 {{ template "layouts/header.html" . }}
-<div class="px-20 py-10 space-y-10 max-w-[1400px] mx-auto text-primary">
+<div class="p-5 lg:px-20 lg:py-10 space-y-10 max-w-[1400px] mx-auto text-primary">
   <div class="flex gap-2">
     <a href="/" class="hover:underline opacity-60 hover:opacity-100">Главная</a>
     <span>/</span>
@@ -8,8 +8,8 @@
   </div>
   <h1 class="text-4xl">Оформление заказа</h1>
   {{ if .isLoggedIn }}
-  <div id="success" hx-ext="response-targets" class="grid grid-cols-[1fr_300px] gap-x-10">
-    <div class="border border-hover col-start-2 px-5 py-6 pt-0 h-fit shadow-md shadow-hover">
+  <div id="success" hx-ext="response-targets" class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10">
+    <div class="border border-hover col-start-1 row-start-1 lg:col-start-2 px-5 py-6 pt-0 h-fit shadow-md shadow-hover">
       <div class="flex justify-between items-center h-[80px] border-b border-hover">
         <div>Ваш заказ</div>
         <a href="/cart" class="block underline hover:text-secondary">Изменить</a>
@@ -39,7 +39,7 @@
       hx-target="#success"
       hx-target-errors="#submit-error"
       hx-swap="outerHTML transition:true"
-      class="block col-start-1 row-start-1 space-y-6"
+      class="block col-start-1 row-start-2 lg:row-start-1 space-y-6"
     >
         <input type="number" name="user_id" value="{{ .userID }}" class="hidden" />
         <input type="number" name="product_count" value="{{ .cartProductsCount }}" class="hidden" />

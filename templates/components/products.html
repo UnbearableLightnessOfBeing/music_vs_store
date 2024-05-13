@@ -4,7 +4,7 @@
   <div class="text-lg text-primary text-semibold opacity-70">Товаров не найдено</div>
   {{ else }}
   <div class="text-lg font-semibold">Всего {{ len .products }} товаров</div>
-  <div class="grid grid-cols-3 gap-4">
+  <div class="grid gird-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
     {{ range .products }}
     {{ template "components/product_card.html" (arr $.isLoggedIn .) }}
     {{ end }}

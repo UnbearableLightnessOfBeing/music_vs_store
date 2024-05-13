@@ -1,11 +1,11 @@
 {{ define "components/cartItem.html" }}
 <div
   id="cart-item-{{ .ID }}"
-  class="px-6 py-4 border border-slate-100 shadow-md shadow-gray-300 grid grid-cols-[1fr_1fr] w-full"
+  class="px-6 py-4 border border-slate-100 shadow-md shadow-gray-300 grid grid-cols-1 xl:grid-cols-[1fr_1fr] w-full gap-y-4"
 >
   <div class="space-y-6">
     <div class="text-xl">Наименование товара</div>
-    <div class="flex gap-10 items-center">
+    <div class="flex gap-10 justify-end items-center md:self-start md:justify-start">
       <div class="w-[150px]">
         <img
           src="{{ if not .Images }}/assets/images/no-image.jpg {{ else }} {{ index .Images 0 }} {{ end }}"
@@ -18,12 +18,12 @@
       </div>
     </div>
   </div>
-  <div class="flex gap-10 justify-between">
-    <div class="space-y-20">
+  <div class="flex flex-col-reverse gap-4 md:flex-row md:gap-10 items-end md:items-start justify-between row-start-1 xl:col-start-2">
+    <div class="space-y-2 md:space-y-20 self-center">
       <div class="text-lg">Цена</div>
       <div class="font-semibold">{{ .PriceInt }}.00 руб</div>
     </div>
-    <div class="space-y-20">
+    <div class="space-y-2 md:space-y-20 self-center md:self-start">
       <div class="text-lg">Количество</div>
       <div class="flex">
         <input
@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-    <div class="space-y-20">
+    <div class="space-y-2 md:space-y-20 self-center md:self-start">
       <div class="text-lg">Стоимость</div>
       <div id="total-{{ .ID }}" class="font-semibold">{{ mul .PriceInt .Quantity }}.00 руб</div>
     </div>

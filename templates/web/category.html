@@ -7,16 +7,14 @@
     <span>/</span>
     <div>{{ .categoryName }}</div>
   </div>
-  <div
-    class="grid grid-cols-[250px_auto]"
-  >
+  <div class="grid grid-cols-1 xl:grid-cols-[250px_auto]">
     <form 
       hx-get="/catalogue/{{ .slug }}/htmx"
       hx-params="*"
       hx-target="#products"
       hx-trigger="click from:#apply"
       hx-swap="outerHTML transition:true"
-      class="shadow-md shadow-hover space-y-3 p-4 h-fit"
+      class="shadow-md shadow-hover space-y-3 p-4 h-fit w-fit mx-auto"
     >
       <div class="text-lg font-semibold text-center">Фильтр по параметрам</div>
       <div class="space-y-2">
@@ -29,7 +27,7 @@
               type="number"
               value=""
               name="min_price"
-              placeholder="min"
+              placeholder="От"
             />
             <input
               id="max_price"
@@ -37,7 +35,7 @@
               type="number"
               value=""
               name="max_price"
-              placeholder="max"
+              placeholder="До"
             />
           </div>
           <div class="space-y-1">
