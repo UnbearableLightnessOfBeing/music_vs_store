@@ -22,7 +22,7 @@
             <img src="/assets/images/logo.png" class="h-12" >
             <span class="text-lg whitespace-nowrap lg:text-3xl font-medium font-harlow text-primary">Music VS Store</span>
           </a>
-          <nav class="hidden md:flex items-center gap-1 md:gap-4">
+          <nav class="hidden md:flex items-center gap-1 md:gap-2 lg:gap-4">
             {{ range $value := .pages.Pages }}
             <a class="text-sm whitespace-nowrap lg:text-lg font-medium {{ if (eq $value.Value $.pages.CurrentPage)}} text-secondary {{ else }} text-primary hover:text-gray-600 {{ end }}" href="/{{ $value.Value }}">
               {{ $value.Name }}
@@ -53,12 +53,6 @@
             </div>
             <div id="menu-dropdown" class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               {{ if .isLoggedIn}}
-              <a
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                href="#"
-              >
-                Мой профиль
-              </a>
               <a
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 href="/orders"
