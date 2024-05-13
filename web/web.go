@@ -1015,6 +1015,13 @@ func (w WebController) RenderSearchPage(c *gin.Context) {
 		panic(err)
 	}
 
+  userID := helpers.GetSession(c)
+
+	cartProductsCount, err := getCartProductsCount(c, w.queries, userID)
+	if err != nil {
+		panic(err)
+	}
+
 	c.HTML(http.StatusOK, "web/search.html", gin.H{
 		"pages": PagesInfo{
 			Pages:       pages,
@@ -1022,6 +1029,7 @@ func (w WebController) RenderSearchPage(c *gin.Context) {
 		},
 		"isLoggedIn": c.GetUint64("user_id") > 0,
 		"categories": categories,
+    "cartProductsCount": cartProductsCount, 
 	})
 }
 

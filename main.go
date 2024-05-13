@@ -53,7 +53,7 @@ func main() {
   })
 
   // for TESTING
-  r.Use(middlewares.LoginForTesting())
+  // r.Use(middlewares.LoginForTesting())
 
   // middlewares
   authMiddleware := middlewares.NewAuthMiddleware(queries)
