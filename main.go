@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"music_vs_store/api"
 	"music_vs_store/controllers"
 	"music_vs_store/driver"
 	"music_vs_store/middlewares"
@@ -62,9 +63,10 @@ func main() {
   // controllers
   // usersController := controllers.NewUsersController(queries)
   sessionsController := controllers.NewSessionsController(queries)
-  dashboardController := controllers.NewDashboardController(queries)
+  // dashboardController := controllers.NewDashboardController(queries)
 
   webController := web.NewWebController(queries, db)
+  apiController := api.NewApiController(queries, db)
 
   // web
   r.GET("/", webController.RenderMainPage)
@@ -85,7 +87,7 @@ func main() {
   // auth
   r.GET("/signup", webController.RenderSignupPage)
   r.GET("/login", webController.RenderLoginPage)
-  r.GET("/admin", authMiddleware.RequireAdmin(), dashboardController.Index)
+  // r.GET("/admin", authMiddleware.RequireAdmin(), dashboardController.Index)
 
   r.POST("/signup", sessionsController.Signup)
   r.POST("/login", sessionsController.Login)
@@ -102,10 +104,12 @@ func main() {
   r.POST("/comments", webController.CreateComment)
 
   // admin api
-  r.POST("/admin/categories", authMiddleware.RequireAdmin(), dashboardController.CreateCategory)
+  // r.POST("/admin/categories", authMiddleware.RequireAdmin(), dashboardController.CreateCategory)
+  r.GET("/api/admin/users", apiController.Users)
+  r.PUT("/api/admin/users/:id", apiController.UserToggleIsAdmin)
 
   // HTMX test
-  r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)
+  // r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)
 
   var port = os.Getenv("SERVER_PORT")
   fmt.Println("starting server at: " + port)

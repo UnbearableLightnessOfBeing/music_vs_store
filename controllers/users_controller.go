@@ -16,7 +16,7 @@ func NewUsersController(queries *db.Queries) UsersController {
 }
 
 func (q UsersController) ListUsers(c *gin.Context) {
-	users, err := q.queries.ListUsrs(c, db.ListUsrsParams{
+	users, err := q.queries.ListUsers(c, db.ListUsersParams{
 		Limit:  10,
 		Offset: 0,
 	})

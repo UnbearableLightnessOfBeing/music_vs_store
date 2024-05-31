@@ -19,8 +19,8 @@ WHERE username = $1 LIMIT 1;
 SELECT * FROM users
 WHERE email = $1 LIMIT 1;
 
--- name: ListUsrs :many
-select * from users
+-- name: ListUsers :many
+select id, username, email, is_admin from users
 order by id
 limit $1
 offset $2;

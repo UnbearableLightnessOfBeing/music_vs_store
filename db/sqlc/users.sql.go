@@ -117,34 +117,39 @@ func (q *Queries) GetUserByName(ctx context.Context, username string) (User, err
 	return i, err
 }
 
-const listUsrs = `-- name: ListUsrs :many
-select id, username, email, is_admin, password, created_at from users
+const listUsers = `-- name: ListUsers :many
+select id, username, email, is_admin from users
 order by id
 limit $1
 offset $2
 `
 
-type ListUsrsParams struct {
+type ListUsersParams struct {
 	Limit  int32 `json:"limit"`
 	Offset int32 `json:"offset"`
 }
 
-func (q *Queries) ListUsrs(ctx context.Context, arg ListUsrsParams) ([]User, error) {
-	rows, err := q.db.QueryContext(ctx, listUsrs, arg.Limit, arg.Offset)
+type ListUsersRow struct {
+	ID       int32        `json:"id"`
+	Username string       `form:"username" json:"username"`
+	Email    string       `form:"email" json:"email"`
+	IsAdmin  sql.NullBool `json:"is_admin"`
+}
+
+func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]ListUsersRow, error) {
+	rows, err := q.db.QueryContext(ctx, listUsers, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []User
+	var items []ListUsersRow
 	for rows.Next() {
-		var i User
+		var i ListUsersRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Username,
 			&i.Email,
 			&i.IsAdmin,
-			&i.Password,
-			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
