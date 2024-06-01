@@ -2,9 +2,8 @@ FROM golang:1.22
 
 WORKDIR /usr/src/music
 
-COPY go.mod ./
-
-# COPY go.mod go.sum ./
+# COPY go.mod ./
+COPY go.mod go.sum ./
 
 RUN go mod tidy
 
