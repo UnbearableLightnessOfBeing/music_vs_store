@@ -160,6 +160,50 @@ func (q *Queries) GetProdutsInCart(ctx context.Context, sessionID int32) ([]GetP
 	return items, nil
 }
 
+const listProducts = `-- name: ListProducts :many
+select id, name, price_int, price_dec, label_id, images, description, characteristics, in_stock from products
+limit $1
+offset $2
+`
+
+type ListProductsParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, listProducts, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Product
+	for rows.Next() {
+		var i Product
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.PriceInt,
+			&i.PriceDec,
+			&i.LabelID,
+			pq.Array(&i.Images),
+			&i.Description,
+			&i.Characteristics,
+			&i.InStock,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const searchProducts = `-- name: SearchProducts :many
 select id, name, price_int, price_dec, label_id, images, description, characteristics, in_stock from products
 where LOWER(name) like $1

@@ -1,3 +1,8 @@
+-- name: ListProducts :many
+select * from products
+limit $1
+offset $2;
+
 -- name: GetProduct :one
 SELECT * FROM products
 WHERE id = $1 LIMIT 1;

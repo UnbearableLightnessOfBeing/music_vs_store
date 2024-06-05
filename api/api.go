@@ -23,7 +23,7 @@ func NewApiController(queries *db.Queries, db *sql.DB) *ApiController {
 
 func (w *ApiController) Users(c *gin.Context) {
   users, err := w.queries.ListUsers(c, db.ListUsersParams{
-    Limit: 10,
+    Limit: 999,
     Offset: 0,
   })
   if err != nil {
@@ -62,5 +62,47 @@ func (w *ApiController) UserToggleIsAdmin(c *gin.Context) {
 
   c.JSON(http.StatusOK, gin.H{
     "result": user,
+  })
+}
+
+func (w *ApiController) Products(c *gin.Context) {
+  products, err := w.queries.ListProducts(c, db.ListProductsParams{
+    Limit: 999,
+    Offset: 0,
+  })      
+  if err != nil {
+    panic(err)
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "products": products,
+  })
+}
+
+type Product struct {
+	ProductID int32 `uri:"id" binding:"required"`
+}
+
+func (w *ApiController) Product(c *gin.Context) {
+  var productPage Product
+  err := c.ShouldBindUri(&productPage)
+  if err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": "Bad url",
+    })
+  }
+
+  product, err := w.queries.GetProduct(c, productPage.ProductID)
+  if err == sql.ErrNoRows {
+    c.JSON(http.StatusNotFound, gin.H{
+      "message": "Product with such id doesn't exist",
+    })
+    return
+  } else if err != nil {
+    panic(err)
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "product": product,
   })
 }

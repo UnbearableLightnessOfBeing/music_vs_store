@@ -104,9 +104,13 @@ func main() {
   r.POST("/comments", webController.CreateComment)
 
   // admin api
-  // r.POST("/admin/categories", authMiddleware.RequireAdmin(), dashboardController.CreateCategory)
+  // ---USERS---
   r.GET("/api/admin/users", apiController.Users)
   r.PUT("/api/admin/users/:id", apiController.UserToggleIsAdmin)
+
+  // ---PRODUCTS---
+  r.GET("/api/admin/products", apiController.Products)
+  r.GET("/api/admin/products/:id", apiController.Product)
 
   // HTMX test
   // r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)
