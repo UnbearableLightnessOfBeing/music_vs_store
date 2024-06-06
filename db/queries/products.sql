@@ -5,8 +5,19 @@ offset $2;
 
 -- name: CreateProduct :one
 INSERT INTO products
-  (name, price_int, label_id, images, description, characteristics, in_stock)
-  VALUES ($1, $2, $3, $4, $5, $6, $7)
+  (name, price_int, label_id, description, characteristics, in_stock)
+  VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING *;
+
+-- name: UpdateProduct :one
+UPDATE products
+  SET name = $2, 
+  price_int = $3, 
+  label_id = $4, 
+  description = $5, 
+  characteristics = $6, 
+  in_stock = $7 
+WHERE id = $1
 RETURNING *;
 
 -- name: GetProductByName :one
@@ -18,6 +29,21 @@ LIMIT 1;
 SELECT * FROM products
 WHERE id = $1 
 LIMIT 1;
+
+-- name: AddImageToProduct :exec
+UPDATE products
+SET images = array_append( images, $2 )
+WHERE id = $1;
+
+-- name: RemoveImageFromProduct :exec
+UPDATE products
+SET images = array_remove( images, $2 )
+WHERE id = $1;
+
+-- name: DeleteProduct :one
+DELETE FROM products
+WHERE id = $1
+RETURNING *;
 
 -- name: GetProductsByCategory :many
 SELECT p.* FROM products p, product_categories p_c

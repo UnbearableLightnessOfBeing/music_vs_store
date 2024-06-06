@@ -12,13 +12,36 @@ import (
 
 const createCategory = `-- name: CreateCategory :one
 insert into categories 
-(name)  
-values ($1) 
+(name, slug)  
+values ($1, $2) 
 returning id, name, slug, img_url
 `
 
-func (q *Queries) CreateCategory(ctx context.Context, name string) (Category, error) {
-	row := q.db.QueryRowContext(ctx, createCategory, name)
+type CreateCategoryParams struct {
+	Name string `json:"name"`
+	Slug string `json:"slug"`
+}
+
+func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error) {
+	row := q.db.QueryRowContext(ctx, createCategory, arg.Name, arg.Slug)
+	var i Category
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ImgUrl,
+	)
+	return i, err
+}
+
+const deleteCategory = `-- name: DeleteCategory :one
+DELETE FROM categories
+WHERE id = $1
+RETURNING id, name, slug, img_url
+`
+
+func (q *Queries) DeleteCategory(ctx context.Context, id int32) (Category, error) {
+	row := q.db.QueryRowContext(ctx, deleteCategory, id)
 	var i Category
 	err := row.Scan(
 		&i.ID,
@@ -36,6 +59,23 @@ WHERE id = $1 LIMIT 1
 
 func (q *Queries) GetCategory(ctx context.Context, id int32) (Category, error) {
 	row := q.db.QueryRowContext(ctx, getCategory, id)
+	var i Category
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ImgUrl,
+	)
+	return i, err
+}
+
+const getCategoryByName = `-- name: GetCategoryByName :one
+SELECT id, name, slug, img_url FROM categories
+WHERE name = $1 LIMIT 1
+`
+
+func (q *Queries) GetCategoryByName(ctx context.Context, name string) (Category, error) {
+	row := q.db.QueryRowContext(ctx, getCategoryByName, name)
 	var i Category
 	err := row.Scan(
 		&i.ID,
@@ -101,6 +141,30 @@ func (q *Queries) ListCategories(ctx context.Context, arg ListCategoriesParams) 
 		return nil, err
 	}
 	return items, nil
+}
+
+const setCategoryImage = `-- name: SetCategoryImage :one
+UPDATE categories
+SET img_url = $2
+WHERE id = $1
+RETURNING id, name, slug, img_url
+`
+
+type SetCategoryImageParams struct {
+	ID     int32          `json:"id"`
+	ImgUrl sql.NullString `json:"img_url"`
+}
+
+func (q *Queries) SetCategoryImage(ctx context.Context, arg SetCategoryImageParams) (Category, error) {
+	row := q.db.QueryRowContext(ctx, setCategoryImage, arg.ID, arg.ImgUrl)
+	var i Category
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ImgUrl,
+	)
+	return i, err
 }
 
 const updateCategoryImageUrl = `-- name: UpdateCategoryImageUrl :one

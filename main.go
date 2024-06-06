@@ -112,6 +112,12 @@ func main() {
   r.GET("/api/admin/products", apiController.Products)
   r.GET("/api/admin/products/:id", apiController.Product)
   r.POST("/api/admin/products", apiController.CreateProduct)
+  r.PUT("/api/admin/products/:id", apiController.UpdateProduct)
+  r.POST("/api/admin/products/:id/images_add", apiController.AddImageToProdut)
+  r.POST("/api/admin/products/:id/images_remove", apiController.RemoveImageFromProduct)
+
+  // ---CATEGORIES---
+  r.GET("/api/admin/categories", apiController.Categories)
 
   // HTMX test
   // r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)

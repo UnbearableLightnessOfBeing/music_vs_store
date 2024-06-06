@@ -1,8 +1,19 @@
 -- name: CreateCategory :one
 insert into categories 
-(name)  
-values ($1) 
+(name, slug)  
+values ($1, $2) 
 returning *;
+
+-- name: DeleteCategory :one
+DELETE FROM categories
+WHERE id = $1
+RETURNING *;
+
+-- name: SetCategoryImage :one
+UPDATE categories
+SET img_url = $2
+WHERE id = $1
+RETURNING *;
 
 -- name: GetCategory :one
 SELECT * FROM categories
@@ -11,6 +22,10 @@ WHERE id = $1 LIMIT 1;
 -- name: GetCategoryBySlug :one
 SELECT * FROM categories
 WHERE slug = $1 LIMIT 1;
+
+-- name: GetCategoryByName :one
+SELECT * FROM categories
+WHERE name = $1 LIMIT 1;
 
 -- name: UpdateCategoryName :one
 UPDATE categories
