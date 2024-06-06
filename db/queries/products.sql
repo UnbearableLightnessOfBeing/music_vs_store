@@ -3,9 +3,21 @@ select * from products
 limit $1
 offset $2;
 
+-- name: CreateProduct :one
+INSERT INTO products
+  (name, price_int, label_id, images, description, characteristics, in_stock)
+  VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING *;
+
+-- name: GetProductByName :one
+SELECT * FROM products
+WHERE name = $1
+LIMIT 1;
+
 -- name: GetProduct :one
 SELECT * FROM products
-WHERE id = $1 LIMIT 1;
+WHERE id = $1 
+LIMIT 1;
 
 -- name: GetProductsByCategory :many
 SELECT p.* FROM products p, product_categories p_c

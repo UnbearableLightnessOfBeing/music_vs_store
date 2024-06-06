@@ -111,6 +111,7 @@ func main() {
   // ---PRODUCTS---
   r.GET("/api/admin/products", apiController.Products)
   r.GET("/api/admin/products/:id", apiController.Product)
+  r.POST("/api/admin/products", apiController.CreateProduct)
 
   // HTMX test
   // r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)
