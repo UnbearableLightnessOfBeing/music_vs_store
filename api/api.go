@@ -25,6 +25,33 @@ func NewApiController(queries *db.Queries, db *sql.DB) *ApiController {
 	}
 }
 
+func (w *ApiController) parseAndStoreOSImage(c *gin.Context) (string, error, int) {
+  file, err := c.FormFile("image")
+  if err != nil {
+    return "", err, http.StatusBadRequest
+  }
+  ext := filepath.Ext(file.Filename)
+  uuidStr := uuid.New().String()
+
+  dst := "./storage/images/" + uuidStr + ext
+  if err = c.SaveUploadedFile(file, dst); err != nil {
+    return "", err, http.StatusInternalServerError
+  }
+
+  imgUrl := "/storage/" + uuidStr + ext
+  return imgUrl, nil, 0
+}
+
+func (w *ApiController) removeOSImage(filePath string) error {
+  splitFilePath := strings.Split(filePath, "/")
+  fileName := splitFilePath[len(splitFilePath) - 1]
+  fileUrl := "./storage/images/" + fileName
+  if err := os.Remove(fileUrl); err != nil {
+    return err
+  }
+  return nil
+} 
+
 func (w *ApiController) Users(c *gin.Context) {
 	users, err := w.queries.ListUsers(c, db.ListUsersParams{
 		Limit:  999,
@@ -237,25 +264,12 @@ func (w *ApiController) AddImageToProdut(c *gin.Context) {
     return
   }
 
-  file, err := c.FormFile("image")
+  imgUrl, err, code := w.parseAndStoreOSImage(c)
   if err != nil {
-    c.JSON(http.StatusBadRequest, gin.H{
+    c.JSON(code, gin.H{
       "message": err.Error(),
     })
-    return
   }
-  ext := filepath.Ext(file.Filename)
-  uuidStr := uuid.New().String()
-
-  dst := "./storage/images/" + uuidStr + ext
-  if err = c.SaveUploadedFile(file, dst); err != nil {
-    c.JSON(http.StatusInternalServerError, gin.H{
-      "message": err.Error(),
-    })
-    return
-  }
-
-  imgUrl := "/storage/" + uuidStr + ext
 
   err = w.queries.AddImageToProduct(c, db.AddImageToProductParams{
     ID: productID,
@@ -293,15 +307,10 @@ func (w *ApiController) RemoveImageFromProduct(c *gin.Context) {
     return
   }
 
-  splitFilePath := strings.Split(filePath, "/")
-  fileName := splitFilePath[len(splitFilePath) - 1]
-  fileUrl := "./storage/images/" + fileName
-
-  if err := os.Remove(fileUrl); err != nil {
+  if err = w.removeOSImage(filePath); err != nil {
     c.JSON(http.StatusInternalServerError, gin.H{
       "message": err.Error(),
     })
-    return
   }
 
   err = w.queries.RemoveImageFromProduct(c, db.RemoveImageFromProductParams{
@@ -543,27 +552,29 @@ func (w *ApiController) SetCategoryImage(c *gin.Context) {
     return
   }
 
-  file, err := c.FormFile("image")
+  category, err := w.queries.GetCategory(c, ctgrID) 
   if err != nil {
     c.JSON(http.StatusBadRequest, gin.H{
       "message": err.Error(),
     })
-    return
   }
-  ext := filepath.Ext(file.Filename)
-  uuidStr := uuid.New().String()
 
-  dst := "./storage/images/" + uuidStr + ext
-  if err = c.SaveUploadedFile(file, dst); err != nil {
-    c.JSON(http.StatusInternalServerError, gin.H{
+  if category.ImgUrl.Valid {
+    if err := w.removeOSImage(category.ImgUrl.String); err != nil {
+      c.JSON(http.StatusInternalServerError, gin.H{
+        "message": err.Error(),
+      })
+    }
+  }
+
+  imgUrl, err, code := w.parseAndStoreOSImage(c)
+  if err != nil {
+    c.JSON(code, gin.H{
       "message": err.Error(),
     })
-    return
   }
 
-  imgUrl := "/storage/" + uuidStr + ext
-
-  category, err := w.queries.SetCategoryImage(c, db.SetCategoryImageParams{
+  category, err = w.queries.SetCategoryImage(c, db.SetCategoryImageParams{
     ID: ctgrID,
     ImgUrl: sql.NullString{
       String: imgUrl,
