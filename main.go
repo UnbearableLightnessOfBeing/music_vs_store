@@ -124,6 +124,11 @@ func main() {
   r.DELETE("/api/admin/categories/:id", apiController.DeleteCategory)
   r.POST("/api/admin/categories/:id/image", apiController.SetCategoryImage)
 
+  // ---LABELS---
+  r.GET("/api/admin/labels", apiController.Labels)
+  r.POST("/api/admin/labels", apiController.CreateLabel)
+  r.DELETE("/api/admin/labels/:id", apiController.DeleteLabel)
+
   // HTMX test
   // r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)
 

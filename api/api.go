@@ -592,3 +592,73 @@ func (w *ApiController) SetCategoryImage(c *gin.Context) {
     "updated": category,
   })
 }
+
+type CreateLabelReq struct {
+  Name string `json:"name"`
+}
+
+// ----LABELS----
+func (w *ApiController) Labels(c *gin.Context) {
+  lbls, err := w.queries.ListLabels(c, db.ListLabelsParams{
+    Limit: 999,
+    Offset: 0,
+  })
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "labels": lbls,
+  })
+}
+
+func (w *ApiController) CreateLabel(c *gin.Context) {
+  var labelReq CreateLabelReq
+  if err := c.ShouldBindJSON(&labelReq); err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+  
+  lbl, err := w.queries.CreateLabel(c, labelReq.Name)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "created": lbl,
+  })
+}
+
+type DeleteLabelReq struct {
+  LabelID int32 `uri:"id"`
+}
+
+func (w *ApiController) DeleteLabel(c *gin.Context) {
+  var deleteReq DeleteLabelReq
+  if err := c.ShouldBindUri(&deleteReq); err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  lbl, err := w.queries.DeleteLabel(c, deleteReq.LabelID)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "deleted": lbl,
+  })
+}

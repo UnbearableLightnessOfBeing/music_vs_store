@@ -9,6 +9,32 @@ import (
 	"context"
 )
 
+const createLabel = `-- name: CreateLabel :one
+INSERT INTO labels
+(name) values ($1)
+RETURNING id, name
+`
+
+func (q *Queries) CreateLabel(ctx context.Context, name string) (Label, error) {
+	row := q.db.QueryRowContext(ctx, createLabel, name)
+	var i Label
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
+}
+
+const deleteLabel = `-- name: DeleteLabel :one
+DELETE FROM labels
+WHERE id = $1
+RETURNING id, name
+`
+
+func (q *Queries) DeleteLabel(ctx context.Context, id int32) (Label, error) {
+	row := q.db.QueryRowContext(ctx, deleteLabel, id)
+	var i Label
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
+}
+
 const getLabel = `-- name: GetLabel :one
 select id, name from labels
 where id = $1

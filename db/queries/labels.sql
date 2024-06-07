@@ -8,3 +8,13 @@ offset $2;
 select * from labels
 where id = $1
 limit 1;
+
+-- name: CreateLabel :one
+INSERT INTO labels
+(name) values ($1)
+RETURNING *;
+
+-- name: DeleteLabel :one
+DELETE FROM labels
+WHERE id = $1
+RETURNING *;
