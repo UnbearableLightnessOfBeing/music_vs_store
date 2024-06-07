@@ -4,6 +4,12 @@ insert into categories
 values ($1, $2) 
 returning *;
 
+-- name: UpdateCategory :one
+UPDATE categories
+SET name = $2, slug = $3
+WHERE id = $1
+RETURNING *;
+
 -- name: DeleteCategory :one
 DELETE FROM categories
 WHERE id = $1

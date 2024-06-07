@@ -167,6 +167,31 @@ func (q *Queries) SetCategoryImage(ctx context.Context, arg SetCategoryImagePara
 	return i, err
 }
 
+const updateCategory = `-- name: UpdateCategory :one
+UPDATE categories
+SET name = $2, slug = $3
+WHERE id = $1
+RETURNING id, name, slug, img_url
+`
+
+type UpdateCategoryParams struct {
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
+}
+
+func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (Category, error) {
+	row := q.db.QueryRowContext(ctx, updateCategory, arg.ID, arg.Name, arg.Slug)
+	var i Category
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ImgUrl,
+	)
+	return i, err
+}
+
 const updateCategoryImageUrl = `-- name: UpdateCategoryImageUrl :one
 UPDATE categories
 SET img_url = $2

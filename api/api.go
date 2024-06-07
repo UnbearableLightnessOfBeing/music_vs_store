@@ -129,12 +129,12 @@ func parseRequest(c *gin.Context) (*CreateProductReq, error) {
   return &productData, nil
 }
 
-func (w *ApiController) getProductByName(c *gin.Context, name string ) (*db.Product, bool) {
+func (w *ApiController) getProductByName(c *gin.Context, name string ) (db.Product, bool) {
   product, err := w.queries.GetProductByName(c, name)
   if err == sql.ErrNoRows {
-    return nil, false
+    return db.Product{}, false
   }
-  return &product, true
+  return product, true
 } 
 
 func (w *ApiController) CreateProduct(c *gin.Context) {
@@ -357,6 +357,41 @@ func (w *ApiController) Categories(c *gin.Context) {
   })
 }
 
+
+type DeleteCategoryReq struct {
+  ProductID int32 `uri:"id"`
+}
+
+func (w *ApiController) parseCategoryID(c *gin.Context) (int32, error) {
+  var uriParams DeleteCategoryReq
+  if err := c.ShouldBindUri(&uriParams); err != nil {
+    return 0, err
+  }
+  return uriParams.ProductID, nil
+}
+
+func (w *ApiController) Category(c *gin.Context) {
+  ctgrID, err := w.parseCategoryID(c)
+  if err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  ctgr, err := w.queries.GetCategory(c, ctgrID)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "category": ctgr,
+  })
+}
+
 func (w *ApiController) parseCategoryReq(c *gin.Context) (db.CreateCategoryParams, error) {
   var createReq db.CreateCategoryParams
   if err := c.ShouldBindJSON(&createReq); err != nil {
@@ -398,7 +433,7 @@ func (w *ApiController) CreateCategory(c *gin.Context) {
     return
   }
 
-  _, exists := w.getProductByName(c, req.Name)
+  _, exists := w.getCategoryByName(c, req.Name)
   if exists {
     c.JSON(http.StatusBadRequest, gin.H{
       "message": "Категория с таким именем уже существует",
@@ -427,18 +462,6 @@ func (w *ApiController) CreateCategory(c *gin.Context) {
   })
 }
 
-type DeleteCategoryReq struct {
-  ProductID int32 `uri:"id"`
-}
-
-func (w *ApiController) parseCategoryID(c *gin.Context) (int32, error) {
-  var uriParams DeleteCategoryReq
-  if err := c.ShouldBindUri(&uriParams); err != nil {
-    return 0, err
-  }
-  return uriParams.ProductID, nil
-}
-
 func (w *ApiController) DeleteCategory(c *gin.Context) {
   ctgrID, err := w.parseCategoryID(c)
   if err != nil {
@@ -462,9 +485,99 @@ func (w *ApiController) DeleteCategory(c *gin.Context) {
 }
 
 func (w *ApiController) UpdateCategory(c *gin.Context) {
+  ctgrID, err := w.parseCategoryID(c)
+  if err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
 
+  req, err := w.parseCategoryReq(c)
+  if err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": "Поля заполнены некорректно",
+    })
+    return
+  }
+
+  ctgr, exists := w.getCategoryByName(c, req.Name)
+  if exists && ctgr.ID != ctgrID {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": "Категория с таким именем уже существует",
+    })
+    return
+  }
+
+  ctgr, exists = w.getCategoryBySlug(c, req.Slug)
+  if exists && ctgr.ID != ctgrID {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": "Категория с таким slug уже существует",
+    })
+    return
+  }
+
+  category, err := w.queries.UpdateCategory(c, db.UpdateCategoryParams{
+    ID: ctgrID,
+    Name: req.Name,
+    Slug: req.Slug,
+  })
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "created": category,
+  })
 }
 
 func (w *ApiController) SetCategoryImage(c *gin.Context) {
+  ctgrID, err := w.parseCategoryID(c)
+  if err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": "Неверный url",
+    })
+    return
+  }
 
+  file, err := c.FormFile("image")
+  if err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+  ext := filepath.Ext(file.Filename)
+  uuidStr := uuid.New().String()
+
+  dst := "./storage/images/" + uuidStr + ext
+  if err = c.SaveUploadedFile(file, dst); err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  imgUrl := "/storage/" + uuidStr + ext
+
+  category, err := w.queries.SetCategoryImage(c, db.SetCategoryImageParams{
+    ID: ctgrID,
+    ImgUrl: sql.NullString{
+      String: imgUrl,
+      Valid: true,
+    },
+  })  
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "updated": category,
+  })
 }
