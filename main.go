@@ -129,6 +129,9 @@ func main() {
   r.POST("/api/admin/labels", apiController.CreateLabel)
   r.DELETE("/api/admin/labels/:id", apiController.DeleteLabel)
 
+  // ---ORDERS---
+  r.GET("/api/admin/orders", apiController.Orders)
+
   // HTMX test
   // r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)
 

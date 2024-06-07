@@ -228,6 +228,94 @@ func (q *Queries) GetOrderProducts(ctx context.Context, orderID int32) ([]GetOrd
 	return items, nil
 }
 
+const getOrders = `-- name: GetOrders :many
+SELECT o.id, o.user_id, o.product_count, o.price_int, o.price_dec, o.delivery_price_int, o.delivery_price_dec, o.total_int, o.total_dec, o.country_id, o.district, o.city, o.postal_code, o.delivery_method_id, o.payment_method_id, o.customer_firstname, o.cusotmer_middlename, o.customer_lastname, o.customer_phone_number, o.customer_email, o.customer_address, o.customer_comment, o.created_at,
+  p.name as payment_method,
+  d.name as delivery_method
+FROM orders o 
+  LEFT JOIN payment_methods p
+  ON o.payment_method_id = p.id
+  LEFT JOIN delivery_methods d
+  ON o.delivery_method_id = d.id
+`
+
+type GetOrdersRow struct {
+	ID                  int32          `json:"id"`
+	UserID              int32          `form:"user_id" json:"user_id"`
+	ProductCount        int32          `form:"product_count" json:"product_count"`
+	PriceInt            int32          `form:"price_int" json:"price_int"`
+	PriceDec            sql.NullInt32  `json:"price_dec"`
+	DeliveryPriceInt    int32          `form:"delivery_price_int" json:"delivery_price_int"`
+	DeliveryPriceDec    sql.NullInt32  `json:"delivery_price_dec"`
+	TotalInt            int32          `form:"total_int" json:"total_int"`
+	TotalDec            sql.NullInt32  `json:"total_dec"`
+	CountryID           int32          `form:"country_id" json:"country_id"`
+	District            string         `form:"district" json:"district"`
+	City                string         `form:"city" json:"city"`
+	PostalCode          int32          `form:"postal_code" json:"postal_code"`
+	DeliveryMethodID    int32          `form:"delivery_method_id" json:"delivery_method_id"`
+	PaymentMethodID     int32          `form:"payment_method_id" json:"payment_method_id"`
+	CustomerFirstname   string         `form:"customer_firstname" json:"customer_firstname"`
+	CusotmerMiddlename  string         `form:"customer_middlename" json:"cusotmer_middlename"`
+	CustomerLastname    string         `form:"customer_lastname" json:"customer_lastname"`
+	CustomerPhoneNumber string         `form:"customer_phone_number" json:"customer_phone_number"`
+	CustomerEmail       string         `form:"customer_email" json:"customer_email"`
+	CustomerAddress     string         `form:"customer_address" json:"customer_address"`
+	CustomerComment     sql.NullString `form:"customer_comment" json:"customer_comment"`
+	CreatedAt           sql.NullTime   `json:"created_at"`
+	PaymentMethod       sql.NullString `json:"payment_method"`
+	DeliveryMethod      sql.NullString `json:"delivery_method"`
+}
+
+func (q *Queries) GetOrders(ctx context.Context) ([]GetOrdersRow, error) {
+	rows, err := q.db.QueryContext(ctx, getOrders)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetOrdersRow
+	for rows.Next() {
+		var i GetOrdersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ProductCount,
+			&i.PriceInt,
+			&i.PriceDec,
+			&i.DeliveryPriceInt,
+			&i.DeliveryPriceDec,
+			&i.TotalInt,
+			&i.TotalDec,
+			&i.CountryID,
+			&i.District,
+			&i.City,
+			&i.PostalCode,
+			&i.DeliveryMethodID,
+			&i.PaymentMethodID,
+			&i.CustomerFirstname,
+			&i.CusotmerMiddlename,
+			&i.CustomerLastname,
+			&i.CustomerPhoneNumber,
+			&i.CustomerEmail,
+			&i.CustomerAddress,
+			&i.CustomerComment,
+			&i.CreatedAt,
+			&i.PaymentMethod,
+			&i.DeliveryMethod,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getOrdersByUserId = `-- name: GetOrdersByUserId :many
 select o.id, o.user_id, o.product_count, o.price_int, o.price_dec, o.delivery_price_int, o.delivery_price_dec, o.total_int, o.total_dec, o.country_id, o.district, o.city, o.postal_code, o.delivery_method_id, o.payment_method_id, o.customer_firstname, o.cusotmer_middlename, o.customer_lastname, o.customer_phone_number, o.customer_email, o.customer_address, o.customer_comment, o.created_at, 
   TO_CHAR(o.created_at, 'DD.MM.YYYY HH:MM:SS') as created_formatted ,

@@ -662,3 +662,18 @@ func (w *ApiController) DeleteLabel(c *gin.Context) {
     "deleted": lbl,
   })
 }
+
+// ---ORDRES---
+func (w *ApiController) Orders(c *gin.Context) {
+  orders, err := w.queries.GetOrders(c)
+  if err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "orders": orders,
+  })
+}

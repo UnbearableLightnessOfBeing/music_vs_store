@@ -77,3 +77,12 @@ from products p join product_orders p_o
 where p_o.order_id = $1
 order by p.id;
   
+-- name: GetOrders :many
+SELECT o.*,
+  p.name as payment_method,
+  d.name as delivery_method
+FROM orders o 
+  LEFT JOIN payment_methods p
+  ON o.payment_method_id = p.id
+  LEFT JOIN delivery_methods d
+  ON o.delivery_method_id = d.id;
