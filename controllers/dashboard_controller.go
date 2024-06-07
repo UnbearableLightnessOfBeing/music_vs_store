@@ -1,13 +1,13 @@
 package controllers
 
 import (
-	"database/sql"
+	// "database/sql"
 	db "music_vs_store/db/sqlc"
 	"net/http"
-	"path/filepath"
+	// "path/filepath"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	// "github.com/google/uuid"
 )
 
 type DashboardController struct {
@@ -37,46 +37,46 @@ func (d DashboardController) Index(c *gin.Context) {
 	})
 }
 
-type CreateCategoryParams struct {
-  Name string `form:"name" binding:"required"`
-}
+// type CreateCategoryParams struct {
+//   Name string `form:"name" binding:"required"`
+// }
 
-func (d DashboardController) CreateCategory(c *gin.Context) {
-  var params CreateCategoryParams 
-  c.ShouldBind(&params)
-
-  created, err := d.queries.CreateCategory(c, params.Name)
-  if err != nil {
-    panic(err)
-  }
-
-  file, err := c.FormFile("image")
-  if err != nil {
-    panic(err)
-  }
-  ext := filepath.Ext(file.Filename)
-  uuidStr := uuid.New().String()
-
-  dst := "./storage/images/" + uuidStr + ext
-  if err = c.SaveUploadedFile(file, dst); err != nil {
-    panic(err)
-  }
-
-  imgUrl := "/storage/" + uuidStr + ext
-  updateParams := db.UpdateCategoryImageUrlParams{
-    ID: created.ID,
-    ImgUrl: sql.NullString{
-      String: imgUrl,
-      Valid: true,
-    },
-  }
-  _, err = d.queries.UpdateCategoryImageUrl(c, updateParams)
-  if err != nil {
-    panic(err)
-  }
-
-  c.Redirect(http.StatusMovedPermanently, "/admin")
-} 
+// func (d DashboardController) CreateCategory(c *gin.Context) {
+//   var params CreateCategoryParams 
+//   c.ShouldBind(&params)
+// 
+//   created, err := d.queries.CreateCategory(c, db.CreateCategoryParams{})
+//   if err != nil {
+//     panic(err)
+//   }
+// 
+//   file, err := c.FormFile("image")
+//   if err != nil {
+//     panic(err)
+//   }
+//   ext := filepath.Ext(file.Filename)
+//   uuidStr := uuid.New().String()
+// 
+//   dst := "./storage/images/" + uuidStr + ext
+//   if err = c.SaveUploadedFile(file, dst); err != nil {
+//     panic(err)
+//   }
+// 
+//   imgUrl := "/storage/" + uuidStr + ext
+//   updateParams := db.UpdateCategoryImageUrlParams{
+//     ID: created.ID,
+//     ImgUrl: sql.NullString{
+//       String: imgUrl,
+//       Valid: true,
+//     },
+//   }
+//   _, err = d.queries.UpdateCategoryImageUrl(c, updateParams)
+//   if err != nil {
+//     panic(err)
+//   }
+// 
+//   c.Redirect(http.StatusMovedPermanently, "/admin")
+// } 
 
 func (d DashboardController) TestHtmx(c *gin.Context) {
   c.HTML(http.StatusOK, "dashboard/htmx.html", gin.H{})

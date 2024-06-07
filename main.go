@@ -118,6 +118,7 @@ func main() {
 
   // ---CATEGORIES---
   r.GET("/api/admin/categories", apiController.Categories)
+  r.POST("/api/admin/categories", apiController.CreateCategory)
 
   // HTMX test
   // r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)
