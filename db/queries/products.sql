@@ -3,6 +3,12 @@ select * from products
 limit $1
 offset $2;
 
+-- name: GetProductsWithCategory :many
+SELECT p.*, p_c.category_id as category_id 
+  FROM products p
+  LEFT JOIN product_categories p_c
+  ON p.id = p_c.product_id;
+
 -- name: CreateProduct :one
 INSERT INTO products
   (name, price_int, label_id, description, characteristics, in_stock)
@@ -29,6 +35,25 @@ LIMIT 1;
 SELECT * FROM products
 WHERE id = $1 
 LIMIT 1;
+
+-- name: GetProductWithCategory :one
+SELECT p.*, p_c.category_id as category_id
+  FROM products p
+  LEFT JOIN product_categories p_c
+  ON p.id = p_c.product_id
+WHERE p.id = $1
+LIMIT 1;
+
+-- name: DeleteProductCategoryRelations :one
+DELETE FROM product_categories p_c
+WHERE p_c.product_id = $1
+RETURNING *;
+
+-- name: AddProductCategoryRelation :one
+INSERT INTO product_categories
+  ( product_id, category_id )
+  VALUES ( $1, $2 )
+RETURNING *;
 
 -- name: AddImageToProduct :exec
 UPDATE products

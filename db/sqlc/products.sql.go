@@ -28,6 +28,25 @@ func (q *Queries) AddImageToProduct(ctx context.Context, arg AddImageToProductPa
 	return err
 }
 
+const addProductCategoryRelation = `-- name: AddProductCategoryRelation :one
+INSERT INTO product_categories
+  ( product_id, category_id )
+  VALUES ( $1, $2 )
+RETURNING id, product_id, category_id
+`
+
+type AddProductCategoryRelationParams struct {
+	ProductID  int32 `json:"product_id"`
+	CategoryID int32 `json:"category_id"`
+}
+
+func (q *Queries) AddProductCategoryRelation(ctx context.Context, arg AddProductCategoryRelationParams) (ProductCategory, error) {
+	row := q.db.QueryRowContext(ctx, addProductCategoryRelation, arg.ProductID, arg.CategoryID)
+	var i ProductCategory
+	err := row.Scan(&i.ID, &i.ProductID, &i.CategoryID)
+	return i, err
+}
+
 const createProduct = `-- name: CreateProduct :one
 INSERT INTO products
   (name, price_int, label_id, description, characteristics, in_stock)
@@ -91,6 +110,19 @@ func (q *Queries) DeleteProduct(ctx context.Context, id int32) (Product, error) 
 	return i, err
 }
 
+const deleteProductCategoryRelations = `-- name: DeleteProductCategoryRelations :one
+DELETE FROM product_categories p_c
+WHERE p_c.product_id = $1
+RETURNING id, product_id, category_id
+`
+
+func (q *Queries) DeleteProductCategoryRelations(ctx context.Context, productID int32) (ProductCategory, error) {
+	row := q.db.QueryRowContext(ctx, deleteProductCategoryRelations, productID)
+	var i ProductCategory
+	err := row.Scan(&i.ID, &i.ProductID, &i.CategoryID)
+	return i, err
+}
+
 const getCartProductsCount = `-- name: GetCartProductsCount :one
 SELECT COUNT(*) FROM products p, cart_item c_i
 WHERE p.id = c_i.product_id
@@ -150,6 +182,46 @@ func (q *Queries) GetProductByName(ctx context.Context, name string) (Product, e
 	return i, err
 }
 
+const getProductWithCategory = `-- name: GetProductWithCategory :one
+SELECT p.id, p.name, p.price_int, p.price_dec, p.label_id, p.images, p.description, p.characteristics, p.in_stock, p_c.category_id as category_id
+  FROM products p
+  LEFT JOIN product_categories p_c
+  ON p.id = p_c.product_id
+WHERE p.id = $1
+LIMIT 1
+`
+
+type GetProductWithCategoryRow struct {
+	ID              int32          `json:"id"`
+	Name            string         `json:"name"`
+	PriceInt        int32          `json:"price_int"`
+	PriceDec        sql.NullInt32  `json:"price_dec"`
+	LabelID         sql.NullInt32  `json:"label_id"`
+	Images          []string       `json:"images"`
+	Description     sql.NullString `json:"description"`
+	Characteristics sql.NullString `json:"characteristics"`
+	InStock         bool           `json:"in_stock"`
+	CategoryID      sql.NullInt32  `json:"category_id"`
+}
+
+func (q *Queries) GetProductWithCategory(ctx context.Context, id int32) (GetProductWithCategoryRow, error) {
+	row := q.db.QueryRowContext(ctx, getProductWithCategory, id)
+	var i GetProductWithCategoryRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.PriceInt,
+		&i.PriceDec,
+		&i.LabelID,
+		pq.Array(&i.Images),
+		&i.Description,
+		&i.Characteristics,
+		&i.InStock,
+		&i.CategoryID,
+	)
+	return i, err
+}
+
 const getProductsByCategory = `-- name: GetProductsByCategory :many
 SELECT p.id, p.name, p.price_int, p.price_dec, p.label_id, p.images, p.description, p.characteristics, p.in_stock FROM products p, product_categories p_c
 WHERE p.id = p_c.product_id
@@ -195,6 +267,60 @@ func (q *Queries) GetProductsByCategory(ctx context.Context, arg GetProductsByCa
 			&i.Description,
 			&i.Characteristics,
 			&i.InStock,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getProductsWithCategory = `-- name: GetProductsWithCategory :many
+SELECT p.id, p.name, p.price_int, p.price_dec, p.label_id, p.images, p.description, p.characteristics, p.in_stock, p_c.category_id as category_id 
+  FROM products p
+  LEFT JOIN product_categories p_c
+  ON p.id = p_c.product_id
+`
+
+type GetProductsWithCategoryRow struct {
+	ID              int32          `json:"id"`
+	Name            string         `json:"name"`
+	PriceInt        int32          `json:"price_int"`
+	PriceDec        sql.NullInt32  `json:"price_dec"`
+	LabelID         sql.NullInt32  `json:"label_id"`
+	Images          []string       `json:"images"`
+	Description     sql.NullString `json:"description"`
+	Characteristics sql.NullString `json:"characteristics"`
+	InStock         bool           `json:"in_stock"`
+	CategoryID      sql.NullInt32  `json:"category_id"`
+}
+
+func (q *Queries) GetProductsWithCategory(ctx context.Context) ([]GetProductsWithCategoryRow, error) {
+	rows, err := q.db.QueryContext(ctx, getProductsWithCategory)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetProductsWithCategoryRow
+	for rows.Next() {
+		var i GetProductsWithCategoryRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.PriceInt,
+			&i.PriceDec,
+			&i.LabelID,
+			pq.Array(&i.Images),
+			&i.Description,
+			&i.Characteristics,
+			&i.InStock,
+			&i.CategoryID,
 		); err != nil {
 			return nil, err
 		}
