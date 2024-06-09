@@ -10,6 +10,10 @@ SET name = $2, slug = $3
 WHERE id = $1
 RETURNING *;
 
+-- name: DeleteCategoryProductRelations :exec
+DELETE FROM product_categories
+  WHERE category_id = $1;
+
 -- name: DeleteCategory :one
 DELETE FROM categories
 WHERE id = $1

@@ -52,6 +52,16 @@ func (q *Queries) DeleteCategory(ctx context.Context, id int32) (Category, error
 	return i, err
 }
 
+const deleteCategoryProductRelations = `-- name: DeleteCategoryProductRelations :exec
+DELETE FROM product_categories
+  WHERE category_id = $1
+`
+
+func (q *Queries) DeleteCategoryProductRelations(ctx context.Context, categoryID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteCategoryProductRelations, categoryID)
+	return err
+}
+
 const getCategory = `-- name: GetCategory :one
 SELECT id, name, slug, img_url FROM categories
 WHERE id = $1 LIMIT 1

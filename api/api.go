@@ -620,13 +620,32 @@ func (w *ApiController) DeleteCategory(c *gin.Context) {
 		return
 	}
 
-	deleted, err := w.queries.DeleteCategory(c, ctgrID)
+  tx, err := w.db.Begin()
+  if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+  }
+
+  qtx := w.queries.WithTx(tx)
+  defer tx.Rollback()
+
+  if err := qtx.DeleteCategoryProductRelations(c, ctgrID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+  }
+
+	deleted, err := qtx.DeleteCategory(c, ctgrID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
+  tx.Commit()
 
 	c.JSON(http.StatusOK, gin.H{
 		"deleted": deleted,
@@ -686,7 +705,7 @@ func (w *ApiController) UpdateCategory(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"created": category,
+		"updated": category,
 	})
 }
 
