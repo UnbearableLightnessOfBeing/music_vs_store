@@ -134,6 +134,7 @@ func main() {
 
   // ---ORDERS---
   r.GET("/api/admin/orders", apiController.Orders)
+  r.GET("/api/admin/orders/:id", apiController.Order)
 
   // HTMX test
   // r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)

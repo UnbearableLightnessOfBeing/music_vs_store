@@ -938,3 +938,38 @@ func (w *ApiController) Orders(c *gin.Context) {
 		"orders": orders,
 	})
 }
+
+type OrderPage struct {
+	OrderID int32 `uri:"id" binding:"required"`
+}
+
+func (w *ApiController) Order(c *gin.Context) {
+  var req OrderPage
+	if err := c.ShouldBindUri(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+  
+	order, err := w.queries.GetOrder(c, req.OrderID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	orderProducts, err := w.queries.GetOrderProducts(c, order.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+  c.JSON(http.StatusOK, gin.H{
+    "order": order,
+    "products": orderProducts,
+  })
+}
