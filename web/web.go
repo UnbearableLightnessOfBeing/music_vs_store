@@ -793,7 +793,7 @@ func (w WebController) CreateOrder(c *gin.Context) {
 		params.CustomerAddress == "" {
 		c.Header("HX-Retarget", "#submit-error")
 		c.HTML(http.StatusBadRequest, "components/create_order_error.html", gin.H{
-			"message": "Проверте все ли поля заполнены",
+			"message": "Проверьте все ли поля заполнены",
 		})
 		return
 	}
