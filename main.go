@@ -127,7 +127,9 @@ func main() {
 
   // ---LABELS---
   r.GET("/api/admin/labels", apiController.Labels)
+  r.GET("/api/admin/labels/:id", apiController.Label)
   r.POST("/api/admin/labels", apiController.CreateLabel)
+  r.PUT("/api/admin/labels/:id", apiController.UpdateLabel)
   r.DELETE("/api/admin/labels/:id", apiController.DeleteLabel)
 
   // ---ORDERS---

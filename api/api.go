@@ -781,6 +781,66 @@ func (w *ApiController) Labels(c *gin.Context) {
 	})
 }
 
+func (w *ApiController) Label(c *gin.Context) {
+	var req DeleteLabelReq
+	if err := c.ShouldBindUri(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+  label, err := w.queries.GetLabel(c, req.LabelID) 
+  if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "label": label,
+  })
+}
+
+func (w *ApiController) UpdateLabel(c *gin.Context) {
+	var req DeleteLabelReq
+	if err := c.ShouldBindUri(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var creaqteReq CreateLabelReq
+	if err := c.ShouldBindJSON(&creaqteReq); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if creaqteReq.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": `Поле "Название" обязательно к заполнению`,
+		})
+		return
+	}
+
+  updated, err := w.queries.UpdateLabel(c, db.UpdateLabelParams{
+    ID: req.LabelID,
+    Name: creaqteReq.Name,
+  })
+  if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "updated": updated,
+  })
+}
+
 func (w *ApiController) CreateLabel(c *gin.Context) {
 	var labelReq CreateLabelReq
 	if err := c.ShouldBindJSON(&labelReq); err != nil {
@@ -823,13 +883,41 @@ func (w *ApiController) DeleteLabel(c *gin.Context) {
 		return
 	}
 
-	lbl, err := w.queries.DeleteLabel(c, deleteReq.LabelID)
+  tx, err := w.db.Begin()
+  if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+  }
+
+  qtx := w.queries.WithTx(tx)
+  defer tx.Rollback()
+
+  if err = qtx.RemoveLabelProductRelations(c, sql.NullInt32{
+    Int32: deleteReq.LabelID,
+    Valid: true,
+  }); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+  }
+
+	lbl, err := qtx.DeleteLabel(c, deleteReq.LabelID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
+
+  if err = tx.Commit(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+  }
 
 	c.JSON(http.StatusOK, gin.H{
 		"deleted": lbl,

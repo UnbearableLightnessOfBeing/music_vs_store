@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createLabel = `-- name: CreateLabel :one
@@ -81,4 +82,34 @@ func (q *Queries) ListLabels(ctx context.Context, arg ListLabelsParams) ([]Label
 		return nil, err
 	}
 	return items, nil
+}
+
+const removeLabelProductRelations = `-- name: RemoveLabelProductRelations :exec
+UPDATE products
+  SET label_id = NULL
+WHERE label_id = $1
+`
+
+func (q *Queries) RemoveLabelProductRelations(ctx context.Context, labelID sql.NullInt32) error {
+	_, err := q.db.ExecContext(ctx, removeLabelProductRelations, labelID)
+	return err
+}
+
+const updateLabel = `-- name: UpdateLabel :one
+UPDATE labels
+  SET name = $2
+WHERE id = $1
+RETURNING id, name
+`
+
+type UpdateLabelParams struct {
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
+}
+
+func (q *Queries) UpdateLabel(ctx context.Context, arg UpdateLabelParams) (Label, error) {
+	row := q.db.QueryRowContext(ctx, updateLabel, arg.ID, arg.Name)
+	var i Label
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
 }

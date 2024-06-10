@@ -14,7 +14,18 @@ INSERT INTO labels
 (name) values ($1)
 RETURNING *;
 
+-- name: UpdateLabel :one
+UPDATE labels
+  SET name = $2
+WHERE id = $1
+RETURNING *;
+
 -- name: DeleteLabel :one
 DELETE FROM labels
 WHERE id = $1
 RETURNING *;
+
+-- name: RemoveLabelProductRelations :exec
+UPDATE products
+  SET label_id = NULL
+WHERE label_id = $1;
