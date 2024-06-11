@@ -103,38 +103,44 @@ func main() {
   r.POST("/search", webController.SearchItems)
   r.POST("/comments", webController.CreateComment)
 
+  api := r.Group("/api/admin")
+  api.Use(authMiddleware.RequireAdminInPanel())
   // admin api
+  // ---AUTH---
+  api.GET("/check-auth", authMiddleware.RequireAdminInPanel(), apiController.CheckAuth)
   // ---USERS---
-  r.GET("/api/admin/users", apiController.Users)
-  r.PUT("/api/admin/users/:id", apiController.UserToggleIsAdmin)
+  api.GET("/users", authMiddleware.RequireAdminInPanel(), apiController.Users)
+  api.PUT("/users/:id", apiController.UserToggleIsAdmin)
 
   // ---PRODUCTS---
-  r.GET("/api/admin/products", apiController.Products)
-  r.GET("/api/admin/products/:id", apiController.Product)
-  r.POST("/api/admin/products", apiController.CreateProduct)
-  r.PUT("/api/admin/products/:id", apiController.UpdateProduct)
-  r.DELETE("/api/admin/products/:id", apiController.DeleteProduct)
-  r.POST("/api/admin/products/:id/images_add", apiController.AddImageToProdut)
-  r.POST("/api/admin/products/:id/images_remove", apiController.RemoveImageFromProduct)
+  api.GET("/products", apiController.Products)
+  api.GET("/products/:id", apiController.Product)
+  api.POST("/products", apiController.CreateProduct)
+  api.PUT("/products/:id", apiController.UpdateProduct)
+  api.DELETE("/products/:id", apiController.DeleteProduct)
+  api.POST("/products/:id/images_add", apiController.AddImageToProdut)
+  api.POST("/products/:id/images_remove", apiController.RemoveImageFromProduct)
 
   // ---CATEGORIES---
-  r.GET("/api/admin/categories", apiController.Categories)
-  r.POST("/api/admin/categories", apiController.CreateCategory)
-  r.GET("/api/admin/categories/:id", apiController.Category)
-  r.PUT("/api/admin/categories/:id", apiController.UpdateCategory)
-  r.DELETE("/api/admin/categories/:id", apiController.DeleteCategory)
-  r.POST("/api/admin/categories/:id/image", apiController.SetCategoryImage)
+  api.GET("/categories", apiController.Categories)
+  api.POST("/categories", apiController.CreateCategory)
+  api.GET("/categories/:id", apiController.Category)
+  api.PUT("/categories/:id", apiController.UpdateCategory)
+  api.DELETE("/categories/:id", apiController.DeleteCategory)
+  api.POST("/categories/:id/image", apiController.SetCategoryImage)
 
   // ---LABELS---
-  r.GET("/api/admin/labels", apiController.Labels)
-  r.GET("/api/admin/labels/:id", apiController.Label)
-  r.POST("/api/admin/labels", apiController.CreateLabel)
-  r.PUT("/api/admin/labels/:id", apiController.UpdateLabel)
-  r.DELETE("/api/admin/labels/:id", apiController.DeleteLabel)
+  api.GET("/labels", apiController.Labels)
+  api.GET("/labels/:id", apiController.Label)
+  api.POST("/labels", apiController.CreateLabel)
+  api.PUT("/labels/:id", apiController.UpdateLabel)
+  api.DELETE("/labels/:id", apiController.DeleteLabel)
 
   // ---ORDERS---
-  r.GET("/api/admin/orders", apiController.Orders)
-  r.GET("/api/admin/orders/:id", apiController.Order)
+  api.GET("/orders", apiController.Orders)
+  api.GET("/orders/:id", apiController.Order)
+  // ---DASHBOARD---
+  api.GET("/dashboard", apiController.Dashboard)
 
   // HTMX test
   // r.GET("/admin/htmx", authMiddleware.RequireAdmin(), dashboardController.TestHtmx)

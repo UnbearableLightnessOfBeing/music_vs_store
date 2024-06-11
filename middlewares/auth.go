@@ -70,3 +70,25 @@ func (m AuthMiddleware) RequireAdmin() gin.HandlerFunc {
     c.Redirect(http.StatusMovedPermanently, "/")
   }
 }
+
+func (m *AuthMiddleware) RequireAdminInPanel() gin.HandlerFunc {
+  return func(c *gin.Context) {
+    session := sessions.Default(c)
+    sessionID := session.Get("id")
+
+    if sessionID != nil {
+      user, err := m.queries.GetUser(c, sessionID.(int32))
+      if err != nil {
+        panic(err)
+      }
+
+      if user.IsAdmin.Valid && user.IsAdmin.Bool {
+        c.Next()
+        return
+      }
+    }
+    c.JSON(http.StatusForbidden, gin.H{
+      "message": "You are not allowed to see this page",
+    })
+  }
+}

@@ -178,6 +178,17 @@ func (q *Queries) GetOrder(ctx context.Context, id int32) (GetOrderRow, error) {
 	return i, err
 }
 
+const getOrderCount = `-- name: GetOrderCount :one
+SELECT count(*) FROM orders
+`
+
+func (q *Queries) GetOrderCount(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getOrderCount)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getOrderProducts = `-- name: GetOrderProducts :many
 select 
   p.name,
@@ -407,4 +418,15 @@ func (q *Queries) GetOrdersByUserId(ctx context.Context, userID int32) ([]GetOrd
 		return nil, err
 	}
 	return items, nil
+}
+
+const getTotalRevenue = `-- name: GetTotalRevenue :one
+SELECT SUM(total_int) FROM orders
+`
+
+func (q *Queries) GetTotalRevenue(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getTotalRevenue)
+	var sum int64
+	err := row.Scan(&sum)
+	return sum, err
 }

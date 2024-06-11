@@ -182,6 +182,17 @@ func (q *Queries) GetProductByName(ctx context.Context, name string) (Product, e
 	return i, err
 }
 
+const getProductCount = `-- name: GetProductCount :one
+SELECT count(*) FROM products
+`
+
+func (q *Queries) GetProductCount(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getProductCount)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getProductWithCategory = `-- name: GetProductWithCategory :one
 SELECT p.id, p.name, p.price_int, p.price_dec, p.label_id, p.images, p.description, p.characteristics, p.in_stock, p_c.category_id as category_id
   FROM products p

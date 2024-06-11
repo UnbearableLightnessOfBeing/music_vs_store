@@ -11,6 +11,9 @@ insert into users (
 SELECT * FROM users
 WHERE id = $1 LIMIT 1;
 
+-- name: GetUserCount :one
+SELECT count(*)FROM users;
+
 -- name: GetUserByName :one
 SELECT * FROM users
 WHERE username = $1 LIMIT 1;

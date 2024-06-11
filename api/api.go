@@ -82,6 +82,13 @@ func (w *ApiController) UserToggleIsAdmin(c *gin.Context) {
 
 	isAdmin := user.IsAdmin.Bool
 
+  if user.Email == "admin@admin.ru" {
+    c.JSON(http.StatusBadRequest, gin.H{
+      "message": "У этого пользователя нельзя забрать права",
+    })
+    return
+  }
+
 	user, err = w.queries.UpdateUserIsAdmin(c, db.UpdateUserIsAdminParams{
 		ID: userToAdmin.UserID,
 		IsAdmin: sql.NullBool{
@@ -971,5 +978,54 @@ func (w *ApiController) Order(c *gin.Context) {
   c.JSON(http.StatusOK, gin.H{
     "order": order,
     "products": orderProducts,
+  })
+}
+
+// ---AUTH---
+func (w *ApiController) CheckAuth(c *gin.Context) {
+  c.JSON(http.StatusOK, gin.H{
+    "message": "check auth",
+  })
+}
+
+// ---DASHBOARD---
+func (w *ApiController) Dashboard(c *gin.Context) {
+  userCount, err := w.queries.GetUserCount(c)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  productCount, err := w.queries.GetProductCount(c)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  orderCount, err := w.queries.GetOrderCount(c)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  revenue, err := w.queries.GetTotalRevenue(c)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{
+      "message": err.Error(),
+    })
+    return
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+    "userCount": userCount,
+    "productCount": productCount,
+    "orderCount": orderCount,
+    "revenue": revenue,
   })
 }

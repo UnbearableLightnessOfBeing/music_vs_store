@@ -3,6 +3,9 @@ select * from products
 limit $1
 offset $2;
 
+-- name: GetProductCount :one
+SELECT count(*) FROM products;
+
 -- name: GetProductsWithCategory :many
 SELECT p.*, p_c.category_id as category_id 
   FROM products p

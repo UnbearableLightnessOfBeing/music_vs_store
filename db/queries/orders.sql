@@ -86,3 +86,9 @@ FROM orders o
   ON o.payment_method_id = p.id
   LEFT JOIN delivery_methods d
   ON o.delivery_method_id = d.id;
+
+-- name: GetOrderCount :one
+SELECT count(*) FROM orders;
+
+-- name: GetTotalRevenue :one
+SELECT SUM(total_int) FROM orders;
